@@ -43,7 +43,7 @@ public function dontExploreGatsChristmasTale():void {
 	outputText("\n\nIt's certainly warmer there.");
 	//turn dat shit off
 	flags[kFLAGS.GATS_ANGEL_DISABLED] = .5;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //ii. Yes
@@ -93,7 +93,7 @@ public function encounterQuoteUnquoteAngel():void {
 		flags[kFLAGS.GATS_ANGEL_TIME_TO_FIND_KEY] = 1;
 	}
 	flags[kFLAGS.GATS_ANGEL_QUEST_BEGAN] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 	
 //5. Solution
@@ -112,7 +112,7 @@ public function findTheWindUpKey():void {
 	outputText("\n\nOne surprise leads to another when a warm glow breaks free from between your hands.  A swirling of green and red mist is concentrated within the frame of your prize, glowing brightly as they swim endlessly through the key's curves at a variety of velocities.  It's plain to see that this little treasure was the cause for the cave's unnatural brilliance.  You're a little ashamed to rob it of its power source... but not enough to give it a second thought as you crawl back down to the entrance only a few feet away.  The last thing you want is for your magical lantern to dull and leave your naked body blind in this hazard-filled hole.");
 	outputText("\n\nYou carefully re-enter the flooded tunnel, unsure how the supposed key will take to water.  It makes little impact as you submerge it, though the glowing light looks lovely on the pitch black tunnel.  The sight reinvigorates you slightly, though the warmer waters are probably more to blame.  Chalking up yet another simple retrieval asked of your person, you surface back outside, eager to get back into your [armor] and return to the high mountains.");
 	player.createKeyItem("North Star Key",0,0,0,0);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //ii. Bringing the Key Back
@@ -148,7 +148,7 @@ public function giveThatBitchAKeyYo():void {
 		outputText("\n\nThe air remains cold and merciless, and regardless of what you do it would be difficult to stay for much longer.  Turning away, you trot silently back to your camp, wondering how things would've gone - if only you were quicker.");
 		//[BAD END, Can no longer see the Old Woman or this series of events]
 		flags[kFLAGS.GATS_ANGEL_DISABLED] = 1;
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//player.removeKeyItem("North Star Key");
 }
@@ -159,7 +159,7 @@ public function theWorstEndingEverDotJPG():void {
 	//Requirements: Choosing [Fuck the Soldier] at the prompt
 	outputText("Still listlessly spinning the windup key around your pointer finger, you gaze back down at the pile of armor buried in the snow.  A strange amount of curiosity surrounds this peculiar set of protection, only mounting the longer you stare at it.  It isn't like you owe anything to the slumbering titan.  Just what could she see in something a mere fraction her size?  Maybe this is some sort of dominating fantasy of hers; you've been around the block enough times to know that not everything is at it appears.  There's no telling just what she has in store for her little creation.  You may actually get to be a hero!");
 	outputText("\n\nAnd, hey, if the windup key does fuck all, at least you get a free set of armor out of the deal!");
-	outputText("\n\nWith your mind made up and your resolve firm, you set off to rescue the dormant soldier, sliding the key back into your pocket.  White powder flies one way and another as the inanimate prisoner is freed from its snowy confines, once again knowing open air.  You prop the set of armor up against your back, taking great care not to alert its captor of its daring escape.  You drape the arms up over your shoulders and scoop the legs into your arms, employing a generous piggyback ride to aid in your liberation.  You pay the giantess a final glance, a hint of doubt still lingering in confines of your judgement.  You assuage your hesitation with a quick hiking of your cargo, rushing down off the mountain.  The cold mountain wind once again shrouds the slumbering spirit from your peripheral vision, helping ease your conflict.");
+	outputText("\n\nWith your mind made up and your resolve firm, you set off to rescue the dormant soldier, sliding the key back into your pocket.  White powder flies one way and another as the inanimate prisoner is freed from its snowy confines, once again knowing open air.  You prop the set of armor up against your back, taking great care not to alert its captor of its daring escape.  You drape the arms up over your shoulders and scoop the legs into your arms, employing a generous piggyback ride to aid in your liberation.  You pay the giantess a final glance, a hint of doubt still lingering in confines of your judgment.  You assuage your hesitation with a quick hiking of your cargo, rushing down off the mountain.  The cold mountain wind once again shrouds the slumbering spirit from your peripheral vision, helping ease your conflict.");
 	outputText("\n\nYou eventually reach the base of the mountain, free of the seemingly never-ending, blindingly white blizzard.  You take a few minutes to trot over to a clearing, your load lightly bouncing around behind you.  A nearby tree acts as the perfect prop for your friend as you turn in place and gently set down the suit of armor.  Eying over the lifeless pile of scrap, it appears as hollow to you as it did when you first saw it buried in the snow.  Even as you pull the beautiful little windup key back from your pocket, you're hesitant to believe something so simple could spark life back to this creation.");
 	outputText("\n\nWith a hand propped over the soldier's shoulder, you guide the key back to a slot in base of the soldier's back and give it a quick turn, filling the air with a pleasant click.  You're taken by surprise as the suit begins to shudder and rattle, backing off of the little miracle to take in the sight.  The armor braces up against the tree, trembling as it slowly rises to its feet.  An ebony haze fills the interior of the once-hollow soldier, light wisps escaping from little cracks and openings as the shuddering soldier fills with what you presume to be life.  The construct finally settles and lifts its hand to its helmet, revealing a pair of minuscule, glowing orbs of gold staring back at you.  North has returned.");
 	outputText("\n\n\"<i>Why have you dragged me down from the mountain?</i>\"");
@@ -200,7 +200,7 @@ public function theWorstEndingEverDotJPG():void {
 	//[if (corruption > 49) 
 	if(player.cor > 49) outputText("  More importantly, you have some unsatisfied, pent up lust that you'd like to expend.");
 	dynStats("lus", 2+player.lib/10+player.cor/10, "cor", 10, "resisted", false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	flags[kFLAGS.GATS_ANGEL_DISABLED] = 1;
 	player.removeKeyItem("North Star Key");
 }
@@ -223,7 +223,7 @@ public function fuckTheAngelBadEnd():void {
 	if(player.hasCock()) outputText("\n\nTaking out your junk");
 	else outputText("\n\nCaressing your cunt");
 	outputText(", you wander your way towards the giant's mouth-muscle, climbing on top of her warm, pink bed. There's gotta be some kinda magic involved - her mint saliva sends tingles through your body, while dragging your ");
-	if(player.hasCock()) outputText(multiCockDescriptLight());
+	if(player.hasCock()) outputText(player.multiCockDescriptLight());
 	else outputText(vaginaDescript());
 	outputText(" against each bump and curve is beginning to get you hard.  She winces at the taste of your crotch against her tongue, though she's obviously never given oral to something with a heartbeat before.  Well, there's a first time for everything.");
 	outputText("\n\nHer mouth is already lubricated with what appears to be chocolatey saliva, a sweet syrup coating your genitals with a cool, arousing fluid.  It's not hard to guess that her tongue might be incredibly sensitive, and every hump against it seems to be getting the giantess unconsciously excitable.  Her eyes begin to flutter and a groan escapes her lips, while you hug against each wave of her warm breath.  The hypersensitivity of her mouth-muscle begins to take control of her movements, the grinding of your ");
@@ -250,7 +250,7 @@ public function fuckTheAngelBadEnd():void {
 	else outputText("feminine juices");
 	outputText(" all along her starving tongue, your eyes lifting up as you stretch to force as much as you can upon her.  A slick, stubby tendril fits between your [butt], while more of her taste buds rub against you in your squirting ecstasy.  Your ");
 	if(player.hasCock()) {
-		outputText(multiCockDescriptLight());
+		outputText(player.multiCockDescriptLight());
 		if(player.cockTotal() == 1) outputText("throbs");
 		else outputText("throb");
 	}
@@ -274,7 +274,7 @@ public function fuckTheAngelBadEndPartII():void {
 	flags[kFLAGS.GATS_ANGEL_DISABLED] = 1;
 	player.orgasm();
 	dynStats("cor", 10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //8. Good End
@@ -384,5 +384,5 @@ public function conclusionOfGiantessGoodEnd():void {
 	//Christmas events are open all year 'round! (some sort of arbitrary limit)
 	//merry christmas everyone <3
 	flags[kFLAGS.GATS_ANGEL_GOOD_ENDED] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }

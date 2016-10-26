@@ -5,7 +5,7 @@ public function sharkGirlGetsDildoed():void {
 	if(player.weaponName != "fists") outputText("put away your " + player.weaponName + " and ", false);
 	outputText("draw out a glistening pink dildo from your pouches, as if it were a weapon.   She looks up at you, at once knowing your intent.  ", false);
 	if(monster.lust > 99) outputText("Her legs spread invitingly wide and she tears off her bikini bottom in a lusty frenzy.  You hold the dildo over her and give it a tiny squeeze, wringing out a few drops of pink fluid from the special dildo.  They land on her exposed cunt and in seconds she's writhing underneath you, humping the air.", false);
-	else outputText("She holds her legs together defiantly, but you pry them open, tear off her bikini bottom and  expose her bald nether-lips.   You hold the dildo over her and squeeze, squirting a gush of pink fluid onto her exposed cunt.  The effect is immediate, and in moments she's humping the air and wet with her own fluids.", false);
+	else outputText("She holds her legs together defiantly, but you pry them open, tear off her bikini bottom and expose her bald nether-lips.   You hold the dildo over her and squeeze, squirting a gush of pink fluid onto her exposed cunt.  The effect is immediate, and in moments she's humping the air and wet with her own fluids.", false);
 	outputText("\n\n", false);
 	
 	outputText("'<i>What a wonderful toy</i>,' you muse as you kneel between your ", false);
@@ -16,7 +16,7 @@ public function sharkGirlGetsDildoed():void {
 	
 	outputText("You slap her left ass-cheek hard, the rough texture of her skin giving the perfect *crack* of skin on skin as you scold her, \"<i>You're not supposed to cum so hard!  Now you're really going to get stretched, skank!</i>\"\n\n", false);
 	
-	outputText("The aquatic monster-woman whimpers, feeling herself getting stretched wider and wider by the growing toy.   Intent on punishing her for her trying to rape you AND for cumming too soon, you grab the dildo in a double-handed grip and force it in to the hilt.   Her tail flops and thrashes as the dildo sinks in until you bottom out.  She flops about like a dying fish, though perhaps the only thing about her 'dying' is a few brain cells from the bliss her cunny's feeling.  Satisfied with the degree of penetration, you grab it around the base and yank back on it, struggling with how tightly it's lodged in her cunt.\n\n", false);
+	outputText("The aquatic monster-woman whimpers, feeling herself getting stretched wider and wider by the growing toy.   Intent on punishing her for trying to rape you AND for cumming too soon, you grab the dildo in a double-handed grip and force it in to the hilt.   Her tail flops and thrashes as the dildo sinks in until you bottom out.  She flops about like a dying fish, though perhaps the only thing about her 'dying' is a few brain cells from the bliss her cunny's feeling.  Satisfied with the degree of penetration, you grab it around the base and yank back on it, struggling with how tightly it's lodged in her cunt.\n\n", false);
 	
 	outputText("You wiggle it back and forth, working it partway out before ramming it back in.  Moaning and rocking underneath you, the shark-girl's eyes cross as she tries to fuck your hands.  Both her hands climb up under the thin black fabric of her top and wrap around her modest breasts, squeezing and caressing them.  She gasps when her fingers find her nipples, and starts drooling down her chin.\n\n", false);
 	outputText("Her salty pussy clamps down hard, but the slick juices pouring from her hole makes it easier and easier to work the bloated sex-toy in and out of her love-hole.   Tired of the slut's moans and gasps of pleasure, you decide to finish her off.   You pull the dildo out, and let out a gasp of surprise when her twitching cunt gapes open obscenely, allowing you to see the entire depth of her love-tunnel, all the way to her cervix.   She groans at the sudden loss of sensation, but before she has a chance to jam a finger into her needy hole, you squeeze the perverted toy HARD, wringing a thick gush of pinkish fluid directly into her baby-maker.\n\n", false);
@@ -29,31 +29,7 @@ public function sharkGirlGetsDildoed():void {
 	cleanupAfterCombat();
 }
 
-//RAEP BEE GIRLS WITH DILDO
-public function beeGirlsGetsDildoed():void {
-	outputText("", true);
-	outputText("You advance on your ", false);
-	if(monster.HP < 1) outputText("hapless", false);
-	else outputText("horny", false);
-	outputText(" foe, pulling your new favorite toy from your pouch like a knight drawing a sword.  The only difference is, your \"sword\" jiggles and leaks pink fluid.   Rushing forward, you close the distance in a leap and gently slap her face.   She looks up at you, dazed and confused, opening her mouth in protest.   The artificial dong easily muffles her noise-hole. From the blush that colors her cheeks, you can tell its fluids are already starting to affect her.\n\n", false);
-	
-	outputText("The bee-bitch's eyes are lidded seductively when you yank out the offending implement.  She licks her lips, as if beckoning you to ram it back into her throat, but the toy is already beginning to swell and you have other plans for it.  You sit down on her chest, just under her exposed breasts and reach down past her honeypot for her abdomen.  Once she realizes where you're headed, she starts squirming mightily, but can't get anywhere from her current position.   Reaching down next to her stinger, you part the softer flesh there and find the organ you were looking for.\n\n", false);
-	
-	outputText("A little stimulation causes it to begin growing out, a messy black organ with numerous bulbs and knots along its length, open at the top and sloshing with honey and fluids.  Your captive stops struggling as it grows harder, a strange female parody of a penis.  Finally, this bitch will be taking something uncomfortable in a hole that wasn't meant to take it.\n\n", false);
-	
-	outputText("The dildo plugs her ovipositor nicely, though a gush of honey squirts over your hand as it's forced in the entire way.  The knots and bulges of her egg-dispenser look even more obscene, and the image only grows worse as the dildo inside it begins absorbing the honey and bee-seed, growing larger.    She cries out in mixed pleasure and pain, and you decide to see how it feels to jerk off such a strange phallic organ.  The slick honey it exudes immediately soaks your hand, bubbling around it as you begin jacking her ovipositor off.\n\n", false);
-	
-	outputText("It gets thicker and thicker as the dildo-plug continues to puff up.  Her cries grow louder and louder as you pick up the tempo, and they don't sound very pained anymore.  Judging by the trembling of her hips, she's quite enjoying herself.   You begin to feel tiny knots and bulges around the bottom of the ovi-prick, and the slick black flesh slowly starts to go transparent there as it's stretched wider and wider by the invader and the eggs backing up behind it.  Worried that you might seriously damage her, you grab the thick sex-toy and give it a gentle yank, unplugging the bee-girl at last.\n\n", false);
-	
-	outputText("She cries out in ecstasy, spurting yellowish-white goo all over herself from her gaping ovipositor.  Eggs begin tumbling from the quivering black tube, rolling off her belly and thighs into the puddle of goo on the ground as her orgasmic contractions force them out, one after another.  They come out in twos and threes, passing through the widened hole with ease.  She buzzes and hums behind you, in her own little world, probably imagining she's fertilizing someone's backdoor.  You shrug and return to stroking the ovipositor, giggling a bit as it hardens nearly as much as a dick and gives a few last mighty squirts, depositing the last egg into the massive pile.\n\n", false);
-	
-	outputText("You release it as she passes out, smiling when you realize she'll probably be leaking eggs with every step from now on.  ", false);
-	if(player.cor < 50) outputText("You feel kind of bad for her, but y", false);
-	else outputText("Y", false);
-	outputText("ou really need to get back to camp and get off after such an intense experience.  Maybe you should give your honey-flavored dildo a shot?", false);
-	dynStats("lus", (20+player.lib/5+player.cor/10));
-	cleanupAfterCombat();
-}
+//RAEP BEE GIRLS WITH DILDO - Moved to BeeGirlScene
 
 //RAEP SAND-WITCH!
 public function sandwitchGetsDildoed():void {

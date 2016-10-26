@@ -42,7 +42,7 @@ private function noMeetingKaijus():void {
 	clearOutput();
 	outputText("You continue rowing on, away from the hilly island.");
 	//[There is still a chance of finding the hill later]
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If yes]
@@ -92,7 +92,7 @@ private function insultTheKaijuFirstMeeting():void {
 		outputText("Perhaps not the smartest thing to do towards such a giant, you decide to mock her obvious insecurities over her body image.  The word 'fat' barely has time to leave your lips when in a rage she puffs up her lips and blows, sending you and your boat racing through the lake out of sight.  Sometime later the boat crashes back on shore, your hair and nerves a little windswept from the fast ride.");
 		//[Giant turtle no longer encounter-able]
 		flags[kFLAGS.KAIJU_DISABLED] = 1;
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 }
 
@@ -105,7 +105,7 @@ private function yesBurnDatClit():void {
 	//[Lust is increased and giant turtle girl is no longer encounter-able][End whitefire scene]
 	dynStats("lus", 15);
 	flags[kFLAGS.KAIJU_DISABLED] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If no] (Scene returns to regular blowjob/urethral insertion scene.)
@@ -123,7 +123,7 @@ private function corruptKaijuInsertion():void {
 	//[Corruption increases slightly and giant turtle girl is no longer encounter-able]
 	dynStats("lus", 50, "cor", 1);
 	flags[kFLAGS.KAIJU_DISABLED] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If compliment]
@@ -145,7 +145,7 @@ private function stopItPlease():void {
 	spriteSelect(103);
 	outputText("You cry out and wave the inquisitive hand away.  You tell her that you mean no offense, but at such a size and strength disparity you are afraid of what a grip from such a woman could do accidentally.  She seems a bit saddened at that, but makes no further attempt to grab you.");
 	//[Giant turtle girl is still encounter-able]
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If let her]
@@ -194,7 +194,7 @@ private function letKaijuHaveWayWithYou():void {
 	outputText("\n\n\"<i>My, that was a mighty big hug.  I think I'll need another nap.  Come visit me again some time,</i>\" she says, slowly putting you down in your boat.  You slowly roll away as the jolly green giantess giggles and slowly wades off.");
 	//[Giant turtle girl now encounter-able at Boat and Swamp, corruption increases slightly]
 	dynStats("cor", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If flirt]
@@ -267,7 +267,7 @@ private function flirtWithKaiju():void {
 	outputText("\n\nYou wave goodbye to the giant green girl as you begin to row away.");
 	//[Corruption increases, giant turtle girl now encounter-able at Boat and Swamp]
 	dynStats("cor", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Second/Repeatable encounter/s at Boat
@@ -334,7 +334,7 @@ private function kaijuRepeatBoobHug():void {
 	outputText("\n\n\"<i>My, that was a mighty big hug.  I think I'll need another nap. Come visit me again some time,</i>\" she says, slowly putting you down in your boat.  You slowly roll away as the jolly green giantess giggles and slowly wades off.");
 	//[Giant turtle girl now encounter-able at Boat and Swamp, corruption increases slightly]
 	flags[kFLAGS.KAIJU_BAD_END_COUNTER]++;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If Fuck] 
@@ -412,7 +412,7 @@ private function fuckThisGiantYouDumbCunt():void {
 	//[Corruption increases]
 	flags[kFLAGS.KAIJU_BAD_END_COUNTER]++;
 	dynStats("cor", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If Urethra Fuck]
@@ -443,7 +443,7 @@ private function urethraFuckDatGiantCock():void {
 	flags[kFLAGS.KAIJU_BAD_END_COUNTER]++;
 	player.orgasm();
 	dynStats("cor", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If Leave]
@@ -451,7 +451,7 @@ private function leaveRepeatKaiju():void {
 	clearOutput();
 	spriteSelect(103);
 	outputText("You politely decline any options and bid the green girl goodbye as you row away.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If Talk] 
@@ -477,7 +477,7 @@ private function talkToKaiju():void {
 		outputText("\n\nYou decide to ask her a very delicate question that has been bothering you for a while.  How did she become such a giant?");
 		outputText("\n\n\"<i>I thought you would ask eventually,</i>\" the big green gal says, tapping a finger on her bottom lip for a few seconds as she considers what she'll say.  \"<i>Well, it all began well after the demons took over the land.  I've always tended to go back and forth between the lake and swamp ever since I can remember.  One day I was bathing in the lake all alone when it suddenly... changed.  I couldn't put my finger on it at the time, but the more I bathed the dirtier I felt. I soon left, deciding that I should stay away for a while... but I had such intense dreams that night, unlike any I ever had before.  I kept thinking of naked bodies rubbing up and down against my own body, of large cocks of every shape and description teasing my pussy or my plump rear, sliding between my cunt lips or my buttocks.  After that I just couldn't seem to help myself, I had to go back to the lake and take another dip, and another, and another.  As the waters became more corrupt and my dreams more intense I had to find the source of my pleasures.  So I began to explore every inch of the lake, until I finally came to a spot where the lake meets the mountains.</i>\"");
 		
-		outputText("\n\nHer body seems to quiver in delight as she continues on.  \"<i>I'm not sure why they want to taint the waters or what it is they use, but I found the spot where the corruption enters the lake and is the strongest.  I go there daily to absorb the warmth and delicious taint of those chemicals.  It increased my lust, and over time my size.");
+		outputText("\n\nHer body seems to quiver in delight as she continues on.  \"<i>I'm not sure why they want to taint the waters or what it is they use, but I found the spot where the corruption enters the lake and is the strongest.  I go there daily to absorb the warmth and delicious taint of those chemicals.  It increased my lust, and over time my size.</i>\"");
 		//[If factory has been shut down and Marae was left uncorrupted]
 		if(player.findStatusAffect(StatusAffects.DungeonShutDown) >= 0 && player.findStatusAffect(StatusAffects.FactoryOverload) < 0) outputText("  But the flow of yummy fluids seems to have been stopped.");
 		//[If the Factory was shut down and Marae corrupted]
@@ -493,7 +493,7 @@ private function talkToKaiju():void {
 		outputText("\n\nShe sighs, the conversation seeming to be at an end.");
 		flags[kFLAGS.KAIJU_TALK_CYCLE] = 0;
 	}
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	if(player.inte < 50) dynStats("int", 1);
 	if(player.lib > 50) dynStats("lib", -1);
 }
@@ -538,7 +538,7 @@ private function yesKaijuGimmePeepShowsMoar():void {
 	outputText("You make your appreciation of her exhibition known, indicating that you would like her to continue on.  Smiling at your suggestion, and more than willing to give an encore performance, she brings her hands down to her trembling cock, slowly tracing a finger up the length of her shaft before grabbing onto it with one hand while the other begins to rub the tip of the head with her palm.  Her hand, still slick with her own cunt juice, slides easily across her cock.  She begins to moan again, even more lewdly than last time.  Her hips begin to buck as she practically begins to fuck her hand.  Beads of precum begin to bubble up from her cock head, and she quickly wipes it on the palm of her free hand before bringing it towards her face to lick the mess off her palm, her body trembling from the sheer delight of drinking her own pre.  \"<i>Oh that's good!</i>\" she pants, bringing her hand back down to begin stroking her throbbing dick with both hands.  \"<i>Please, please watch me cum!</i>\" the giantess begs of you as she goes into high gear, giving her cock everything she's got left.  It isn't much longer before she erupts like a geyser, spraying hermy turtle girl cum high into the air, only for it to rain back down on the green girl.  Her hands begin to slide across her torso, gently massaging the sperm into her skin.");
 	//[Increase lust further, end corrupt/herm scene]
 	dynStats("lib", 1, "lus", 33);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If no] (Skip corrupt/herm scene)
@@ -548,7 +548,7 @@ private function noKaijuPeepShows():void {
 	outputText("\"<i>My goodness, it's so much better with a captivated audience!</i>\" she says, breathing heavily.  You thank her for the show as she places you back into your boat and giving it a push.  You row away, considering perhaps coming back for another show.");
 	//[Libido is increased by 1]
 	dynStats("lib", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //One off scenes
@@ -576,7 +576,7 @@ private function dontGetFutaTurtlesOffToday():void {
 	clearOutput();
 	spriteSelect(103);
 	outputText("You shake your head no, politely responding that you do not want to get her off right now.  \"<i>Oh, okay. I understand,</i>\" the giantess states, looking somewhat crestfallen.  You row away, leaving her and her new addition to themselves for the time being.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If Mock] 
@@ -607,7 +607,7 @@ private function mockDatTurtleGirl():void {
 	player.orgasm();
 	dynStats("cor", 1);
 	flags[kFLAGS.KAIJU_DISABLED] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If yes]
@@ -636,7 +636,7 @@ private function helpNewFutaKaijuGetOff():void {
 	//[Corruption increases slightly, lust is decreased]
 	player.orgasm();
 	dynStats("cor", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If Incubi Drafts]
@@ -668,7 +668,7 @@ private function yesTurnKaijuFuta():void {
 	
 	outputText("\n\n\"<i>Oh don’t look so concerned, I know it can’t fit in you.  Well, not without some major corrupt magic on my part and a crazy willingness on your part, but we could always discuss that later.  But how about a little urethra play?  I’ve seen a minotaur stick a pinkie finger in his cock before, I think you’ll fit.</i>\"");
 	outputText("\n\nWait, she wants you in her dick? The hell kind of minotaur was she spying on?");
-	outputText("\n\nBefore you can comment or protest or even question the logic of her plan she has already stripped you of your [armor] and positioned you in front of her crotch, face to face with her cum-slit.  A giant sized glob of pre has already formed at the head of her dick, her newly formed cock apparently a bit of a leaky faucet.  \"<i>Geronimo!</i>\" she yells as she pushes you face first into her goo drizzling tip, your head sliding into her dick with surprising ease, though your shoulders seem to be a different manner.  She pushes and twists you about, gently adding pressure until you finally pop right in all the way to your waist.  It’s surprisingly slippery in her cock, lubed by sweat and precum, and you slide with some ease even further into her dick until you are in up to your ankles despite the tightness of her passage, keeping your arms pinned to your sides.  You wiggle your feet a bit outside her dick before the perverted giant uses them to pull you most of the way back out before shoving you in there once more.  From your vantage point you can almost see all the way into her balls, and to your horror you see a new giant glob of pre heading your way!  You try to shout or move about to get the green herm’s attention, but your voice is muffled and your body constrained by the tight cock flesh all around you.  You take a deep breath and hold it right before getting a face full of musky sweet precum, the scent in your nose reminding you of salty…watermelon? You barely have time to register the scent before you are yanked out of her cock and can breathe again, her pre dripping off your face.");
+	outputText("\n\nBefore you can comment or protest or even question the logic of her plan she has already stripped you of your [armor] and positioned you in front of her crotch, face to face with her cum-slit.  A giant sized glob of pre has already formed at the head of her dick, her newly formed cock apparently a bit of a leaky faucet.  \"<i>Geronimo!</i>\" she yells as she pushes you face first into her goo drizzling tip, your head sliding into her dick with surprising ease, though your shoulders seem to be a different manner.  She pushes and twists you about, gently adding pressure until you finally pop right in all the way to your waist.  It’s surprisingly slippery in her cock, lubed by sweat and precum, and you slide with some ease even further into her dick until you are in up to your ankles despite the tightness of her passage, keeping your arms pinned to your sides.  You wiggle your feet a bit outside her dick before the perverted giant uses them to pull you most of the way back out before shoving you in there once more.  From your vantage point you can almost see all the way into her balls, and to your horror you see a new giant glob of pre heading your way!  You try to shout or move about to get the green herm’s attention, but your voice is muffled and your body constrained by the tight cock flesh all around you.  You take a deep breath and hold it right before getting a face full of musky sweet precum, the scent in your nose reminding you of salty...watermelon? You barely have time to register the scent before you are yanked out of her cock and can breathe again, her pre dripping off your face.");
 	outputText("\n\n\"<i>Sorry about that, it only just occurred to me that might pose a problem.  But I have an even better idea, and this way I can see your cute face!</i>\" she says, blushing in delight at the view of your precum dripping face.  \"<i>Gods above [name] but you look like a whore!  By Marae you’re turning me on!</i>\"");
 	
 	outputText("\n\nShe quickly has you positioned in front of her cock once more, this time feet first so she can keep your head free.  You can see your legs slowly slide down into her green cock, her cum-slit swallowing you up to your [hips].  You can feel the walls of her cock head push in all around you, squeezing your [butt]");
@@ -686,7 +686,7 @@ private function yesTurnKaijuFuta():void {
 	//[Corruption increases slightly, lust is decreased]
 	player.orgasm();
 	dynStats("cor", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Improved Bad End
@@ -723,7 +723,7 @@ private function flyAwayFromBadEnd():void {
 	clearOutput();
 	spriteSelect(103);
 	outputText("Flapping your wings at max speed you beat a hasty retreat!");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[End wings]
@@ -781,7 +781,7 @@ private function badEndPartTwo():void {
 	outputText("\n\nIt is many hours before the pressure and pleasure becomes too much for even the slutty giant, but rather than end it she merely ratchets her sexual perversion down a peg, taking the tree out of her soaked cunt for now, but still diddling herself off to smaller orgasms with you.  You’re helpless as she uses you as a living dildo, pushing you as far into her dripping cunt as you will go, smacking you repeatedly into her G-spot and bringing herself to orgasm after orgasm.  Her massaging walls and inquisitive fingers bring you to orgasm almost as much.  Even in the haze of her lust, she still cares enough to get you off.  But that doesn’t seem to stop her from pumping you into her pussy for hours, only taking you out to feed you more of her milk to keep you going.  Finally, her arms grow tired, and even her impossible libido wanes. Hopefully you’ll be able to leave her and head back to camp soon... or so you thought.\n\nWhether through magic or gods only know how, she seems to have formed a boulder into a smooth, wide, bulbous yet short (relatively speaking) vaginal plug, which she uses to plug up her hole with you still trapped inside.  It appears you’re to now call her vagina home, a live in sex toy only taken out to be fed milk and pleasure her in various ways.");
 	player.orgasm();
 	dynStats("lib", 5, "sen", 30, "cor", 4);
-	eventParser(5035);
+	getGame().gameOver();
 }
 }
 }

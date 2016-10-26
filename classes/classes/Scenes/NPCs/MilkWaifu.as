@@ -32,7 +32,7 @@ public function arriveWithLacticWaifuAtCamp():void {
 	
 	//[Name Field.  If left empty, defaults to "Bath Slut"]
 	menu();
-	addButton(0,"Next",nameZeMilkBath);
+	addButton(0, "Next", nameZeMilkBath);
 	mainView.nameBox.text = "";
 }
 
@@ -99,8 +99,8 @@ private function nameZeMilkBath():void
 		
 		//[Next time Rath's at camp and PC accesses Milky's meny, play the Arrival w/ Rath scene, sans first sentence]
 	}
-	kGAMECLASS.inDungeon = false;
-	doNext(13);
+	//Set before this function is called:	kGAMECLASS.inDungeon = false;
+	doNext(camp.returnToCampUseOneHour);
 }
 
 public function ratducto():void {
@@ -123,7 +123,7 @@ public function ratducto():void {
 	//{Plot Item gained: "Super Reducto"}
 	player.createKeyItem("Super Reducto",0,0,0,0);
 	outputText("\n\n(<b>Key Item Acquired: Super Reducto</b>)");
-	doNext(1);
+	doNext(playerMenu);
 }
 
 
@@ -136,7 +136,7 @@ public function milkyMenu():void {
 		outputText("You wander over to " + flags[kFLAGS.MILK_NAME] + "'s pool, and find the dusky girl sitting at its rim, ");
 		if(flags[kFLAGS.MILK_SIZE] == 0) outputText("lying face-down on her massive rack, her plump little ass sticking up in the air for all to see.  Seeing you approach, she brightens up and shifts her titanic bust around to face you, all bright-eyes and smiles.  \"<i>Milk time?</i>\"");
 		else if(flags[kFLAGS.MILK_SIZE] == 1) outputText("arms crossed under her hefty, milky bust to support their still-sizable weight.  She smiles as you approach, able to stand up under her own power to give you a hug, milky tits pressed tight against you.  \"<i>I-is it milk time?</i>\" she asks, cupping her tits for you.");
-		else outputText("her long, tanned legs dangling into the tub.  She jumps up when you approach, and though still a bit unsteady with such easy movements, she's quick to leap into your arms, nuzzling into your neck and pressing her firm, perky DD-cup breasts against you, little trickles of milk staining your chest through the little shift she's wearing.  \"<i>[name],</i>\" she purrs happily.");
+		else outputText("her long, tanned legs dangling into the tub.  She jumps up when you approach, and though still a bit unsteady with such easy movements, she's quick to leap into your arms, nuzzling into your neck and pressing her firm, perky DD-cup breasts against you, little trickles of milk staining your chest through the little shirt she's wearing.  \"<i>[name],</i>\" she purrs happily.");
 	}
 	else
 	{
@@ -202,7 +202,7 @@ private function sendToFarm():void
 
 	flags[kFLAGS.FOLLOWER_AT_FARM_BATH_GIRL] = 1;
 	
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function backToCamp():void
@@ -223,7 +223,7 @@ private function backToCamp():void
 private function milkWriteFuAppearance():void {
 	clearOutput();
 	outputText("" + flags[kFLAGS.MILK_NAME] + " is a five-foot-five human female, with darkly tanned skin and ebony hair.  ");
-	if(flags[kFLAGS.MILK_SIZE] >= 2) outputText("Over her supple body, she wears a simple cloth shift which cuts off just above her knees, hiding her newly-gained modesty, with a pair of silk painties and a simple bra beneath it.  ");
+	if(flags[kFLAGS.MILK_SIZE] >= 2) outputText("Over her supple body, she wears a simple cloth shirt which cuts off just above her knees, hiding her newly-gained modesty, with a pair of silk painties and a simple bra beneath it.  ");
 	outputText("She has a human face with rich, smooth skin dotted with the faintest trace of freckles.  Her hair is long and full, hanging down her back to her waist.  She's got a curvaceous body, bust aside, with supple hips and thighs, and a big butt you can just sink your fingers into.");
 	
 	//{If GIANT boobs: 
@@ -277,7 +277,7 @@ private function superReductoUsage():void {
 	if(flags[kFLAGS.MILK_SIZE] == 0) {
 		outputText("\n\nHer tits are huge.  No hiding that.  Reducto could bring them down to a more modest level, but then...  she does have amazing tits.  You're sure it wouldn't hurt her to keep them pretty big; any reduction is a favor at this point.  Then again, you could go all the way and drop her down to a \"normal\" cup size, something like some nice DDs: leave her enough to be considered a busty beauty, but little enough that she doesn't have back problems, though you don't know if she'll still lactate enough to bathe in with that small of a bust.");
 		outputText("\n\nYou shift " + flags[kFLAGS.MILK_NAME] + " around in your lap, giving yourself the best angle on her giant tits.  That done, you lather up with Reducto, covering your hands with the stuff before reaching around and grabbing your friend's tits, smearing the first dollops around her leaky nipples.  She winces, shivering as the cool substance smears onto her teats, but almost immediately you can see it going to work: her breasts shudder, flesh quivering as they begin to shrink like balloons.");
-		outputText("\n\n\"<i>[name]!</i>\" " + flags[kFLAGS.MILK_NAME] + " cries out, whimpering and moaning as you massage her tits, rubbing a goodly amount of reducto all around her bust.  Milk pours out of her like a pair of hoses, spraying her motherly fluids everywhere as her carrying capacity shrinks and shrinks.  Down and down she goes, breasts shrinking and leaking until they're about HHH-cups - big enough for a cowgirl, but a lot smaller than they were.");
+		outputText("\n\n\"<i>[name]!</i>\" " + flags[kFLAGS.MILK_NAME] + " cries out, whimpering and moaning as you massage her tits, rubbing a good amount of reducto all around her bust.  Milk pours out of her like a pair of hoses, spraying her motherly fluids everywhere as her carrying capacity shrinks and shrinks.  Down and down she goes, breasts shrinking and leaking until they're about HHH-cups - big enough for a cowgirl, but a lot smaller than they were.");
 		outputText("\n\n\"<i>That's enough,</i>\" you say, leaning around to put your hands into the spray of milk " + flags[kFLAGS.MILK_NAME] + "'s making, washing the reducto from your hands.  When you're done, you wipe her teats off with spare milk, rubbing off the reducto until her dusky skin is as bare as can be, nice and shiny.");
 		outputText("\n\nExperimentally, " + flags[kFLAGS.MILK_NAME] + " tries to stand.  She nearly falls forward, leaden down by her still-prodigious bosoms, but you catch her, steadying the lightened girl until she's standing on her own power, swaying slightly, but standing.");
 		
@@ -308,13 +308,13 @@ private function superReductoUsage():void {
 		
 		outputText("\n\nYou tell her it was your pleasure.  ");
 		//{If Rath is at camp: 
-		outputText("Rathazul approaches, clearly having seen the preceeding events.  He smiles warmly at the two of you, clearly happy to have helped.  Wordlessly, the old rat produces a folded set of garments: a cloth shift with intricate embroidery, and a pair of expensive-looking women's underthings, handing them over to " + flags[kFLAGS.MILK_NAME] + ".  She looks from the gift of clothing to the alchemist, and taking them, plants an affectionate kiss on his old brow.  He chuckles, blushing.  \"<i>I'm sorry I don't have more to give you, poor dear,</i>\" Rath says, starting to shuffle away.  \"<i>Still, I think I've held onto those long enough.</i>\"");
+		outputText("Rathazul approaches, clearly having seen the preceeding events.  He smiles warmly at the two of you, clearly happy to have helped.  Wordlessly, the old rat produces a folded set of garments: a cloth shirt with intricate embroidery, and a pair of expensive-looking women's underthings, handing them over to " + flags[kFLAGS.MILK_NAME] + ".  She looks from the gift of clothing to the alchemist, and taking them, plants an affectionate kiss on his old brow.  He chuckles, blushing.  \"<i>I'm sorry I don't have more to give you, poor dear,</i>\" Rath says, starting to shuffle away.  \"<i>Still, I think I've held onto those long enough.</i>\"");
 		
 		outputText("\n\nYou help " + flags[kFLAGS.MILK_NAME] + " into her new clothes, probably the first she's been able to wear in years, and leave her to get used to her new body - though not before she draws you into a long kiss, holding you tight once again and whispering her heartfelt thanks.");
 		//If no Rath: "You tell " + flags[kFLAGS.MILK_NAME] + " to wait a moment, and go digging through your possessions.  It takes a few minutes, but eventually you find some comfortable-looking clothing.  She takes them eagerly, saying she'll trim them down to her size as soon as she's got herself settled down: it's a lot to take in all at once, and she seems eager to experiment with her new, slender body, walking all over camp with a gay smile.  You leave her to exercise, but not before she draws you into a long kiss, holding you tight once again and whispering her heartfelt thanks."}
 	}
 	flags[kFLAGS.MILK_SIZE]++;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 	
 //Milk Bath (HHH or Giant boobs only)
@@ -377,7 +377,7 @@ private function relaxWithMilkWaifu():void {
 	//(+Lust, -Fatigue)
 	dynStats("lus", 10+player.sens/10, "resisted", false);
 	fatigue(-34);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[Communal Bath] (PC must have 3+ of the following followers)
@@ -427,7 +427,7 @@ private function communalBath():void {
 	
 	fatigue(-40);
 	HPChange(player.maxHP()*.33,false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[Milk Girl]
@@ -481,7 +481,7 @@ private function dontFuckTheMilkWaifu():void {
 	dynStats("lus", 10+player.sens/10, "resisted", false);
 	HPChange(player.maxHP()*.33,false);
 	fatigue(-20);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[Fuck Her] (PC has a Dick)
@@ -504,7 +504,7 @@ private function fuckTheMilkWaifu():void {
 	//[+Lust, +HP, -Fatigue]
 	player.orgasm();
 	HPChange(player.maxHP()*.33,false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[Fuck Her] (PC has Cooch & C+cups)
@@ -526,7 +526,7 @@ private function beARugMunchingMilkDyke():void {
 	//[+Lust, +HP, -Fatigue]
 	player.orgasm();
 	HPChange(player.maxHP()*.33,false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 	
 //[Drink & Masturbate]
@@ -580,7 +580,7 @@ private function drinkAndFapturbate():void {
 	outputText(".  Smirking and sexually sated, you pop the drain in the tub and stand there while the sex-scented lactic bathwater runs out the drain.  A quick toweling off later, and you're ready to go, feeling slightly refreshed and fairly sated.  It does take you a little longer to get your [armor] equally dry and back in place, but you manage.");
 	player.orgasm();
 	fatigue(-33);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function nyanCatMilkTime():void {
@@ -620,11 +620,11 @@ private function nyanCatMilkTime():void {
 		else outputText("\n\nThough you didn't intend for this to turn communal, " + flags[kFLAGS.MILK_NAME] + " certainly has more than enough to share.  You relax as the last trickles of milk pour into the pool, her breasts looking positively deflated.  You decide to leave the plug in for your friends as you clamber out, figuring they'll want to stockpile a little for the day before you drain it.  With her tits lightened for the moment, " + flags[kFLAGS.MILK_NAME] + " reaches up and pulls you down to her, just long enough to plant a kiss on your cheek and whisper, \"<i>Thank you, [name].  That felt good.</i>\"");
 		fatigue(-50);
 		dynStats("lus", 10+player.sens/10, "resisted", false);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//Milk Time!  (DD Boobs Ver.)
 	else {
-		outputText("You sit yourself down with " + flags[kFLAGS.MILK_NAME] + " and ask if she'd like a good milking.  Her eyes brighten at the suggestion, and she whispers \"<i>Yes please,</i>\" already pulling off her shift.  You help her get her top and bra off, leaving her full, perky breasts bare in the cool sun.  You slip behind her, running your hands across her sun-kissed skin, tracing your fingers from hips to chest; " + flags[kFLAGS.MILK_NAME] + " shivers at your slightest touch, whining lustily as your hands wrap around her milk-laden mounds.  Her reddened nipples are rock-hard by the time your fingers brush up against them, perspiring clear pearlescent drops as you circle her wide areola.");
+		outputText("You sit yourself down with " + flags[kFLAGS.MILK_NAME] + " and ask if she'd like a good milking.  Her eyes brighten at the suggestion, and she whispers \"<i>Yes please,</i>\" already pulling off her shirt.  You help her get her top and bra off, leaving her full, perky breasts bare in the cool sun.  You slip behind her, running your hands across her sun-kissed skin, tracing your fingers from hips to chest; " + flags[kFLAGS.MILK_NAME] + " shivers at your slightest touch, whining lustily as your hands wrap around her milk-laden mounds.  Her reddened nipples are rock-hard by the time your fingers brush up against them, perspiring clear pearlescent drops as you circle her wide areola.");
 		outputText("\n\n" + flags[kFLAGS.MILK_NAME] + " whimpers as you squeeze a tiny trickle from her teats, the white fluid squirting out in a powerful arc, staining the campground for the briefest moment before the hungry earth swallows it up, leaving no trace but a darkened patch at the girl's knees.  Gently, you start to squeeze and knead " + flags[kFLAGS.MILK_NAME] + "'s breasts, holding her back against you as you massage the heavy burden from her seemingly unending reserves.  A steady stream of milk pours from her chest, dribbling down between your fingers and her flat belly.  Soon a pool's formed around your [legs], the barren earth not nearly fast enough to consume the bounty flowing from your friend.");
 		
 		outputText("\n\nWith each caress and squeeze, " + flags[kFLAGS.MILK_NAME] + " shivers and shakes, her chest soon heaving with her ragged, pleasure-strained breath.  You can see her lustful secretions stain her paintes as her hidden cunt quivers, desperate for attention as you milk her over-sensitive mammaries.  Her breathing becomes more irregular, her long legs quaking and eyes rolling back as you squeeze out gallon after gallon.  Her whimpers of pleasure become outright cries, piercing the quiet of camp with orgasmic moans and shrill screams as your fingers work their magic on her, sending shockwaves of pleasure from hefty teats to sex-addled mind  that make her entire body convulse and writhe at your touch.");
@@ -648,7 +648,7 @@ private function finishMilkNormall():void {
 	outputText("\n\n\"<i>Thank you, [name],</i>\" she says simply as you dry yourself off.");
 	fatigue(-50);
 	dynStats("lus", 10+player.sens/10, "resisted", false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[Suckle]
 private function suckleDatMilk():void {
@@ -664,18 +664,18 @@ private function suckleDatMilk():void {
 	outputText("\n\nEventually, the boobgasm subsides, leaving " + flags[kFLAGS.MILK_NAME] + " a quivering, panting pile of lust in your arms, her fingers absently rubbing through her panties as the last dribbles of milk trickle down her chest and your chin.  Taking the first deep breath you've managed to get in the last few minutes, you grab a towel from nearby and try to dry yourself and the leaky girl off as best you can, brushing off the gallons of milk that have washed over you both.  When you're done, " + flags[kFLAGS.MILK_NAME] + " leans over and plants a long, lusty kiss on your lips, her tongue lapping up little drops of her own milk still inside your mouth.  She breaks the kiss after a long, pleasant moment, whispering \"<i>Thank you, [name].</i>\"");
 	fatigue(-50);
 	dynStats("lus", 10+player.sens/10, "resisted", false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[Fuck Her] (Needs a dick what fits)
 private function fuckDatMilkSlat():void {
 	clearOutput();
 	var x:int = player.cockThatFits(50);
-	outputText("Sitting behind the milky girl, chest pressed to her back tight enough to feel her every breath, you can't help but feel " + flags[kFLAGS.MILK_NAME] + "s full, round ass brushing against your " + cockDescript(x) + ".  Responding to her touch, your prick begins to stiffen, filling out through your [armor] and into the valley of " + flags[kFLAGS.MILK_NAME] + "'s ass.  She gasps ever so slightly when she feels your prick pushing against her silky undergarments, but you can feel her heart race, her flesh heating as she starts to move her ass more deliberately, rubbing you from stem to head.");
+	outputText("Sitting behind the milky girl, chest pressed to her back tight enough to feel her every breath, you can't help but feel " + flags[kFLAGS.MILK_NAME] + "'s full, round ass brushing against your " + cockDescript(x) + ".  Responding to her touch, your prick begins to stiffen, filling out through your [armor] and into the valley of " + flags[kFLAGS.MILK_NAME] + "'s ass.  She gasps ever so slightly when she feels your prick pushing against her silky undergarments, but you can feel her heart race, her flesh heating as she starts to move her ass more deliberately, rubbing you from stem to head.");
 	
-	outputText("\n\nOne of your hands drifts down from " + flags[kFLAGS.MILK_NAME] + "'s teats, fingers tracing along her supple skin and ample curves to the hem of her panties.  You pull them down with one smooth motion, bareing the full mounds of her dusky ass cheeks.  She pushes back immediately, humping up and down your rod as you work to free yourself from your [armor].  Finally, your " + cockDescript(x) + " pops free from its binds, only to be instantly buried in " + flags[kFLAGS.MILK_NAME] + "'s rear cleavage; she gives a happy, girlish giggle when your throbbing rod pushes through her valley, practically bouncing on your cock.  You wrap your arms around her waist, one hand working her still-needy teats as the other dives between her legs, easily slipping a few fingers into her sodden gash.  " + flags[kFLAGS.MILK_NAME] + " moans lustily as your digits enter her, biting her lower lip when your fingertips caress her inner walls and spasming muscles, soon soaked in her feminine fluids.  Your thumb swirls around the bud of her clit, drawing ragged gasps of pleasure from her lips until you silence her with a kiss, driving your tongue into her mouth as your fingers assault her cunt, fingering her until she's nice, wet, and ready.");
+	outputText("\n\nOne of your hands drifts down from " + flags[kFLAGS.MILK_NAME] + "'s teats, fingers tracing along her supple skin and ample curves to the hem of her panties.  You pull them down with one smooth motion, baring the full mounds of her dusky ass cheeks.  She pushes back immediately, humping up and down your rod as you work to free yourself from your [armor].  Finally, your " + cockDescript(x) + " pops free from its binds, only to be instantly buried in " + flags[kFLAGS.MILK_NAME] + "'s rear cleavage; she gives a happy, girlish giggle when your throbbing rod pushes through her valley, practically bouncing on your cock.  You wrap your arms around her waist, one hand working her still-needy teats as the other dives between her legs, easily slipping a few fingers into her sodden gash.  " + flags[kFLAGS.MILK_NAME] + " moans lustily as your digits enter her, biting her lower lip when your fingertips caress her inner walls and spasming muscles, soon soaked in her feminine fluids.  Your thumb swirls around the bud of her clit, drawing ragged gasps of pleasure from her lips until you silence her with a kiss, driving your tongue into her mouth as your fingers assault her cunt, fingering her until she's nice, wet, and ready.");
 	
-	outputText("\n\nYou shift forward ever so slightly, dragging your " + cockDescript(x) + " from " + flags[kFLAGS.MILK_NAME] + "'s butt-cleavage and into the welcoming embrace of her womanhood.  You both moan with lust as your " + cockHead(x) + " presses into her, parting the folds of her cunny to feel the hot touch of her walls kissing your tip.  You slide into her with measured ease, " + cockDescript(x) + " spreading her walls wide as your hips move to meet, your groin pushing against her bubble butt, flesh yielding as you try and slide as much cockflesh into her eager channel as you can.");
-	outputText("\n\nBy the time you've hilted " + flags[kFLAGS.MILK_NAME] + " she's a mess, cunt drooling obscenely and tongue hanging from her mouth.  Her chest heaves in your hands as you fingers wrap back around her cherry-red nipples, her milk coming in erratic spurts as she undulates on your cock, hips and ass starting to bounce atop you.  You move to match her, hammering your [hips] home to meet her, thrusting your " + cockDescript(x) + " into her clinging depths.  " + flags[kFLAGS.MILK_NAME] + " cups her hands to her breasts, pooling up handfuls of milk and splashing them onto your prick and her gash, nearly dousing the heat of your lust with the rush of cool cream; but another jack-hammer thrust shows her milk to be a magnificent lubricant, letting you slip and slide into her with ease.  Soon you're both moaning your lust, pleasured gasps and sighs echoing through the camp as you fuck " + flags[kFLAGS.MILK_NAME] + "'s dripping cunt.");
+	outputText("\n\nYou shift forward ever so slightly, dragging your " + cockDescript(x) + " from " + flags[kFLAGS.MILK_NAME] + "'s butt-cleavage and into the welcoming embrace of her womanhood.  You both moan with lust as your " + player.cockHead(x) + " presses into her, parting the folds of her cunny to feel the hot touch of her walls kissing your tip.  You slide into her with measured ease, " + cockDescript(x) + " spreading her walls wide as your hips move to meet, your groin pushing against her bubble butt, flesh yielding as you try and slide as much cockflesh into her eager channel as you can.");
+	outputText("\n\nBy the time you've hilted " + flags[kFLAGS.MILK_NAME] + " she's a mess, cunt drooling obscenely and tongue hanging from her mouth.  Her chest heaves in your hands as your fingers wrap back around her cherry-red nipples, her milk coming in erratic spurts as she undulates on your cock, hips and ass starting to bounce atop you.  You move to match her, hammering your [hips] home to meet her, thrusting your " + cockDescript(x) + " into her clinging depths.  " + flags[kFLAGS.MILK_NAME] + " cups her hands to her breasts, pooling up handfuls of milk and splashing them onto your prick and her gash, nearly dousing the heat of your lust with the rush of cool cream; but another jack-hammer thrust shows her milk to be a magnificent lubricant, letting you slip and slide into her with ease.  Soon you're both moaning your lust, pleasured gasps and sighs echoing through the camp as you fuck " + flags[kFLAGS.MILK_NAME] + "'s dripping cunt.");
 
 	outputText("\n\nYou can feel your orgasm mounting, surging on as your " + cockDescript(x) + " hammers relentlessly into " + flags[kFLAGS.MILK_NAME] + ".  With an animalistic roar, you push her down onto all fours and grab her ass for leverage.  She squeals when you push her down, but she recovers in an instant, wiggling her ass tantalizingly as your fingers sink into her pliant flesh.  With a vision full of that big, soft ass swaying as your dick pounds " + flags[kFLAGS.MILK_NAME] + "'s, you can't help but cum.  You grint your teeth and give " + flags[kFLAGS.MILK_NAME] + " a hard spank right on the ass, making her shriek with pleasure and pain, her cunt squeezing your " + cockDescript(x) + " at just the right moment: you shoot a load of white-hot seed straight into her womb, dick buried to the hilt inside her.  Around your spasming cock, " + flags[kFLAGS.MILK_NAME] + "'s quim quivers and contracts, milking you for every drop; her teats let loose a wild stream of milk which pools around you, nearly hiding the excess spooge that pours from her battered cunny to stain the earth.");
 	
@@ -683,15 +683,15 @@ private function fuckDatMilkSlat():void {
 	player.orgasm();
 	dynStats("sen", -1);
 	fatigue(-10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Titfuck (ie, an Excuse for Savin to use "Lactic Lust" because Fen just taught him that and he has fallen in love) (Requires DD or HHH tittehs & a dick)
 private function titFuckDatMilkSlut():void {
 	clearOutput();
 	outputText("You sit down beside " + flags[kFLAGS.MILK_NAME] + " and give her a little push onto her back.  A tiny gasp escapes her lips, but is silenced as you move over top her and giver her a long, tongue-filled kiss.  Her surprise turns into a lusty moan as you ");
-	if(flags[kFLAGS.MILK_SIZE] == 2) outputText("pull off her shift and bra");
-	else outputText("sink your fingers into her utter-like teats");
+	if(flags[kFLAGS.MILK_SIZE] == 2) outputText("pull off her shirt and bra");
+	else outputText("sink your fingers into her udder-like teats");
 	outputText(", caressing her sensitive breasts until a gentle stream of milk runs down her chest.  Her breath catches in anticipation as you back off a moment, freeing your [cock] from your [armor] and letting it flop onto her bare belly.  However, your hips slide forward away from her already-wet cunt and towards the enticing valley of her cleavage.  To your delight, the attention you're about to lavish on her breasts seems to excite " + flags[kFLAGS.MILK_NAME] + " as much as a good fucking, and her breath picks up excitedly as your cock slips between her teats.  With a little urging, she cups her breasts and squeezes them together around your rock-hard member, enveloping it in the warm embrace of her dusky flesh.");
 	
 	outputText("\n\nBefore you can start to thrust into her chest, you reach down and pinch her nipples, rolling the two prominent peaks between your fingers, coaxing out a bigger and bigger flood of milk from her deep reserves.  White rivers run down from her mounds, a deluge flooding down into the valley around your [cock].  You shudder as the warm, thick cream pours in around your member.  " + flags[kFLAGS.MILK_NAME] + " reaches in and rubs it into your cockflesh with slow, sensuous motions, gently stroking you off as more and more whiteness submerges your wang. Overcome by your lactic lust, you lean in and lap up the run-off from the lake of milk between " + flags[kFLAGS.MILK_NAME] + "'s leaky breasts.  Your senses hum at the of taste sweet cream tinted with lust, and as if on their own accord, your [hips] start to slide forward, your [cock] gliding between her tits like it would a well-lubed cunt.  " + flags[kFLAGS.MILK_NAME] + " giggles at the sensation, squeezing her tits tightly together around your wang.");
@@ -714,7 +714,7 @@ private function titFuckDatMilkSlut():void {
 	player.orgasm();
 	dynStats("sen", -1);
 	fatigue(-10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	
 }
 	}

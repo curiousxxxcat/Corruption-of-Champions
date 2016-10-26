@@ -10,11 +10,8 @@ package classes.Scenes.Areas.Desert
 	import classes.Scenes.Areas.Mountain.Minotaur;
 	import classes.Scenes.Areas.Plains.Gnoll;
 
-	public class AntsScene extends BaseContent
+	public class AntsScene extends BaseContent implements TimeAwareInterface
 	{
-		public function AntsScene()
-		{
-		}
 
 //  ANTS_PC_FAILED_PHYLLA:int = 467;
 //  ANT_COLONY_KEPT_HIDDEN:int = 468;
@@ -54,11 +51,39 @@ package classes.Scenes.Areas.Desert
 
 //  DIDNT_FUCK_PHYLLA_ON_RECRUITMENT:int = 925;
 
+		public var pregnancy:PregnancyStore;
+
+		public function AntsScene()
+		{
+			pregnancy = new PregnancyStore(kFLAGS.PHYLLA_VAGINAL_PREGNANCY_TYPE, kFLAGS.PHYLLA_DRIDER_INCUBATION, 0, 0);
+			CoC.timeAwareClassAdd(this);
+		}
+
+		//Implementation of TimeAwareInterface
+		public function timeChange():Boolean
+		{
+			pregnancy.pregnancyAdvance();
+			trace("\nPhylla time change: Time is " + model.time.hours + ", incubation: " + pregnancy.incubation + ", event: " + pregnancy.event);
+			if (flags[kFLAGS.PHYLLA_EGG_LAYING] > 0 && rand(5) == 0 && flags[kFLAGS.ANT_KIDS] < 5000) flags[kFLAGS.ANT_KIDS]++;
+			if (model.time.hours > 23) {
+				//The pregnancyStore doesn't handle Phylla's ant eggs because they are continuous. The regular egg production is all handled here.
+				if (flags[kFLAGS.PHYLLA_EGG_LAYING] > 0) flags[kFLAGS.DAYS_PHYLLA_HAS_SPENT_BIRTHING]++;
+				if (flags[kFLAGS.PHYLLA_GEMS_HUNTED_TODAY] > 0) flags[kFLAGS.PHYLLA_GEMS_HUNTED_TODAY] = 0;
+				if (phyllaWaifu()) flags[kFLAGS.DAYS_PHYLLA_IN_CAMP]++;
+			}
+			return false;
+		}
+	
+		public function timeChangeLarge():Boolean {
+			return false;
+		}
+		//End of Interface Implementation
+		
 		public function phyllaWaifu():Boolean
 		{
 			return flags[kFLAGS.ANT_WAIFU] > 0;
 		}
-
+		
 		public function antColonyEncounter():void
 		{
 			//WAIFU GET!
@@ -99,7 +124,7 @@ package classes.Scenes.Areas.Desert
 			outputText("\n\nYou could watch from where you're hiding, or you could play the hero and step in.");
 			//[Keep Hidden]
 			//[Play Hero]
-			simpleChoices("Play Hero", playHero, "Keep Hidden", keepHidden, "", 0, "", 0, "", 0);
+			simpleChoices("Play Hero", playHero, "Keep Hidden", keepHidden, "", null, "", null, "", null);
 		}
 
 //►[Keep Hidden]
@@ -115,7 +140,7 @@ package classes.Scenes.Areas.Desert
 				outputText("After seeing the large pack of demons you decide it's best not to act.  You yourself are in no condition to help the poor creature, and knowing full well what comes after demons 'subdue' their prey, you don't want to stick around either.  You glance over and realize the skirmish has already started.  It's too late to really help her anyway, you argue to yourself, plus she's covered in muscle.");
 				outputText("\n\nAssuring yourself that she'll be fine, you take the opportunity to flee while the demons are distracted, heading back to camp.  Leaving the ant-girl to her fate.");
 				//[End of Event]
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 				return;
 			}
 			//►(If Over 41 - Male)
@@ -173,7 +198,7 @@ package classes.Scenes.Areas.Desert
 				//If PC has dick(s):
 				if (player.hasCock()) outputText("  Feeling [eachCock] throb between your legs, you run one of your hands down your chest and start to stroke lovingly.");
 
-				outputText("\n\nBlood still concentrating on your crotch, your set you fingers atop your vagina, resting lightly on your [clit], then rub the lips of your labia until your juices start to dribble down your legs.  In a slow circular motion you start to massage your clit as you watch the scene unfold before you.");
+				outputText("\n\nBlood still concentrating on your crotch, you set your fingers atop your vagina, resting lightly on your [clit], then rub the lips of your labia until your juices start to dribble down your legs.  In a slow circular motion you start to massage your clit as you watch the scene unfold before you.");
 				outputText("\n\nOne of the demons is forcing his sizable cock down the helpless ant-girl's throat, while two more have begun to jerk themselves off using her upper hands as maturbation aids and yet another pair, female this time, force the ant to finger them.  You can clearly discern their moans and grunts even from your hiding place.  Hoping the mob won't hear you over the sounds already being made, you slide a finger inside yourself and add your moans to theirs.");
 				outputText("\n\nThe demons force their new cum dumpster into a doggy-style position, laughing at her discomfort.  One of the many hermaphroditic demons distinguishes himself from the others as he grows erect, aided by a subservient who had been and still is trying to suck his impressive demonic cock; this demon saunters up to the ant-morph and licks his lips.  The hermaphrodite lifts the ant's chitinous abdomen and exposes her cunt; the ant-morph, who had all but given up struggling to free herself, suddenly starts to squirm again as her womanhood is exposed.");
 				outputText("\n\nThe demon looks surprised briefly, then smiles devilishly as a sudden realization strikes.  Massaging his pendulous breasts with one hand, the demon begins to tease the ant's pussy with his demonic cock, a monstrous member at least 20 inches in length, dragging the huge head up and down the girl's entrance.  The ant, alarmed, begins to protest with a series of clicks and frantic flails, but when one of the female demons waiting on the sidelines sees the open mouth, she steps up and slides her cunt across the ant's face, quieting her.  Taking his cue from the demoness, the teasing hermaphrodite suddenly shoves his demonic dick, balls deep, into the ant's wet pussy.  You can see the stomach of the ant contort as the demon starts to pump, and both demons slap their hands together in a high five, clearly pleased with themselves.  The herm quickly yields to the pleasure, setting his jaw and pounding rapidly, and you slip several fingers inside yourself as you imagine what his cock must feel like.");
@@ -186,7 +211,7 @@ package classes.Scenes.Areas.Desert
 				player.orgasm();
 				dynStats("sen", -1,  "cor", 3);
 			}
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //►[Play Hero]
@@ -198,7 +223,7 @@ package classes.Scenes.Areas.Desert
 			outputText("\n\nYou are now fighting demons!");
 			startCombat(new DemonPack());
 			monster.createStatusAffect(StatusAffects.phyllafight, 0, 0, 0, 0);
-			doNext(1);
+			doNext(playerMenu);
 		}
 
 //►Console ant-morph
@@ -246,7 +271,7 @@ package classes.Scenes.Areas.Desert
 			outputText("\n\nThe ant queen gives you a dismissive wave with one of her larger arms, giving you reason to think her good will is anything but.  As you turn to leave, your eye catches Phylla's and she shyly smiles at you.  Her mother sees this and delivers a final, cryptic warning.  \"<i>One last thing before you depart, 'Champion'.  Should you fail, the consequences, for you, will be... dire.</i>\"");
 			outputText("\n\nAs you mull over this ominous message, your guide reappears and leads you back through the maze of tunnels, to the exit of the colony.  You leave the anthill behind and head to camp, considering your best course of action.");
 			flags[kFLAGS.PC_READY_FOR_ANT_COLONY_CHALLENGE] = 1;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //The Challenges
@@ -277,7 +302,7 @@ package classes.Scenes.Areas.Desert
 				outputText("\n\n\"<i>Oh good, you're here.  I was beginning to think you were a coward.</i>\"  Before you can respond to his insult, he cuts you off.  \"<i>We're ready to start when you are.  Let's hope you survive longer than the last guy.</i>\"");
 			}
 			//[Fight] [Leave]
-			simpleChoices("Fight", antColiseumFight, "", 0, "", 0, "", 0, "Leave", leaveAntColony);
+			simpleChoices("Fight", antColiseumFight, "", null, "", null, "", null, "Leave", leaveAntColony);
 		}
 
 //►[Leave]
@@ -285,7 +310,7 @@ package classes.Scenes.Areas.Desert
 		{
 			clearOutput();
 			outputText("Deciding to better prepare yourself first, you inform the thin fight manager that you will return later.  You leave the colony, heading back to camp.");
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 		private function antColiseumFight():void
@@ -320,7 +345,7 @@ package classes.Scenes.Areas.Desert
 				monster.createStatusAffect(StatusAffects.NoLoot, 0, 0, 0, 0);
 			}
 			monster.createStatusAffect(StatusAffects.PhyllaFight, 0, 0, 0, 0);
-			doNext(1);
+			doNext(playerMenu);
 		}
 
 //(Tentacle Beast - Win) Standard Tentacle Beast Win Scene. (Again we're going to need to adapt the ending so the PC does not go back to camp.)
@@ -391,7 +416,7 @@ package classes.Scenes.Areas.Desert
 				flags[kFLAGS.ANTS_PC_BEAT_GNOLL]++;
 			}
 			else if (flags[kFLAGS.ANT_ARENA_WINS] - flags[kFLAGS.ANT_ARENA_LOSSES] >= 2 && flags[kFLAGS.ANT_ARENA_WINS] >= 3 && player.gender > 0) {
-				gameState = 0;
+				getGame().inCombat = false;
 				flags[kFLAGS.ANT_ARENA_WINS]++;
 				antGirlGoodEnd();
 				return;
@@ -445,8 +470,7 @@ package classes.Scenes.Areas.Desert
 
 			outputText("\n\n<b>Epilogue</b>\n");
 			outputText("You live out the rest of your days in blissful ignorance, helping the colony in any way you can. Mostly you're used as an experimental sex toy. They force you to drink an uncountable number of different potions and elixirs. Eventually you start to beg for more as your mind and body crave the sexual liquids. Oftentimes Chylla even puts you in the arena, sometimes to pleasure yourself in front of the whole colony or calling upon you to service as many males as you can please at once. Sometimes you're a male, sometimes you're a female, and sometimes both. Your mind becomes completely consumed with pleasing the colony in any way you can. You never get to see the outside world or Phylla again, but you don't care. You're busy pleasing every cock placed in front of you. As long as you're helping the colony grow and become strong, nothing else matters to you.");
-			//GAME OVER
-			eventParser(5035);
+			getGame().gameOver();
 		}
 
 //Good End
@@ -622,13 +646,13 @@ package classes.Scenes.Areas.Desert
 			//PC is a Female/Herm Drider:
 			if (player.canOvipositSpider()) {
 				outputText("\n\nThis overwhelming maternal feeling brings forth an interesting idea!  Turning to Phylla, you tell her that you can help to make her desire come true.  She looks at you a bit taken back, as if what you already did wasn't enough already.");
-				outputText("\n\nYou go on to explain, telling her that your body is chock full of eggs that eagerly await a willing host to gestate in.  If she wants to birth as many children as possible, your union can grant her wishes; albeit, she will will birthing both Ant and Spider children.");
+				outputText("\n\nYou go on to explain, telling her that your body is chock full of eggs that eagerly await a willing host to gestate in.  If she wants to birth as many children as possible, your union can grant her wishes; albeit, she will be birthing both Ant and Spider children.");
 				//Persuade Phylla: Random chance of failing, affected by INT level and whether she's already housing eggs in her vagina.
 				if (player.inte / 20 + rand(20) + 1 < 16) {
 					//Persuasion failure:
 					outputText("\n\nPhylla ponders for a moment and shakes her head.  \"<i>I'm sorry [name], I'm not comfortable with that right now.");
 					//(If player has already impregnated Phylla:
-					if (flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] > 0) outputText("  I just can't hold anything else inside me. I'm sorry! Please don't be mad... I mean I will!  Just a-after... this batch...");
+					if (pregnancy.isPregnant) outputText("  I just can't hold anything else inside me. I'm sorry! Please don't be mad... I mean I will!  Just a-after... this batch...");
 					//(If player has not impregnated: I mean...I just don't feel comfortable with that right now...
 					outputText("</i>\"\n\n\"<i>Maybe later though...</i>\"");
 					//End of persuasion failure
@@ -645,7 +669,7 @@ package classes.Scenes.Areas.Desert
 					outputText("\n\n\"<i>UGH! It hurts... a little~ feels so strange... I-mea~ good!</i>\" she cries out.");
 					outputText("\n\nYou comfort her while telling her that you have a few more on the way; something that causes Phylla to beam with pride at the thought of being filled with so much new life that she will eventually birth.  Egg after egg slides into Phylla, causing her stomach to bulge bigger and bigger with your brood as you stuff more into her.  At last, the final egg is laid inside of Phylla, and with a loud pop, you  retract your ovipositor from her love hole;  you know it'll recover in time.  Phylla rubs her belly and gleams with delight, filled with her lover's future children that will help the colony to grow strong.");
 					player.dumpEggs();
-					if (flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] == 0) flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] = 8;
+					if (!pregnancy.isPregnant) pregnancy.knockUpForce(PregnancyStore.PREGNANCY_DRIDER_EGGS, 8 * 24); //Supposed to be eight days, not eight hours
 				}
 				// (End Drider Continuation)
 			}
@@ -855,7 +879,7 @@ package classes.Scenes.Areas.Desert
 				//Human/Harpy/Naga legs:
 				else outputText("Phylla immediately realizes this, and flips you over so that you are resting on your head and neck, and curls your [legs] towards her.");
 
-				outputText("  Your  " + multiCockDescriptLight() + " now resting comfortably out of the open room, Phylla positions herself to scissor your pussy.");
+				outputText("  Your " + multiCockDescriptLight() + " now resting comfortably out of the open room, Phylla positions herself to scissor your pussy.");
 				outputText("\n\n\"<i>Y-you had me worried for a second. I mean, I've never seen something... So <b>big!</b></i>\" she teases.");
 				//(Transitions to Freakishly huge dick(s):)
 			}
@@ -916,7 +940,8 @@ package classes.Scenes.Areas.Desert
 			else outputText("\n\n");
 			//Scissoring Continuation
 			outputText("You increase both your tempo and force as you grind your sex against hers, and your hips are greeted with Phylla trying her best to stay in place and to give the most resistance possible. The sensation of a foreign orgasm enters you, signalling Phylla is close to another body twitching release; at the same time you feel yourself also building up to one of your own. Simultaneously, you work each other up until you're both on the brink.  Your hips work at a fierce speed, caressing your cunts together in a flurry of sexual fury, neither of you letting the other cum and just enjoying the pleasure that you're sharing mentally, until Phylla can't stand it anymore and releases her hold over you.  The barrier to your orgasmic fulfillment gone, your mind becomes overwhelmed and releases control over her own release, flooding her mind with your euphoric delight.  Both of you cum in unison, drowning in earth shattering bliss. Phylla releases all notions of timidness and screams in utter bliss, spraying her love juices all over your cunt like a fountain, and you do the same in return; although not in nearly the same amounts.");
-			outputText("\n\nYou almost collapse on to her as your body attempts to recover from pleasure.  You catch yourself planting both your arms on either side of Phylla's face, hanging over her.  She reaches up and wraps all her arms around you, bringing you down to lay next to her.  The shy ant morph turns her head and kisses you one final time before you both pass out in each other's embrace.");
+			outputText("\n\nYou almost collapse onto her as your body attempts to recover from pleasure.  You catch yourself planting both your arms on either side of Phylla's face, hanging over her.  She reaches up and wraps all her arms around you, bringing you down to lay next to her.  The shy ant morph turns her head and kisses you one final time before you both pass out in each other's embrace.");
+			player.orgasm();
 			menu();
 			addButton(0, "Next", waifuQuestOver);
 		}
@@ -939,7 +964,7 @@ package classes.Scenes.Areas.Desert
 			outputText("You smile at her and tell her you would love for her to join you at your camp.  Her face brightens like the sun and she quickly gathers the very few possessions she owns - mostly clothing, the pillows, and some jewelry.  Together you promptly leave the colony and head back to camp.");
 			outputText("\n\n(<b>Phylla has moved in!  She can be found in the lovers tab!</b>)");
 			flags[kFLAGS.ANT_WAIFU] = 1;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //►[Stay Here]
@@ -951,7 +976,7 @@ package classes.Scenes.Areas.Desert
 			outputText("\n\nAs you turn to leave she quickly says, \"<i>If you ever feel your camp is safe enough for me to join you, p-please come get me.  If you want.  I mean, I'm not going anywhere... not that I could with my mother watching anyway...</i>\"");
 			outputText("\n\nYou nod and without another word, head back to camp.");
 			flags[kFLAGS.PHYLLA_STAY_HOME] = 1;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //If PC returns to colony after telling her to stay with her mother:
@@ -978,7 +1003,7 @@ package classes.Scenes.Areas.Desert
 		{
 			if (flags[kFLAGS.PHYLLA_CAPACITY] < 50) flags[kFLAGS.PHYLLA_CAPACITY] = 50;
 			clearOutput();
-			if (flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] == 1) {
+			if (pregnancy.isPregnant && pregnancy.incubation == 0) {
 				phyllaLaysSomeDriderEggs();
 				return;
 			}
@@ -1160,7 +1185,7 @@ package classes.Scenes.Areas.Desert
 
 				outputText("\n\nTurning to leave back to camp, you hear Phylla crying.  Maybe some time alone with her thoughts will help her see what you're trying to accomplish here.");
 			}
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //(Ant Morph Mating Ritual / Inherited Knowledge)
@@ -1229,7 +1254,7 @@ package classes.Scenes.Areas.Desert
 					outputText("nipples.  You tell her you want to see the inside and for her to explain why she doesn't give birth from it.  By this time, you can see you've started making her horny and her modesty is slowly melting away.  She parts her pussy lips for you with her larger arms and then starts pointing at her long clit with one of her lower hands.");
 
 					outputText("\n\n\"<i>This is my... m-my...</i>\"  With a gulp of courage she continues.  \"<i>My clitoris.  It's hypersensitive and just touching it can cause me to...</i>\" Her voice trails off.  \"<i>Cause you to...?</i>\"  You probe for the answer with a smile on your face, knowing she isn't looking at you anyway.  \"<i>Orgasm.</i>\"  She says blankly.  You can tell by her changing tone and attitude her lust must be consuming all her thoughts.  You ask for a demonstration, causing her head to twist around to give you a long, hard stare.  You've wiped the wicked smile from your face and replaced it with an innocently inquiring one; a true master of deception on one shoulder, and a devil in disguise on the other.");
-					outputText("\n\nWith her two upper hands still holding her pussy open for you to see, the lower hand not resting on her clit starts to run up and down the entrance of her quickly moistening cunt.  She moves her smaller right hand and starts from the tip of her love button and slowly runs all her fingers down it.  She moans loudly every time she reaches the base of her clit. Her shoulders tense up and her body shakes as she almost instantly builds to an orgasm.  The resulting climaxes, as you are well aware, are very messy.  With her small left hand, she thrusts two of her fingers into herself, and you watch as she moans deeply and starts masterbating her clit quicker. The two larger hands remove themselves from holding her pussy lips apart and start to pinch her nipples ");
+					outputText("\n\nWith her two upper hands still holding her pussy open for you to see, the lower hand not resting on her clit starts to run up and down the entrance of her quickly moistening cunt.  She moves her smaller right hand and starts from the tip of her love button and slowly runs all her fingers down it.  She moans loudly every time she reaches the base of her clit. Her shoulders tense up and her body shakes as she almost instantly builds to an orgasm.  The resulting climaxes, as you are well aware, are very messy.  With her small left hand, she thrusts two of her fingers into herself, and you watch as she moans deeply and starts masturbating her clit quicker. The two larger hands cease holding her pussy lips apart and start to pinch her nipples");
 					if (flags[kFLAGS.PHYLLA_EGG_LAYING] > 0) outputText(", sending jets of milk shooting out onto the floor");
 					outputText(".  With a loud moan she orgasms, covering her smaller two forearms, her inner thighs, and the floor below her in thick, sweet-smelling, girl cum.");
 
@@ -1248,7 +1273,7 @@ package classes.Scenes.Areas.Desert
 				}
 			}
 			flags[kFLAGS.PHYLLA_INHERITED_KNOWLEDGE] = 1;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //(Phylla's Life Past & Future)
@@ -1278,7 +1303,7 @@ package classes.Scenes.Areas.Desert
 					outputText("\n\nYou might as well try; Phylla seems pretty worked up over this and you want to help ease her stress in whatever way you can.");
 					outputText("\n\nYou nod and she walks over to you. All four of her arms wrap around you.  She seems to wait for you to take control of the situation, not wanting to take the lead herself.  You put your index finger on her chin and raise her head up so your mouths meet.  At first you don't feel anything; assuming it's not working, you slide your tongue past her lips into her mouth.  Her grip on you tightens but still nothing happens.  Starting to pull back from her assuming it's not going to work, you feel her grip you hard in desperation as she uses her two upper arms to grab the back of your head to force your tongue deeper into her mouth.  Then, like a triple shot of whiskey right to the brain your mind becomes disoriented with images of Phylla pacing around her room telling herself she didn't see you and Izma together and that it's all just in her mind.");
 					outputText("\n\nA flash of her crying, trying desperately to console herself about the fact that you would let a corrupt shark morph have their way with you.  After this, there's a lull in the mind link... you feel as if it's your time to present Izma's case for Phylla's understanding.  Thinking back to the first time you and Izma met, and how she was kind and even let you read her books.  You recall her conversation about how her people work out their relationships with each other.  Bringing up your memories of Izma and you locked in ferocious battle for dominance, you feel Phylla get scared at these particular memories but you force the memories of you pulling some of your more brutal attacks so Izma didn't take any real wounds.");
-					outputText("\n\nThough still off-putting this seems to calm Phylla a bit.  The last memory you recall is the one where Izma submitted to you. At the end of one of your 'fights' Izma confesses that you're her alpha and, if allowed, she would be happy to spend her life with you camp.");
+					outputText("\n\nThough still off-putting this seems to calm Phylla a bit.  The last memory you recall is the one where Izma submitted to you. At the end of one of your 'fights' Izma confesses that you're her alpha and, if allowed, she would be happy to spend her life at your camp.");
 					outputText("\n\nYou feel Phylla's grip on you ease and then release. You slowly break the kiss and look into Phylla's eyes.  Your mind still aches as it always does after these things.");
 					outputText("\n\n\"<i>I don't know what to say... I was wrong... about her... I mean, about you... I'm so sorry.</i>\"");
 					outputText("\n\nYou tell her it's understandable, but sometimes making assumptions before you have all the facts can be disastrous.  \"<i>I know. I'll never doubt you... or Iz-Izma again.</i>\"  You ask Phylla if she would like to meet Izma someday.  She shyly says, \"<i>Only if you think that would be a good idea. She seems very... aggressive.  I mean not that that's a bad thing... I just don't think... I'm strong, too, but I don't like to fight like she does.</i>\"");
@@ -1339,7 +1364,7 @@ package classes.Scenes.Areas.Desert
 				outputText("\n\nYou mull this over in your head, and you must have been thinking pretty hard.  When you get up to leave you find Phylla has completely passed out on your lap.  You take this opportunity to gently unwrap yourself from her, and head back to camp.");
 
 			}
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 
@@ -1567,7 +1592,7 @@ package classes.Scenes.Areas.Desert
 		{
 			clearOutput();
 			outputText("Placing your hands on your hips, you smirk and tell Phylla that a true queen never spits. Phylla shoots you a slutty look and gulps your load greedily, taking a moment to savor the warmth and texture as it works its way down her throat.  She ahhhs loudly as she rubs her stomach, humming in pleasure as the steamy load spreads its heat to her belly.  \"<i>Thank you, [name].  That hit the spot.</i>\"");
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //[Spit it out]
@@ -1575,7 +1600,7 @@ package classes.Scenes.Areas.Desert
 		{
 			clearOutput();
 			outputText("Crossing your arms, you tell Phylla to spit your load out.  As you dress yourself back up in your [armor], you hear Phylla frantically dig out a hole in the floor.  She playfully leans over and spits the salty payload into it.  She makes a soft hum when she's finished, before quickly covering it up again.  \"<i>Thank you, [name].  Next time I'll do better, I promise.</i>\"");
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //Corrupt BJ Ending
@@ -1591,7 +1616,7 @@ package classes.Scenes.Areas.Desert
 			else outputText("improved since the last time.");
 
 			outputText("\n\nYou brutishly confirm she has by grabbing the back of her head and shoving it back onto your cock.  With an apathetic tone, you snidely remark that this is how she needs to react every time you approach her.");
-			outputText("\n\nPhylla groans at the rough treatment, not used to being treated so coarsely as your  " + cockDescript(x) + " lunges back and forth in her mouth, grinding along her cheek and tongue. Your cock seems to have a mind of its own as you somehow manage to wrap her tongue around yourself, knowing full well Phylla lacks the technique required to do it on her own.  The little queen is about to receive a rude awakening about pleasing her master.");
+			outputText("\n\nPhylla groans at the rough treatment, not used to being treated so coarsely as your " + cockDescript(x) + " lunges back and forth in her mouth, grinding along her cheek and tongue. Your cock seems to have a mind of its own as you somehow manage to wrap her tongue around yourself, knowing full well Phylla lacks the technique required to do it on her own.  The little queen is about to receive a rude awakening about pleasing her master.");
 			outputText("\n\nMoan after muffled moan escapes from Phylla's mouth as you continue your callous fucking of her delicate little face.  Your little slut is trying her best to keep up with your thrusts but is ultimately failing.  Perhaps she needs a little motivation?  Withdrawing your " + cockDescript(x) + ", you tell her she doesn't get to suck your dick anymore unless she fingers her tight little hole. Desperate to fulfill your desires, she quickly darts a hand to her pussy and fingers that little fuckhole like her life depends on it.  Within seconds you see her long clit protruding, begging to be touched.");
 
 			//(If PC has Multidicks Add Section  - Multidick)
@@ -1642,7 +1667,7 @@ package classes.Scenes.Areas.Desert
 			//***Both mode endings converge here***
 			outputText("\n\n...Can you? You muse again, thinking about it.  After a few moments of helping Phylla to the pile of, now very wet, cushions she calls a bed, you finish donning your [armor] and head back to the surface.");
 			player.orgasm();
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //\"<i>Use Dick</i>\"
@@ -1761,7 +1786,7 @@ package classes.Scenes.Areas.Desert
 
 			outputText("\n\nPhylla stirs next to you, and groggily says, \"<i>You should come down more often.  I mean...  I miss you sometimes...</i>\"  Her shyness returns as she slowly recovers from the small sex-coma you placed each other in.  You say you'll think about it and wink at her as you get dressed and head back to camp, leaving her to eagerly await the next time you come to take her once again.");
 			player.orgasm();
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //Straight Sex (Lesbian/Fisting) - Written
@@ -1799,7 +1824,7 @@ package classes.Scenes.Areas.Desert
 
 			outputText("\n\nYou say you'll think about it and wink at her as you get dressed and head back to camp, leaving her to eagerly await the next time you come to take her once again.");
 			player.orgasm();
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 
@@ -1901,7 +1926,7 @@ package classes.Scenes.Areas.Desert
 				outputText("\n\nAfter a moment of staggered walking you allow Phylla the courtesy to flop down onto the hard surface of the bed, pausing only for a moment to look over your pregnant little whore.  After a quick remark to her on how she'd better be ready for another round soon, you leave her to the mess you have made as you head back to camp.");
 			}
 			player.orgasm();
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //While Giving Birth (Female) - Written
@@ -1911,7 +1936,10 @@ package classes.Scenes.Areas.Desert
 			outputText("Phylla looks completely taken aback when you suggest that you want to have sex with her.  You can tell she is self conscious about the way she looks right now by the way she covers her enlarged breasts with all four of her hands as she sits back in her seat.");
 			outputText("\n\n\"<i>I... look, we could wait until I've given birth... Wouldn't you want that?</i>\"  She glances behind her at her engorged abdomen.  \"<i>I... It won't ta-AHH!</i>\"");
 			outputText("\n\nShe stops mid-sentence as a contraction shoots through her body, making the entirety of it tense up.  Then with an almost sexual moan she shudders as all her muscles relax and the contraction pushes a cyclentrial egg out from the birthing slit at the tip of her abdomen. As if on cue, one of your many children quickly runs in from the shadows and scoops up the egg to remove it and take it somewhere deeper into the colony.  Clearly there's some kind of greater system going on here.");
-			outputText("\n\nAs you walk back in front of her you begin to strip down, leaving your armor and underwear strewn about behind you.  You walk almost whorishly with a slow, sensual gait, allowing her to see the sensual swivel of your " + buttDescript() + " from left to right and back again as you visibly entice Phylla's mind to lustful thoughts.  Once you're facing Phylla once again, you see her lower two hands are still covering her breasts and the upper two are gripping the stone chair she sits in.");
+			outputText("\n\nAs you walk back in front of her you begin to strip down, leaving your armor and underwear strewn about behind you.");
+			if (player.isNaga()) outputText("  You slither almost whorishly with a slow, measured wriggle,");
+			else outputText("  You walk almost whorishly with a slow, sensual gait,");
+			outputText(" allowing her to see the sensual swivel of your " + buttDescript() + " from left to right and back again as you visibly entice Phylla's mind to lustful thoughts.  Once you're facing Phylla once again, you see her lower two hands are still covering her breasts and the upper two are gripping the stone chair she sits in.");
 			outputText("\n\n\"<i>I didn't mean... I just thought...</i>\"");
 
 			//If Corruption is less than 75:
@@ -2074,7 +2102,7 @@ package classes.Scenes.Areas.Desert
 				outputText("\n\nNow that Phylla's quieted down, you tell her you're going to get some sleep; if she's to have another child, she'll need to either keep quiet or leave to another room.  She nods dejectedly as you settle in for your nap.  You swear you hear her go into labor again right before drifting off.");
 			}
 			player.orgasm();
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //[Orgy w/ Colony - Requires Children]
@@ -2193,13 +2221,13 @@ package classes.Scenes.Areas.Desert
 			if (player.cockTotal() > 1) outputText("s");
 			outputText(" sucked, stroked, inserted, and finally orgasming so many times that you lose track. Hours pass and you eventually pass out sitting atop Phylla's throne watching the writhing mass before you.");
 
-			outputText("\n\nYou wake up some time later, body aching from exhaustion. Glancing over at Phylla to see how she's fairing after so much exertion, you her sprawled out on cushions with pleased warriors surrounding her, her skin and chitin covered in a thick coat of semen.  You wonder to yourself if you should invite her to the stream to wash off.");
+			outputText("\n\nYou wake up some time later, body aching from exhaustion. Glancing over at Phylla to see how she's fairing after so much exertion, you see her sprawled out on cushions with pleased warriors surrounding her, her skin and chitin covered in a thick coat of semen.  You wonder to yourself if you should invite her to the stream to wash off.");
 
 			outputText("\n\n\"<i>It's okay... they'll... lick me... clean...</i>\"  You hear Phylla's weak voice in your mind, although she still doesn't look conscious.");
 			outputText("\n\nYou might want to stay and watch that, but you've spent too long down here already.  You collect your things, trying your best not to step on the twenty or so passed out ants on the floor as you head back to camp.");
 			player.orgasm();
 			dynStats("sen", -2);
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //Orgy w/ Colony (Female)
@@ -2238,8 +2266,14 @@ package classes.Scenes.Areas.Desert
 
 			outputText("\n\n\"<i>It's not about what you want! It's about what's fair!</i>\" You scold her. \"<i>You four!</i>\" You gesture to the other males who you aren't servicing. </i>\"Go get some 'release.'</i>\"");
 
-			outputText("\n\nPhylla looks almost terrified as her four offspring descend on her, cocks in hand.  You stop stroking the cock of the only remaining male and demand he remove your armor. Quickly he uses all four of his strong arms to remove your [armor]. Once you're completely nude you push him onto his knees. Setting one foot on his shoulder, you present your [vagina] to him. Knowing full well what you want he plunges his face into your ready cunt and starts eating you out. You close your eyes and lean back, letting the passion of his licking consume your thoughts. You hear a loud moan and it snaps you out of your revelry.  You look over to Phylla. Her children have forced her onto her knees. Phylla uses all four of her hands and her mouth to please her children. You see her sloppily sucking off one dick then jump to sucking off another, exchanging her mouth with her hands as she services every dick in front of her. You glace between her legs and see streams of her wetness as it runs down her chitin legs and pools around her knees.");
-			outputText("\n\nGetting close to orgasm just by the oral pleasure coursing through your nethers, you pull the head of the ant between your legs. You beckon him to follow you as you strut over to where Phylla is.");
+			outputText("\n\nPhylla looks almost terrified as her four offspring descend on her, cocks in hand.  You stop stroking the cock of the only remaining male and demand he remove your armor. Quickly he uses all four of his strong arms to remove your [armor]. Once you're completely nude you push him onto his knees.");
+			if (player.isBiped()) outputText("  Setting one foot on his shoulder, you present your [vagina] to him.");
+			else outputText(" Now at the perfect height, you present your [vagina] to him.");
+			outputText("  Knowing full well what you want he plunges his face into your ready cunt and starts eating you out. You close your eyes and lean back, letting the passion of his licking consume your thoughts. You hear a loud moan and it snaps you out of your revelry.  You look over to Phylla. Her children have forced her onto her knees. Phylla uses all four of her hands and her mouth to please her children. You see her sloppily sucking off one dick then jump to sucking off another, exchanging her mouth with her hands as she services every dick in front of her. You glace between her legs and see streams of her wetness as it runs down her chitin legs and pools around her knees.");
+			outputText("\n\nGetting close to orgasm just by the oral pleasure coursing through your nethers, you pull the head of the ant");
+			if (player.isBiped()) outputText(" from between your legs.");
+			else outputText(" from your cunt.");
+			outputText("  You beckon him to follow you as you strut over to where Phylla is.");
 			outputText("\n\nPhylla's glazed eyes and blank expression look very cute in a very twisted sort of way. She looks up and gazes at you as a fresh load of semen drips from her open mouth.");
 
 			outputText("\n\n\"<i>I...</i>\" She trys to say before you interrupt her.");
@@ -2314,7 +2348,7 @@ package classes.Scenes.Areas.Desert
 			outputText("\n\nYou might want to stay and watch that, but you've spent too long down here already.  You collect your things, trying your best not to step on the twenty or so passed out ants on the floor as you head back to camp.");
 			player.orgasm();
 			dynStats("sen", -1);
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //►[Lay Eggs / Don't Lay Eggs]
@@ -2346,7 +2380,7 @@ package classes.Scenes.Areas.Desert
 				outputText("\n\nShe pauses and makes a strange face as her abdomen pulses and another egg emerges from the tip.  She blushes deeply.  \"<i>That's the last one!  I mean, I had to get it out, it was already...</i>\"");
 				outputText("\n\nYou cut her off by asking when her abdomen will return to normal size - both because you're curious and because you really didn't want her to finish that sentence.  \"<i>It shouldn't take long.  I can already feel it changing.</i>\"");
 				outputText("\n\nSmiling, you thank her for complying with all your demands.  You leave the colony, heading back to camp.");
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 			}
 		}
 
@@ -2385,7 +2419,7 @@ package classes.Scenes.Areas.Desert
 			flags[kFLAGS.PHYLLA_COOLDOWN] = 12;
 			flags[kFLAGS.ANTS_BIRTHED_FROM_LICKING]++;
 			if (flags[kFLAGS.ANT_KIDS] < 5000) flags[kFLAGS.ANT_KIDS] += 5;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //DON'T LICK THAT!
@@ -2397,23 +2431,23 @@ package classes.Scenes.Areas.Desert
 
 			outputText("\n\nThe process of simulation goes on for a several long, moan filled minutes, until with a hearty cry the orb that holds your newborn child slides out from Phylla's abdomen.  Panting and breathing a sigh of relief, your Ant Morph lover thanks you, but reminds you that she has quite the clutch of eggs that still needs to be laid.  Smiling, you renew your efforts along her orifice, to the affectionate gasps of Phylla...");
 
-			outputText("\n\nThe better part of an hour later, the two of you lay against Phylla's bedding in a loving embrace; you cuddle the exhausted Ant woman close to you as she appreciates the tender feel of your fingers through her hair.");
+			outputText("\n\nThe better part of an hour later, the two of you lay against Phylla's bedding in a loving embrace; you cuddle the exhausted ant woman close to you as she enjoys the tender feel of your fingers running through her hair.");
 
 			outputText("\n\n\"<i>Thank you.  I-it meant a lot to me for you to be here.</i>\"  She confides.  You tell her that it was no trouble at all; that you wouldn't miss this joyous moment.  Phylla sneaks in a soft kiss on your neck and gives you a firm squeeze of her arms.  \"<i>I should be alright on my own at this point");
 			if (flags[kFLAGS.ANT_KIDS] > 1) outputText("; the children can tend to the eggs and I can really use the rest");
 			outputText(".  You should get back to your duties...  B-but I wouldn't mind if you came back later...</i>\"");
 
-			outputText("\n\nYou remark to Phylla that you might just take her up on that, and wink as you leave your exhausted lover to recuperate, passing several of your children as they scoop up the bundle of eggs that lay huddled together on the floor.");
+			outputText("\n\nYou remark to Phylla that you might just take her up on that and wink as you leave your exhausted lover to recuperate, passing several of your children as they scoop up the bundle of eggs that lie huddled together on the floor.");
 			flags[kFLAGS.PHYLLA_COOLDOWN] = 6;
 			flags[kFLAGS.ANT_KIDS]++;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //Phylla lays Drider eggs
 		private function phyllaLaysSomeDriderEggs():void
 		{
 			clearOutput();
-			flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] = 0;
+			pregnancy.knockUpForce(); //Clear Pregnancy
 			outputText("As you near Phylla's bedchamber you can hear an 'Eeep!' of surprise and worry. Thinking she might be in trouble you burst into the room.  Glancing around for any immediate danger you only see Phylla's vagina drooling a green, slimy mucus.  The way she holds her very pregnant stomach and splays her legs out on the bedspread suggests that your recently laid spawn are ready to hatch.  \"<i>[name], it's time!  UGH!  I don't... have to words to express how weird this feels!</i>\"  Phylla cries out, somewhat scared at the green ooze that trickled out of her.");
 
 			//PC has less than 75 corruption:
@@ -2436,7 +2470,7 @@ package classes.Scenes.Areas.Desert
 				else outputText("\n\nRubbing her now empty belly Phylla remarks on how much she loves giving birth through her 'other hole' and how you should knock her up this way much more often.  Again you feel the maternal warmth radiating from Phylla.");
 
 				outputText("\n\nYour intimate moment with her is interrupted by the crackling and hatching of egg shells as your brood clamors for freedom.  Sighting their mother, they scurry up the bedspread and set up a pecking order for who will get the first go at Phylla's milk filled breasts.  The birthing complete, you kiss Phylla on the lips and thank her for hosting your young.  \"<i>Thank you for helping me achieve my purpose in life.  I know you have other things to do, but just know that... I love you.</i>\" She weakly replies.  You wink at her and nod before heading back up to the surface.");
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 			}
 			//PC has more than 75 corruption:
 			else {
@@ -2483,8 +2517,8 @@ package classes.Scenes.Areas.Desert
 			//empty eggs and such!
 			player.dumpEggs();
 			//set phylla drider preggo timer
-			flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] = 8;
-			doNext(13);
+			if (!pregnancy.isPregnant) pregnancy.knockUpForce(PregnancyStore.PREGNANCY_DRIDER_EGGS, 8 * 24); //Supposed to be eight days, not eight hours
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //Let Phylla Recover:
@@ -2492,7 +2526,7 @@ package classes.Scenes.Areas.Desert
 		{
 			clearOutput();
 			outputText("Working up all of your self control, you decide that Phylla could use the rest.  You wink at Phylla as you leave, telling her that you'll be back to fuck her brains out shortly... once she feeds your children.  She only musters the strength to smile and mutter something about motherhood but you're already halfway out the door.");
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //►[Children - Only available if Phylla has laid eggs]
@@ -2519,7 +2553,7 @@ package classes.Scenes.Areas.Desert
 			if (flags[kFLAGS.PHYLLA_TIMES_DRIDER_EGG_LAYED] > 10) outputText("\n\nShe sighs forlornly but continues.  \"<i>Some of our drider offspring have even taken it upon themselves to leave the colony and venture out into the world.  Not that I mind; it's just sad seeing them go sometimes.  I know we did a good job raising them, and I hope they take the lessons we taught them to heart, and that they never forget where home is...</i>\"");
 			//Ending for Scene
 			outputText("\n\nYou feel good about this.  Standing up to survey the colony, you can see Phylla is also very content.  You thank her for talking to you and head back to the surface, toward camp.");
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //►[Appearance]
@@ -2595,14 +2629,15 @@ package classes.Scenes.Areas.Desert
 				outputText("\n\n\"<i>Is there anything else you wanted to do while you're down here?</i>\"  She inquires excitedly.");
 			}
 			flags[kFLAGS.PHYLLA_GEMS_HUNTED_TODAY] = 1;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //Drider/Bee impregnation scene for Phylla (universal unless otherwise specified, which will include varied intros and stuff.
 //Sex > [Egg Phylla]
 		private function eggDatBitch():void
 		{
-			//C is a Female/Herm Drider:
+			clearOutput();
+			//PC is a Female/Herm Drider:
 			if (player.canOvipositSpider()) outputText("While Phylla appears to be sexually sated, the heaviness in your spider abdomen begs for release.\n\n");
 			//First Time:
 			if (flags[kFLAGS.TIMES_EGG_IMPREGNATING_PHYLLA] == 0) {
@@ -2617,10 +2652,10 @@ package classes.Scenes.Areas.Desert
 			if (rand(20) + 1 + player.inte / 20 < 10) {
 				outputText("\n\nPhylla ponders for a moment and shakes her head.  \"<i>I'm sorry, [name], I'm not comfortable with that right now.");
 				//If player has already impregnated Phylla with drider eggs and fails the check:
-				if (flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] > 0) outputText("\n\n\"<i>I just can't hold anything else inside me.  I'm sorry!  Please don't be mad... I mean, I will!  Just a-after... this batch.</i>\"");
+				if (pregnancy.isPregnant) outputText("\n\n\"<i>I just can't hold anything else inside me.  I'm sorry!  Please don't be mad... I mean, I will!  Just a-after... this batch.</i>\"");
 				//Else player has not impregnated:
 				else outputText("\n\n\"<i>I mean... I just, don't feel comfortable with that right now. Maybe later, though.</i>\"");
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 			}
 			//Persuasion Success
 			else {
@@ -2648,12 +2683,12 @@ package classes.Scenes.Areas.Desert
 				outputText("\n\nAt last, the final egg laid inside of Phylla, you retract your ovipositor from her love hole; it'll recover in time. Phylla rubs her belly and gleams with delight, filled with her lover's future children that will help the colony to grow strong.");
 				//PC Drider eggs will take 8 days regardless of where she houses them to hatch. (3
 				//through 8 children per pregnancy)
-				if (flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] == 0) flags[kFLAGS.PHYLLA_DRIDER_INCUBATION] = 8;
+				if (!pregnancy.isPregnant) pregnancy.knockUpForce(PregnancyStore.PREGNANCY_DRIDER_EGGS, 8 * 24); //Supposed to be eight days, not eight hours
 				flags[kFLAGS.TIMES_EGG_IMPREGNATING_PHYLLA]++;
 				player.orgasm();
 				player.dumpEggs();
 			}
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 	}
 }

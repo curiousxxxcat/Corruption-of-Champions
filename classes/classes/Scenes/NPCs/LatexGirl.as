@@ -103,11 +103,16 @@ public function gooObedience(arg:Number = 0, output:Boolean = true):Number {
 	return flags[kFLAGS.GOO_OBEDIENCE];
 }
 private function gooTits():String {
-	return npcBreastDescript(gooTitSize());
+	return BreastStore.breastDescript(gooTitSize());
 }
+
 private function gooCock():String {
-	return NPCCockDescript(flags[kFLAGS.GOO_DICK_TYPE],flags[kFLAGS.GOO_DICK_LENGTH]);
+	return Appearance.cockDescription(gooGetCockType(), flags[kFLAGS.GOO_DICK_LENGTH], flags[kFLAGS.GOO_DICK_LENGTH] / 6, 50, 100);
 }
+public function gooGetCockType():CockTypesEnum {
+	return CockTypesEnum.ParseConstantByIndex(flags[kFLAGS.GOO_DICK_TYPE]);
+}
+
 public override function latexGooFollower():Boolean {
 	return flags[kFLAGS.GOO_SLAVE_RECRUITED] > 0;
 
@@ -124,7 +129,7 @@ private function gooTitSize():Number {
 
 //TF Scene:
 public function meanGooGirlRecruitment():void {
-	gameState = 0;
+	getGame().inCombat = false;
 	clearOutput();
 	flags[kFLAGS.GOO_TFED_MEAN] = 1;
 	flags[kFLAGS.GOO_EYES] = monster.skinTone;
@@ -154,7 +159,7 @@ public function meanGooGirlRecruitment():void {
 		outputText("\n\nYou heave her up over your shoulder, straining your capable muscles to hold up those giant mammaries and remain upright.  The task is arduous, but you're strong enough for anything!  ");
 		if(player.tou < 40) {
 			outputText("Halfway there, you get too tired to continue.  You may be strong, but you don't have the endurance to heft a burden like this long term.  You'll have to leave her for now and try to recapture her once she's conscious.");
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 			fatigue(30);
 			return;
 		}
@@ -165,7 +170,7 @@ public function meanGooGirlRecruitment():void {
 	//Too weak and dumb: 
 	else {
 		 outputText("\n\nYou try to lift her, but she's too heavy!  Drat!  There's no way you'll get her back to camp like this, and you can't leave the portal undefended long enough to wait for her to wake.  You'll have to leave her for now and try to recapture her once she's awake.");
-		 doNext(13);
+		 doNext(camp.returnToCampUseOneHour);
 		 return;
 	}
 	//[Next] (Go to aftermath)
@@ -269,7 +274,7 @@ private function nameZeLatexGoo():void
 	flags[kFLAGS.GOO_HAPPINESS] = 1;
 	flags[kFLAGS.GOO_OBEDIENCE] = 1;
 	flags[kFLAGS.GOO_FLUID_AMOUNT] = 100;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //PC Couldn't Bring Her Back
 public function encounterLeftBehindGooSlave():void {
@@ -321,7 +326,7 @@ private function encounterLeftBehindGooSlaveII():void {
 
 //Pure Characters Intro(F):
 public function pureGooRecruitmentStart():void {
-	gameState = 0;
+	getGame().inCombat = false;
 	clearOutput();
 	flags[kFLAGS.GOO_TFED_NICE] = 1;
 	flags[kFLAGS.GOO_EYES] = monster.skinTone;
@@ -345,7 +350,7 @@ public function pureGooRecruitmentStart():void {
 private function leaveTheLatexGooGirl():void {
 	clearOutput();
 	outputText("You don't have the time to deal with this... thing.  You put the girl down on the shore and head on back to camp.  Hopefully, whatever finds her won't be TOO horrible.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //Take her Home(F)
 private function niceGuysTakeLatexHome():void {
@@ -362,7 +367,7 @@ private function niceGuysTakeLatexHome():void {
 		if(player.tou < 40) {
 			outputText("Halfway there, you get too tired to continue.  You may be strong, but you don't have the endurance to heft a burden like this long term.  You'll have to leave her for now and try to find her once she's conscious.");
 			fatigue(30);
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 			return;
 		}
 		outputText("You're out of breath when you get to camp, but you made it!  It'll take awhile for you to catch your wind after all that work...  Your arms and legs are still burning from the exertion!");
@@ -371,7 +376,7 @@ private function niceGuysTakeLatexHome():void {
 	//{Too weak and dumb:}
 	else {
 		outputText("You try to lift her, but she's too heavy!  Drat!  There's no way you'll get her back to camp like this, and you can't leave the portal undefended long enough to wait for her to wake.  You'll have to leave her for now and try finding her again once she's awake.");
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	//[Next] (Go to PURE aftermath)
@@ -459,7 +464,7 @@ private function bootOutNiceGoo():void {
 	outputText("You did your civic duty bringing her back with you, but taking care of her in the long term... that's asking too much.  \"<i>I understand,</i>\" she says, bowing her head sadly as she struggles unsteadily to her feet.  \"<i>It's all right.  You've done more than enough, really.  I'll go.  Hopefully some of my sisters in the lake will be willing to help me, even if I'm so... so different... from them, now.  Goodbye, my friend.  Maybe we'll meet again sometime.</i>\"");
 	outputText("\n\nShe's gone a moment later, waving over her shoulder as she unsteadily walks back toward the lake.");
 	flags[kFLAGS.GOO_TOSSED_AFTER_NAMING] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Keep Her(F):
@@ -475,14 +480,14 @@ private function niceGuysKeepTheirGooGals():void {
 	flags[kFLAGS.GOO_HAPPINESS] = 60;
 	flags[kFLAGS.GOO_OBEDIENCE] = 20;
 	flags[kFLAGS.GOO_FLUID_AMOUNT] = 100;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 
 //Approach Her (Select From Slaves Tab)(F)
 public function approachLatexy():void {
 	clearOutput();
-	//First Line - Happiness Dependant
+	//First Line - Happiness Dependent
 	//(Sub 10)
 	if(gooHappiness() < 10) outputText(flags[kFLAGS.GOO_NAME] + " scowls up at your approach, her unhappiness clearly visible in her " + flags[kFLAGS.GOO_EYES] + " eyes.  You doubt her solid onyx face could be any more morose.");
 	//(Sub 20)
@@ -522,7 +527,7 @@ public function approachLatexy():void {
 	//{LightA}  
 	else outputText("Sitting high on her chest, her " + gooTits() + " seems almost disproportionately tiny for her frame.  The perky onyx nipples protrude invitingly, tiny caps of inviting midnight.");
 	//{Regardless} 
-	outputText("  You estimate " + flags[kFLAGS.GOO_NAME] + "'s chest would fit a " + breastCup(gooTitSize()) + " bra, were she to wear one.");
+	outputText("  You estimate " + flags[kFLAGS.GOO_NAME] + "'s chest would fit a " + Appearance.breastCup(gooTitSize()) + " bra, were she to wear one.");
 	//Dicknips:
 	if(flags[kFLAGS.GOO_NIPPLE_TYPE] == 1) outputText("  Those proud nipples have odd bulges at the tips, bulges that can swell tremendously, turning into rigid dicknipples.");
 	//Cuntnips:
@@ -592,11 +597,11 @@ private function sendToFarm():void
 
 	outputText("\n\n“<i>No sneaking off,</i>” you warn. “<i>I want you to work hard and earn the fluids you’ll be given.</i>”");
 
-	outputText("\n\n“<i>As you wish [master],</i>” she sighs, before slowly sliding off in the direction of the lake. She will be utterly useless as either a worker or a protector, you think; however, you suspect if Whitney keeps her well fed she will be able to harvest latex from her, which is surely worth something, and maybe some good old fashioned exertion will do the wilful goo some good.");
+	outputText("\n\n“<i>As you wish [master],</i>” she sighs, before slowly sliding off in the direction of the lake. She will be utterly useless as either a worker or a protector, you think; however, you suspect if Whitney keeps her well fed she will be able to harvest latex from her, which is surely worth something, and maybe some good old fashioned exertion will do the willful goo some good.");
 	
 	flags[kFLAGS.FOLLOWER_AT_FARM_LATEXY] = 1;
 	
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function backToCamp():void
@@ -703,7 +708,7 @@ private function latexyEatsADickItem(item:ItemType):void {
 	}
 	else {
 		if(item == consumables.GROPLUS) {
-			outputText("Her " + gooCock() + " shivers, and starts to sprout outward from the base, lengthing before your very eyes.  One... two... three... new inches of gleaming prick reveal themselves to you!\n\n" + flags[kFLAGS.GOO_NAME] + " giggles, \"<i>You sure do like them big!</i>\"");
+			outputText("Her " + gooCock() + " shivers, and starts to sprout outward from the base, lengthening before your very eyes.  One... two... three... new inches of gleaming prick reveal themselves to you!\n\n" + flags[kFLAGS.GOO_NAME] + " giggles, \"<i>You sure do like them big!</i>\"");
 			flags[kFLAGS.GOO_DICK_LENGTH] += 3;
 		}
 		else if(item == consumables.REDUCTO) {
@@ -731,7 +736,7 @@ private function setLatexysBustSize():void {
 	outputText("You ask " + flags[kFLAGS.GOO_NAME] + " if she wouldn't mind keeping her tits around a certain size.");
 	//Low Obedience
 	if(gooObedience() < 60) {
-		outputText("\n\nShe puts her hands on her hips and shouts, \"<i>As if!  I'll make 'em as big or as small as I want!  You're already getting a sexy latex woman who's dependant on you for sexual fluids - you don't need to micromanage everything about me too!</i>\"  She blushes a little when she realized she just discussed her new self as 'sexy'.  She must like this a little more than she lets on.");
+		outputText("\n\nShe puts her hands on her hips and shouts, \"<i>As if!  I'll make 'em as big or as small as I want!  You're already getting a sexy latex woman who's dependent on you for sexual fluids - you don't need to micromanage everything about me too!</i>\"  She blushes a little when she realized she just discussed her new self as 'sexy'.  She must like this a little more than she lets on.");
 		gooObedience(-2);
 		menu();
 		addButton(0,"Next",approachLatexy);
@@ -826,7 +831,7 @@ private function changeLatexyTits(arg:int = 0):void {
 	}
 	flags[kFLAGS.GOO_PREFERRED_TIT_SIZE] = arg;
 	if(gooObedience() < 75) gooObedience(3);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 	
 //Feeding Her(F)
@@ -878,7 +883,7 @@ private function feedLatexyCumIndirectly():void {
 	if(player.cockTotal() > 1) outputText("one");
 	else outputText("it");
 	outputText(", plumping it to full rigidity with a few quick strokes.  " + flags[kFLAGS.GOO_NAME] + " can only watch the salacious display with rapt attention, one hand nervously stroking her thigh while the other fiddles with her hair.  Willingly waiting, she seems to understand that you're just here to provide her with sustenance.  It doesn't make it any easier for her to restrain her lusts.");
-	outputText("\n\nAs you rapidly masturbate, " + flags[kFLAGS.GOO_NAME] + "'s hands slip into her oil-slicked tunnel.  Two of her fingers are devoured by the pliable slit, engulfed in sable moisture.  Then, a third joins its kind, nosing in to massage the slick sensual walls within.  The panting latex woman easily allows her fourth finger to stretch her slit wide, exposing the ebony interior to you as fuel for your masturbulatory ardor.  Her thumb grazes across her clit as she begins to rock her hips at you, lewdly thrusting as she begins to drool rivulets of raven honey.");
+	outputText("\n\nAs you rapidly masturbate, " + flags[kFLAGS.GOO_NAME] + "'s hands slip into her oil-slicked tunnel.  Two of her fingers are devoured by the pliable slit, engulfed in sable moisture.  Then, a third joins its kind, nosing in to massage the slick sensual walls within.  The panting latex woman easily allows her fourth finger to stretch her slit wide, exposing the ebony interior to you as fuel for your masturbatory ardor.  Her thumb grazes across her clit as she begins to rock her hips at you, lewdly thrusting as she begins to drool rivulets of raven honey.");
 	outputText("\n\nYou groan, equally enraptured by the display she's putting on for you.  Soon, you're ");
 	if(player.cumQ() < 250) outputText("oozing a thicker river of pre-cum than normal");
 	else if(player.cumQ() < 500) outputText("dripping even more pre-cum than usual");
@@ -904,7 +909,7 @@ private function feedLatexyCumIndirectly():void {
 	//{Boost her happiness a tiny amount.}
 	gooHappiness(4);
 	player.orgasm();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //Feed Lady-Cum Indirectly(F)
 private function feedLatexyGirlCumIndirectly():void {
@@ -947,7 +952,7 @@ private function feedLatexyGirlCumIndirectly():void {
 	gooFluid(temp);
 	//{Boost her happiness a tiny amount.}
 	gooHappiness(4);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //Feed Her Minotaur Cum {Nice Vs Hard}:(F)
 private function minotaurCumFeedingGoo(nice:Boolean = false):void {
@@ -988,7 +993,7 @@ private function minotaurCumFeedingGoo(nice:Boolean = false):void {
 				outputText("\n\nStaggering onto her feet, " + flags[kFLAGS.GOO_NAME] + " growls, \"<i>Fuck it, I'm not that thirsty!</i>\"  She turns away from you, unwilling to even talk at this point.");
 				gooObedience(-5);
 				gooHappiness(-3);
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 				return;
 			}
 			outputText("\n\nStaggering up on her feet, " + flags[kFLAGS.GOO_NAME] + " looks about ready to quit.  Then, she licks her lips and shudders, as if remembering her own hunger.  She slumps down onto her knees and tips her head back, shaking a few strands of latex out of her face as she opens her mouth.  Then, her onyx lips mouth, \"<i>Feed me, please.</i>\"");
@@ -1016,7 +1021,7 @@ private function minotaurCumFeedingGoo(nice:Boolean = false):void {
 	gooHappiness(15);
 	if(nice) gooObedience(-1);
 	else gooObedience(5);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Feed Cum Directly(F)
@@ -1085,7 +1090,7 @@ private function feedLatexyCumDirectly():void {
 		gooObedience(5);
 		player.orgasm();
 		dynStats("sen", -2);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//{DISOBEDIENT:}
 	else {
@@ -1146,7 +1151,7 @@ private function feedCumDirectEpilogue():void {
 	//{Boost her happiness a tiny amount.}
 	gooHappiness(5);
 	gooObedience(-4);
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 //Feed Lady-Cum Direct(F)
 private function feedLatexyGirlCumDirect():void {
@@ -1216,7 +1221,7 @@ private function feedLatexyGirlCumDirect():void {
 		gooObedience(4);
 		player.orgasm();
 		dynStats("sen", -2);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//{DISOBEDIENT; chose not to/could not Assert Control}
 	else {
@@ -1250,7 +1255,7 @@ private function feedCumDirectEpilogueGirls():void {
 	//{Boost her happiness a tiny amount.}
 	gooHappiness(4);
 	gooObedience(-4);
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 
 /*Savin Says: Disobedient Pets get Punished with Gentle Loving PC-Dom (FEMALE)(F)*/
@@ -1286,7 +1291,7 @@ private function assertControlOverCuntDrainingLatexGoo():void {
 	//{Boost her happiness a tiny amount.}
 	gooHappiness(5);
 	gooObedience(5);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Savin Says: Disobedient Pets get Punished with Gentle Loving PC-Dom (MALE)
@@ -1323,7 +1328,7 @@ private function tryToAssertMaleDomWhileLatexGooDrains():void {
 	//{Boost her happiness a tiny amount.}
 	gooHappiness(5);
 	gooObedience(5);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Dominant Fucking Her(F)
@@ -1350,7 +1355,7 @@ private function femalePCDomFucksLatexGoo():void {
 		else outputText(" has");
 		outputText(" you doubting that claim, but she seems resolute in her desire to avoid direct sex, for now.");
 		if(gooFluid() < 15) outputText("  Her hunger is palpable, perhaps it would be best if you simply 'fed' her soon?");
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		gooObedience(-3);
 		return;
 	}
@@ -1396,7 +1401,7 @@ private function femalePCDomFucksLatexGoo():void {
 	gooFluid(5+player.wetness()*2);
 	gooObedience(5);
 	gooHappiness(2);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //Female Dominant Fuck (Goo IS Futa)(F)
 private function femalePCDomFucksLatexGooFuta():void {
@@ -1415,7 +1420,7 @@ private function femalePCDomFucksLatexGooFuta():void {
 		outputText(", \"<i>No.  You can't make me.  I may be stuck in this camp and separated from my people, but I will not let myself be some sexual toy.</i>\"  A trickle of inky lubricant between her legs and the rigidity of her " + gooCock() + " have you doubting that claim, but she seems resolute in her desire to avoid direct sex, for now.");
 		if(gooFluid() < 10) outputText("  Her hunger is palpable, perhaps it would be best if you simply 'fed' her soon?");
 		gooObedience(-3);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	//{OBEDIENT ENOUGH}
@@ -1431,7 +1436,7 @@ private function femalePCDomFucksLatexGooFuta():void {
 	outputText("  You take a few experimental bounces, enjoying the feeling of that " + gooCock() + " pressing on your folds and stirring against your insides.  Your pet reaches up to grab onto your [hips] for support.  She pants ");
 	if(player.isTaur()) outputText("into your haunches");
 	else if(player.tallness >= 84) outputText("against your side");
-	else if(player.tallness >= 70) outputText("into your shouder");
+	else if(player.tallness >= 70) outputText("into your shoulder");
 	else if(player.tallness >= 60) outputText("into your neck");
 	else outputText("over your head");
 	outputText(", trying to pull herself up against you, deeper inside you.");
@@ -1485,8 +1490,8 @@ private function femalePCDomFucksLatexGooFuta():void {
 	outputText("\n\nThat will not do.  You command her to stop");
 	if(flags[kFLAGS.LATEX_GOO_TIMES_FEMDOMMED_BY_PC] > 0) outputText(", and obediently, she does.  To reward her for being a good pet, you give her a deep tongue kiss.");
 	else {
-		outputText(", but the order goes unheeded.  " + flags[kFLAGS.GOO_NAME] + "'s nose disappears into the slimy mess that your pussy has become, pressing deeper and harder to gluttenously devour your juices.  Tired of her insubordination, you shove her back, shuddering when inch after inch of slithering tongue slides free.  The sensuously-skinned slut immediately tries to get back up, but you force her down and slap her, right across the face.  She stops cold, slowly raising a hand to her cheek.  Glittery black tears escape from her eyes as she apologizes, \"<i>I'm sorry!  I'm sorry!  I'll be good, I'll be good!  I promise!</i>\"");
-		outputText("\n\nYou nod, and then, before she dwell on her punishment, you give her a kiss.  She blushes purple afterward, giggling into her palm.");
+		outputText(", but the order goes unheeded.  " + flags[kFLAGS.GOO_NAME] + "'s nose disappears into the slimy mess that your pussy has become, pressing deeper and harder to gluttonously devour your juices.  Tired of her insubordination, you shove her back, shuddering when inch after inch of slithering tongue slides free.  The sensuously-skinned slut immediately tries to get back up, but you force her down and slap her, right across the face.  She stops cold, slowly raising a hand to her cheek.  Glittery black tears escape from her eyes as she apologizes, \"<i>I'm sorry!  I'm sorry!  I'll be good, I'll be good!  I promise!</i>\"");
+		outputText("\n\nYou nod, and then, before she can dwell on her punishment, you give her a kiss.  She blushes purple afterward, giggling into her palm.");
 	}
 	outputText("  You get dressed and leave with a swagger in your step.  A smiling, solid goo-girl sits in your wake.");
 	player.orgasm();
@@ -1496,7 +1501,7 @@ private function femalePCDomFucksLatexGooFuta():void {
 	gooFluid(5+player.wetness()*2);
 	gooObedience(4);
 	gooHappiness(2);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Male Dominant Fuck(F)
@@ -1523,7 +1528,7 @@ private function malePCDomFucksLatexGoo():void {
 		outputText(" you doubting that claim, but she seems resolute in her desire to avoid direct sex, at least until you train her a bit better.");
 		if(gooFluid() < 10) outputText("  Her hunger is palpable, perhaps it would be best if you simply 'fed' her soon?");
 		gooObedience(-3);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	//{OBEDIENT ENOUGH}
@@ -1541,7 +1546,7 @@ private function malePCDomFucksLatexGoo():void {
 		if(player.cockTotal() > 2) outputText("s");
 		outputText(" and starts to pump with sure strokes.");
 	}
-	outputText("\n\n" + flags[kFLAGS.GOO_NAME] + "'s vibrant " + flags[kFLAGS.GOO_EYES] + " eyes look up at you as her cheeks hollow to provide suction.  You groan again, this time slowly pulling her head back.  As she withdraws, her slick black spit drips from your dick, though much of it gradually hardens into a reflective sheath for your tool.  You draw her off until only your " + cockHead(0) + " remains inside that suckling pleasure-hole.  Then, you slam her down, fucking her mouth");
+	outputText("\n\n" + flags[kFLAGS.GOO_NAME] + "'s vibrant " + flags[kFLAGS.GOO_EYES] + " eyes look up at you as her cheeks hollow to provide suction.  You groan again, this time slowly pulling her head back.  As she withdraws, her slick black spit drips from your dick, though much of it gradually hardens into a reflective sheath for your tool.  You draw her off until only your " + player.cockHead() + " remains inside that suckling pleasure-hole.  Then, you slam her down, fucking her mouth");
 	if(player.biggestCockArea() >= 10 && player.biggestCockArea() < 50) outputText(" and throat");
 	else if(player.biggestCockArea() >= 50) outputText(", throat, and body");
 	outputText(" with quick strokes.  Faster and faster you bounce her on your loins");
@@ -1562,7 +1567,7 @@ private function malePCDomFucksLatexGoo():void {
 	else outputText("cock");
 	outputText(".  She whines, but wiggles back in your direction, staying locked on her target in spite of the punishment.  An ebony slit, so warm and wet that it feels like it's blowing steam onto your erection, closes the few inches of separating air.");
 	outputText("\n\nThe teases have the desired effect on you, and you yank her down on your " + cockDescript(0) + ".  Like her mouth and throat, her cunt quickly goes gooey once you get past her feminine lips.  Inside, she feels like a combination of warm gelatin and vagina, having all the flexibility and yielding nature of the former combined with the exquisitely textured interior of the latter.  The sensuous, smooth surface of " + flags[kFLAGS.GOO_NAME] + "'s ass rubs over your [hips] as her cunt swallows the entirety of your prick.  Tendrils of inescapable excitement worm their way up your spine, fed by your stiff manhood's orgasm-induced sensitivity.  They send you into what can only be described as a sexual frenzy.");
-	outputText("\n\nYou grab " + flags[kFLAGS.GOO_NAME] + "'s hair and pull in between strokes, forcing her to arch her back and display her body in a more pleasing manner.  Smack, smack, smack...  Your [hips] clap against her, growing faster with every moment.  Your hapless fuck-partner whines from pain and excitement, gushing black wetness across your [legs] as she cums.  You spank her rounded bottom again, and as the ripples of your vibration massage your " + cockDescript(0) + ", you cum again.  Her slick snatch greedily devours the first few spurts your body can offer up.  It even massages your length from root to " + cockHead(0) + " to coax out more.");
+	outputText("\n\nYou grab " + flags[kFLAGS.GOO_NAME] + "'s hair and pull in between strokes, forcing her to arch her back and display her body in a more pleasing manner.  Smack, smack, smack...  Your [hips] clap against her, growing faster with every moment.  Your hapless fuck-partner whines from pain and excitement, gushing black wetness across your [legs] as she cums.  You spank her rounded bottom again, and as the ripples of your vibration massage your " + cockDescript(0) + ", you cum again.  Her slick snatch greedily devours the first few spurts your body can offer up.  It even massages your length from root to " + player.cockHead() + " to coax out more.");
 	if(player.cumQ() >= 1000) outputText("  This quickly bloats her into a pregnant-looking state, and after her last injection, she has nowhere to metabolize it all.");
 	if(player.cumQ() >= 2000) outputText("  You keep going until a torrent of alabaster seed is running out of her cunt around your cock.  Glorious.");
 	if(flags[kFLAGS.GOO_DICK_LENGTH] > 0) outputText("  The " + gooCock() + " below noisily fires inky loads into the dirt, where it's quickly absorbed.");
@@ -1601,7 +1606,7 @@ private function malePCDomFucksLatexGoo():void {
 	fatigue(10);
 	gooObedience(4);
 	gooHappiness(2);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Savin Really Wants to Breastfeed Latexy Because He's a Weird Milk Fetishist Like That
@@ -1660,7 +1665,7 @@ private function feedLatexySomeMilk():void {
 	fatigue(5);
 	player.orgasm();
 	dynStats("sen", 2);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	
 }
 }

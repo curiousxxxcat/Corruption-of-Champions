@@ -242,10 +242,9 @@ private function buyCocoa():void {
 		return;
 	}
 	outputText("You pay ten gems for some cocoa.  ");
-	menuLoc = 29;
 	player.gems -= 10;
 	statScreenRefresh();
-	inventory.takeItem(consumables.MOUSECO);
+	inventory.takeItem(consumables.MOUSECO, ingredientsMenu);
 }
 
 private function buyFerretFruit():void {
@@ -258,10 +257,9 @@ private function buyFerretFruit():void {
 		return;
 	}
 	outputText("You pay twenty gems for a single ferret fruit.  ");
-	menuLoc = 29;
 	player.gems -= 20;
 	statScreenRefresh();
-	inventory.takeItem(consumables.FRRTFRT);
+	inventory.takeItem(consumables.FRRTFRT, ingredientsMenu);
 }
 
 private function buyFig():void {
@@ -273,10 +271,9 @@ private function buyFig():void {
 		return;
 	}
 	outputText("You pay five gems for a fig.  ");
-	menuLoc = 29;
 	player.gems -= 5;
 	statScreenRefresh();
-	inventory.takeItem(consumables.RINGFIG);
+	inventory.takeItem(consumables.RINGFIG, ingredientsMenu);
 }
 
 
@@ -294,11 +291,8 @@ private function talkBakeryMenu():void {
 	// I guess it just wouldn't do anything?
 	// FWIW, the flag that has to be set to get rubiIntros to return zero is set in a function that has the comment:
 	//(Will no longer encounter Rubi at the bakery.)
-	var rubiB:Number = telAdre.rubi.rubiIntros();
-	if (rubiB > 0)
-	{
-		addButton(1,rubiT,rubiWrapper,rubiB);
-	}
+	var rubiB:Function = telAdre.rubi.rubiIntros();
+	if (rubiB != null) addButton(1, rubiT, rubiB);
 
 	if(kGAMECLASS.nieveHoliday()) {
 		if(flags[kFLAGS.KAMI_ENCOUNTER] > 0) {
@@ -315,10 +309,6 @@ private function talkBakeryMenu():void {
 	else addButton(3,"PinkGirl",kGAMECLASS.telAdre.frosty.approachFrosty);
 	addButton(9,"Leave",bakeryuuuuuu);
 }
-private function rubiWrapper(rubiB:int = 0):void {
-	eventParser(rubiB);
-}
-
 
 public function nomnomnom(name:String,price:Number):void {
 	flags[kFLAGS.TEMP_STORAGE_PASTRY_NAME] = name;
@@ -417,8 +407,7 @@ public function buySlutCake():void {
 	outputText("The minotaur chef emerges from the backroom bearing a box that contains your cupcake.  It's too big to scarf down immediately.\n\n", false);
 	player.gems -= 500;
 	statScreenRefresh();
-	menuLoc = 19;
-	inventory.takeItem(consumables.CCUPCAK);
+	inventory.takeItem(consumables.CCUPCAK, bakeryuuuuuu);
 }
 
 private function buyFoxBerry():void {
@@ -430,10 +419,9 @@ private function buyFoxBerry():void {
 		return;
 	}
 	outputText("You pay five gems for a fox berry.  ");
-	menuLoc = 29;
 	player.gems -= 5;
 	statScreenRefresh();
-	inventory.takeItem(consumables.FOXBERY);
+	inventory.takeItem(consumables.FOXBERY, ingredientsMenu);
 }
 
 
@@ -461,7 +449,7 @@ private function easterBakeSaleHelp():void {
 	//(If the player has tits)
 	if(player.biggestTitSize() >= 1) outputText("Your [fullChest] bounce at the vigor of your movement.  ");
 	outputText("Going over the egg like an elaborate puzzle with its secrets only limited by your ability to unlock them, you are delighted to feel a stir of movement from within.  The heat is leaving not only your hands, but the entire room now, bringing the bristling heat down until you're sure it's cooler in here than outside with the swarm of customers.");
-	outputText("\n\nThe egg you've been holding in your hands begins to almost shake, you set it down to avoid the risk of you dropping it.  It turns out you put it down just in time, as a chocolate eruption sprays out of the egg towards the ceiling with more force than a geyser.  Climbing from the remains of the egg, a voluptuously bodied chocolate herm emerges, intents obvious from the equipment already erect and slavering.  You can't help but size her up, noting her full DD cup breasts and a dick you judge to be about 14 inches.  Her sensual gait as she makes her way over to you is nothing short of evil in the way it brings heat to your crotch, ");
+	outputText("\n\nThe egg you've been holding in your hands begins to almost shake; you set it down to avoid the risk of you dropping it.  It turns out you put it down just in time, as a chocolate eruption sprays out of the egg towards the ceiling with more force than a geyser.  Climbing from the remains of the egg, a voluptuously bodied chocolate herm emerges, intents obvious from the equipment already erect and slavering.  You can't help but size her up, noting her full DD cup breasts and a dick you judge to be about 14 inches.  Her sensual gait as she makes her way over to you is nothing short of evil in the way it brings heat to your crotch, ");
 	//(if the pc is male)
 	if(player.gender == 1) outputText("[eachCock] jumps to full hardness.");
 	//(if the pc is female)
@@ -478,8 +466,8 @@ private function malesHelpOutWithEaster():void {
 	clearOutput();
 	outputText("A idea crosses your mind; why not have the molten girl help you with your problem?  As if reading your mind, the girl continues her way to you, making her way with her eyes locked on your [cock biggest].  She is upon you now, flaccid streams drooling off her hand as she makes to grab your cock.  A heated pressure envelopes your shaft");
 	if(player.balls > 0) outputText(", sticky drops of chocolate trailing down your [balls]");
-	outputText(", each movement a not unpleasant sensation as the warmth infuses you.  The center of the pressure loosens, and your chocolate partner takes it upon herself to pin you to the floor, her warmness surrounding you.  Almost immediately you feel a similar pressure to the previous upon your groin, pulsating now as if stroking your cock in earnest.  You work out that she has enveloped your rod in what you assume is a vagina.  As if to confirm your suspicions, your captor lets out a small moan, increasing the fervour with which she rings out your dong.");
-	outputText("\n\nUnable now to contain your own lust, you start idly pumping into her velvety depths, the extreme warmth of which does nothing to discourage you.  Delighted by your newfound vigor, the mass riding you lets a sound out halfway between a squeal and a moan, increasing the vehemence of her own ministrations.  You pull your hand free from its prison only to thrust it higher up, gripping the highly malleable breast of the buxom girl.  Increasing the intensity of your pelvic endeavor, you elicit another moan from the bodacious vixen's lips, only adding fuel to your frenzied motions.  Jamming into her depths, intense heat assaults your body.  As if setting a spark to kindling, a torrid wave sweeps through you before you realise you are towards your limit.");
+	outputText(", each movement a not unpleasant sensation as the warmth infuses you.  The center of the pressure loosens, and your chocolate partner takes it upon herself to pin you to the floor, her warmness surrounding you.  Almost immediately you feel a similar pressure to the previous upon your groin, pulsating now as if stroking your cock in earnest.  You work out that she has enveloped your rod in what you assume is a vagina.  As if to confirm your suspicions, your captor lets out a small moan, increasing the fervor with which she rings out your dong.");
+	outputText("\n\nUnable now to contain your own lust, you start idly pumping into her velvety depths, the extreme warmth of which does nothing to discourage you.  Delighted by your newfound vigor, the mass riding you lets a sound out halfway between a squeal and a moan, increasing the vehemence of her own ministrations.  You pull your hand free from its prison only to thrust it higher up, gripping the highly malleable breast of the buxom girl.  Increasing the intensity of your pelvic endeavor, you elicit another moan from the bodacious vixen's lips, only adding fuel to your frenzied motions.  Jamming into her depths, intense heat assaults your body.  As if setting a spark to kindling, a torrid wave sweeps through you before you realize you are towards your limit.");
 	outputText("\n\nDecided on making your mate peak before you, your attention turns to bringing pleasure from your awkward thrusts into her depths.  Finding your current position lacking the dominance you need for your vision, you struggle out from beneath the heated woman, leaving her confused with her ass in the air.  Satisfied with your new arrangement, you take up position behind her and push your hand into her pussy, testing its plasticity.  Wasting no more time, you line up your [cock biggest] with the woman's opening and administer your entire length in a quick thrust.  The woman openly moans from your treatment of her depths.  Still remembering your goal, you bring your hand down and find a harder globule of chocolate that must be her clitoris.  While passively administering jabs into her pussy, you concentrate your fingers on her love button, rubbing with both tenderness and vigor.  Moaning openly now, the girl lets out a keening wail that puts you dangerously close to the edge yourself.  With a final burst of energy you aren't sure you can afford, you begin plunging into her silky breach with near desperation.");
 	
 	outputText("\n\nYour chocolate counterpart is now screaming with a passion unmatched by even yourself, while you ram as fast as your [legs] will allow.  The girl's other equipment is also reaching its limit, convulsing as if about to burst.  The shriek the woman emits is nothing short of ear-shattering as she cums, chocolate raining down on you.  ");
@@ -501,7 +489,7 @@ private function malesHelpOutWithEaster():void {
 	player.orgasm();
 	dynStats("lib", 1);
 	player.cumMultiplier += 2;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 }
 }

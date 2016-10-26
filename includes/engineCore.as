@@ -35,6 +35,7 @@ public function silly():Boolean {
 
 }
 
+/* Replaced by Utils.formatStringArray, which does almost the same thing in one function
 public function clearList():void {
 	list = [];
 }
@@ -59,7 +60,7 @@ public function outputList():String {
 	list = [];
 	return stuff;        
 }
-
+*/
 
 public function HPChange(changeNum:Number, display:Boolean):void
 {
@@ -105,18 +106,23 @@ public function clone(source:Object):* {
 	return(copier.readObject());
 }
 
+/* Was only used in two places at the start of the game
 public function speech(output:String, speaker:String):void {
 	var speech:String = "";
 	speech = speaker + " says, \"<i>" + output + "</i>\"\n";
 	outputText(speech, false);
 }
-
-
+*/
 	
 public function clearOutput():void {
 	forceUpdate();
 	currentText = "";
 	mainView.clearOutputText();
+	if(gameState != 3) mainView.hideMenuButton( MainView.MENU_DATA );
+	mainView.hideMenuButton( MainView.MENU_APPEARANCE );
+	mainView.hideMenuButton( MainView.MENU_LEVEL );
+	mainView.hideMenuButton( MainView.MENU_PERKS );
+	mainView.hideMenuButton( MainView.MENU_STATS );
 }
 
 public function rawOutputText(output:String, purgeText:Boolean = false):void
@@ -207,13 +213,13 @@ public function displayPerks(e:MouseEvent = null):void {
 		outputText("\n<b>You have " + num2Text(player.perkPoints) + " perk point", false);
 		if(player.perkPoints > 1) outputText("s", false);
 		outputText(" to spend.</b>", false);
-		addButton(1,"Perk Up",eventParser,116);
+		addButton(1, "Perk Up", perkBuyMenu);
 	}
 	if(player.findPerk(PerkLib.DoubleAttack) >= 0) {
 		outputText("\n<b>You can adjust your double attack settings.</b>");
 		addButton(2,"Dbl Options",doubleAttackOptions);
 	}
-	addButton(0,"Next",eventParser,1);
+	addButton(0, "Next", playerMenu);
 }
 
 public function doubleAttackOptions():void {
@@ -241,7 +247,7 @@ public function doubleAttackOptions():void {
 		addButton(1,"Dynamic",doubleAttackDynamic);
 	}
 	var e:MouseEvent;
-	addButton(4,"Back",displayPerks,e);
+	addButton(4, "Back", displayPerks);
 }
 
 public function doubleAttackForce():void {
@@ -258,64 +264,120 @@ public function doubleAttackOff():void {
 }
 
 public function levelUpGo(e:MouseEvent = null):void {
+	clearOutput();
 	hideMenus();
 	mainView.hideMenuButton( MainView.MENU_NEW_MAIN );
 	//Level up
-	if(player.XP >= (player.level) * 100) {
+	if (player.XP >= (player.level) * 100) {
 		player.level++;
 		player.perkPoints++;
-		outputText("<b>You are now level " + player.level + "!</b>\n\nYou may now apply +5 to one attribute.  Which will you choose?", true);
-		player.XP -= (player.level-1) * 100;
-		simpleChoices("Strength", 44, "Toughness", 45, "Speed", 47, "Intelligence", 46, "", 0);                
+		outputText("<b>You are now level " + player.level + "!</b>\n\nYou may now apply +5 to one attribute.  Which will you choose?");
+		player.XP -= (player.level - 1) * 100;
+		menu();
+		addButton(0, "Strength", levelUpStatStrength);
+		addButton(1, "Toughness", levelUpStatToughness);
+		addButton(2, "Speed", levelUpStatSpeed);
+		addButton(3, "Intelligence", levelUpStatIntelligence);
 	}
 	//Spend perk points
-	else if(player.perkPoints > 0) {
+	else if (player.perkPoints > 0) {
 		perkBuyMenu();
 	}
 	else {
-		outputText("<b>ERROR.  LEVEL UP PUSHED WHEN PC CANNOT LEVEL OR GAIN PERKS.  PLEASE REPORT THE STEPS TO REPRODUCE THIS BUG TO FENOXO@GMAIL.COM OR THE FENOXO.COM BUG REPORT FORUM.</b>", true);
-		doNext(1);
+		outputText("<b>ERROR.  LEVEL UP PUSHED WHEN PC CANNOT LEVEL OR GAIN PERKS.  PLEASE REPORT THE STEPS TO REPRODUCE THIS BUG TO FENOXO@GMAIL.COM OR THE FENOXO.COM BUG REPORT FORUM.</b>");
+		doNext(playerMenu);
 	}
-	/*OLD LEVEL UP CODE
-	player.level++;
-	levelText2.visible = false;
-	levelBG.visible = false;
-	dataText.visible = false;
-	dataBG.visible = false;
-	perksText.visible = false;
-	perksBG.visible = false;
-	appearanceText.visible = false;
-	appearanceBG.visible = false;
-	statsBG.visible = false;
-	statsText.visible = false;
-	outputText("<b>You are now level " + player.level + "!</b>\n\nYou may now apply +5 to one attribute.  Which will you choose?", true);
-	player.XP -= (player.level-1) * 100;
-	simpleChoices("Strength", 44, "Toughness", 45, "Speed", 47, "Intelligence", 46, "", 0);
-	*/
 }
 
-public function perkBuyMenu():void {
-	outputText("", true);
+private function levelUpStatStrength():void {
+	dynStats("str", 5); //Gain +5 Str due to level
+	clearOutput();
+	outputText("Your muscles feel significantly stronger from your time adventuring.");
+	doNext(perkBuyMenu);
+}
+
+private function levelUpStatToughness():void {
+	dynStats("tou", 5); //Gain +5 Toughness due to level
+	trace("HP: " + player.HP + " MAX HP: " + maxHP());
+	statScreenRefresh();
+	clearOutput();
+	outputText("You feel tougher from all the fights you have endured.");
+	doNext(perkBuyMenu);
+}
+
+private function levelUpStatSpeed():void {
+	dynStats("spe", 5); //Gain +5 speed due to level
+	clearOutput();
+	outputText("Your time in combat has driven you to move faster.");
+	doNext(perkBuyMenu);
+}
+
+private function levelUpStatIntelligence():void {
+	dynStats("int", 5); //Gain +5 Intelligence due to level
+	clearOutput();
+	outputText("Your time spent fighting the creatures of this realm has sharpened your wit.");
+	doNext(perkBuyMenu);
+}
+
+private function perkBuyMenu():void {
+	clearOutput();
 	var perkList:Array = buildPerkList();
-	if(perkList.length == 0) {
-		outputText("<b>You do not qualify for any perks at present.  </b>In case you qualify for any in the future, you will keep your " + num2Text(player.perkPoints) + " perk point", false);
-		if(player.perkPoints > 1) outputText("s", false);
-		outputText(".", false);
-		doNext(115);
+	
+	if (perkList.length == 0) {
+		outputText("<b>You do not qualify for any perks at present.  </b>In case you qualify for any in the future, you will keep your " + num2Text(player.perkPoints) + " perk point");
+		if(player.perkPoints > 1) outputText("s");
+		outputText(".");
+		doNext(playerMenu);
 		return;
 	}
-	if (testingBlockExiting){
-		tempPerk = perkList[rand(perkList.length)].perk;
-		doNext(114);
-	} else {
-		outputText("Please select a perk from the drop-down list, then click 'Okay'.  You can press 'Skip' to save your perk point for later.\n\n", false);
+	if (testingBlockExiting) {
+		menu();
+		addButton(0, "Next", perkSelect, perkList[rand(perkList.length)].perk);
+	}
+	else {
+		outputText("Please select a perk from the drop-down list, then click 'Okay'.  You can press 'Skip' to save your perk point for later.\n\n");
 		mainView.aCb.x = 210;
-		mainView.aCb.y = 108;
-		mainView.aCb.visible = true;
+		mainView.aCb.y = 112;
+		
+		if (mainView.aCb.parent == null) {
+			mainView.addChild(mainView.aCb);
+			mainView.aCb.visible = true;
+		}
+		
 		mainView.hideMenuButton( MainView.MENU_NEW_MAIN );
-		simpleChoices("Okay",0,"Skip",115,"",0,"",0,"",0);
+		menu();
+		addButton(1, "Skip", perkSkip);
 	}
 }
+
+private function perkSelect(selected:PerkClass):void {
+	stage.focus = null;
+	if (mainView.aCb.parent != null) {
+		mainView.removeChild(mainView.aCb);
+		applyPerk(selected);
+	}
+}
+
+private function perkSkip():void {
+	stage.focus = null;
+	if (mainView.aCb.parent != null) {
+		mainView.removeChild(mainView.aCb);
+		playerMenu();
+	}
+}
+
+private function changeHandler(event:Event):void {
+ 	//Store perk name for later addition
+	clearOutput();
+ 	var selected:PerkClass = ComboBox(event.target).selectedItem.perk;
+	mainView.aCb.move(210, 85);
+	outputText("You have selected the following perk:\n\n");
+	outputText("<b>" + selected.perkName + ":</b> " + selected.perkLongDesc + "\n\nIf you would like to select this perk, click <b>Okay</b>.  Otherwise, select a new perk, or press <b>Skip</b> to make a decision later.");
+	menu();
+	addButton(0, "Okay", perkSelect, selected);
+	addButton(1, "Skip", perkSkip);
+}
+
 public function buildPerkList():Array {
 	var perkList:Array = [];
 	function _add(p:PerkClass):void{
@@ -497,17 +559,18 @@ public function buildPerkList():Array {
 }
 
 public function applyPerk(perk:PerkClass):void {
+	clearOutput();
 	player.perkPoints--;
 	//Apply perk here.
-	outputText("<b>" + perk.perkName + "</b> gained!", true);
-	player.createPerk(perk.ptype,perk.value1,perk.value2,perk.value3,perk.value4);
+	outputText("<b>" + perk.perkName + "</b> gained!");
+	player.createPerk(perk.ptype, perk.value1, perk.value2, perk.value3, perk.value4);
 	if (perk.ptype == PerkLib.StrongBack2) player.itemSlot5.unlocked = true;
 	if (perk.ptype == PerkLib.StrongBack) player.itemSlot4.unlocked = true;
 	if (perk.ptype == PerkLib.Tank2) {
 		HPChange(player.tou, false);
 		statScreenRefresh();
 	}
-	doNext(1);
+	doNext(playerMenu);
 }
 
 public function buttonText(buttonName:String):String {
@@ -570,14 +633,14 @@ public function getButtonToolTipText( buttonText :String ) :String
 	//combat
 	//wombat
 	if (buttonText == "Attack") {
-		if (gameState != 1) toolTipText = "";
+		if (!inCombat) toolTipText = "";
 		else toolTipText = "Attempt to attack the enemy with your " + player.weaponName + ".  Damage done is determined by your strength and weapon.";
 	}
 	if(buttonText == "Kiss") {                        
 		toolTipText = "Attempt to kiss your foe on the lips with drugged lipstick.  It has no effect on those without a penis.";
 	}
 	if(buttonText == "Tease") {
-		if (gameState != 1) toolTipText = "";
+		if (!inCombat) toolTipText = "";
 		else toolTipText = "Attempt to make an enemy more aroused by striking a seductive pose and exposing parts of your body.";
 	}
 	if(buttonText == "Kick") {                        
@@ -623,7 +686,7 @@ public function getButtonToolTipText( buttonText :String ) :String
 		toolTipText = "Lower your head and charge your opponent, attempting to gore them on your horns.  This attack is stronger and easier to land with large horns.";
 	}
 	if(buttonText.indexOf("Fantasize") != -1) {                        
-		toolTipText = "Fantasize about your opponent in a sexual way.  Its probably a pretty bad idea to do this unless you want to end up getting raped.";
+		toolTipText = "Fantasize about your opponent in a sexual way.  It's probably a pretty bad idea to do this unless you want to end up getting raped.";
 	}
 	if(buttonText.indexOf("Charge W.") != -1) {                        
 		toolTipText = "The Charge Weapon spell will surround your weapon in electrical energy, causing it to do even more damage.  The effect lasts for the entire combat.  (Fatigue Cost: " + spellCost(15) + ")";
@@ -637,8 +700,8 @@ public function getButtonToolTipText( buttonText :String ) :String
 	if(buttonText.indexOf("Aroused") != -1) {
 	}
 	if(buttonText.indexOf("Arouse") != -1) {                        
-		if (gameState != 1) toolTipText = "";
-		else toolTipText = "The arouse spell draws on your own inner lust in order enflame the enemy's passions.  (Fatigue Cost: " + spellCost(15) + ")";
+		if (!inCombat) toolTipText = "";
+		else toolTipText = "The arouse spell draws on your own inner lust in order to enflame the enemy's passions.  (Fatigue Cost: " + spellCost(15) + ")";
 	}
 	if(buttonText == "Heal") {                        
 		toolTipText = "Heal will attempt to use black magic to close your wounds and restore your body, however like all black magic used on yourself, it has a chance of backfiring and greatly arousing you.  (Fatigue Cost: " + spellCost(20) + ")";
@@ -647,8 +710,8 @@ public function getButtonToolTipText( buttonText :String ) :String
 		toolTipText = "The Might spell draws upon your lust and uses it to fuel a temporary increase in muscle size and power.  It does carry the risk of backfiring and raising lust, like all black magic used on oneself.  (Fatigue Cost: " + spellCost(25) + ")";
 	}
 	//Wait
-	if(buttonText.indexOf("Wait") != -1 && gameState > 0) {                        
-		toolTipText = "Take no action for this round.  Why would you do this.  This is a terrible idea.";
+	if(buttonText.indexOf("Wait") != -1 && inCombat) {                        
+		toolTipText = "Take no action for this round.  Why would you do this?  This is a terrible idea.";
 	}
 	//Sting
 	if(buttonText.length == 5 && buttonText.indexOf("Sting") != -1) {                        
@@ -692,10 +755,10 @@ public function getButtonToolTipText( buttonText :String ) :String
 	}
 	//Masturbation Toys
 	if(buttonText == "Masturbate") {
-		toolTipText = "Selecting this option will attempt to manually masturbate in order to relieve your lust buildup.";
+		toolTipText = "Selecting this option will make you attempt to manually masturbate in order to relieve your lust buildup.";
 	}
 	if(buttonText == "Meditate") {
-		toolTipText = "Selecting this option will attempt to meditate in order to reduce lust and corruption.";
+		toolTipText = "Selecting this option will make you attempt to meditate in order to reduce lust and corruption.";
 	}
 	if(buttonText.indexOf("AN Stim-Belt") != -1) {
 		toolTipText = "This is an all-natural self-stimulation belt.  The methods used to create such a pleasure device are unknown.  It seems to be organic in nature.";
@@ -704,7 +767,7 @@ public function getButtonToolTipText( buttonText :String ) :String
 		toolTipText = "This is a self-stimulation belt.  Commonly referred to as stim-belts, these are clockwork devices designed to pleasure the female anatomy.";
 	}
 	if(buttonText.indexOf("AN Onahole") != -1) {
-		toolTipText = "An all-natural onahole, this device looks more like a bulbous creature than a sex-toy.  Never-the-less, the slick orifice it presents looks very inviting.";
+		toolTipText = "An all-natural onahole, this device looks more like a bulbous creature than a sex-toy.  Nevertheless, the slick orifice it presents looks very inviting.";
 	}
 	if(buttonText.indexOf("D Onahole") != -1) {
 		toolTipText = "This is a deluxe onahole, made of exceptional materials and with the finest craftsmanship in order to bring its user to the height of pleasure.";
@@ -738,7 +801,7 @@ public function getButtonToolTipText( buttonText :String ) :String
 	}
 	//Marble
 	if(buttonText.indexOf("Marble (Sex)") != -1) {
-		toolTipText = "Get with marble for a quick cuddle and some sex.";
+		toolTipText = "Get with Marble for a quick cuddle and some sex.";
 	}
 	//Rathazul
 	if(buttonText.indexOf("Rathazul") != -1) {
@@ -845,9 +908,9 @@ public function createCallBackFunction(func:Function, arg:*):Function
 	}
 	if( arg == -9000 || arg == null )
 	{
-		if (func == eventParser){
+/*		if (func == eventParser){
 			CoC_Settings.error("createCallBackFunction(eventParser,"+arg+")");
-		}
+		} */
 		return function ():*
 		{ 
 			if (CoC_Settings.haltOnErrors) 
@@ -879,15 +942,15 @@ public function createCallBackFunction2(func:Function,...args):Function
 
 
 public function addButton(pos:int, text:String = "", func1:Function = null, arg1:* = -9000):void {
-	if (func1==null) return;
-	var callback :Function,
-	toolTipText :String;
-
+	if (func1 == null) return;
+	var callback: Function;
+	var toolTipText: String;
+/* Let the mainView decide if index is valid
 	if(pos > 9) {
 		trace("INVALID BUTTON");
 		return;
 	}
-
+*/
 	callback = createCallBackFunction(func1, arg1);
 	
 
@@ -924,6 +987,21 @@ public function removeButton(arg:*):void {
 	mainView.hideBottomButton( buttonToRemove );
 }
 
+public function menu():void { //The newer, simpler menu - blanks all buttons so addButton can be used
+	mainView.hideBottomButton(0);
+	mainView.hideBottomButton(1);
+	mainView.hideBottomButton(2);
+	mainView.hideBottomButton(3);
+	mainView.hideBottomButton(4);
+	mainView.hideBottomButton(5);
+	mainView.hideBottomButton(6);
+	mainView.hideBottomButton(7);
+	mainView.hideBottomButton(8);
+	mainView.hideBottomButton(9);
+	flushOutputTextToGUI();
+}
+
+/*
 // AFICT, menu() isn't called with arguments ANYWHERE in the codebase.
 // WHRYYYYYYY
 public function menu(text1:String = "", func1:Function = null, arg1:Number = -9000, 
@@ -982,20 +1060,31 @@ public function menu(text1:String = "", func1:Function = null, arg1:Number = -90
 	//mainView.setOutputText( currentText );
 	flushOutputTextToGUI();
 }
+*/
 
-
-public function choices(text1:String, butt1:*, 
-						text2:String, butt2:*, 
-						text3:String, butt3:*, 
-						text4:String, butt4:*, 
-						text5:String, butt5:*, 
-						text6:String, butt6:*, 
-						text7:String, butt7:*, 
-						text8:String, butt8:*, 
-						text9:String, butt9:*, 
-						text0:String, butt0:*):void 
-{
-
+public function choices(text1:String, butt1:Function,
+						text2:String, butt2:Function,
+						text3:String, butt3:Function,
+						text4:String, butt4:Function,
+						text5:String, butt5:Function,
+						text6:String, butt6:Function,
+						text7:String, butt7:Function,
+						text8:String, butt8:Function,
+						text9:String, butt9:Function,
+						text0:String, butt0:Function):void { //New typesafe version
+							
+	menu();	
+	addButton(0, text1, butt1);
+	addButton(1, text2, butt2);
+	addButton(2, text3, butt3);
+	addButton(3, text4, butt4);
+	addButton(4, text5, butt5);
+	addButton(5, text6, butt6);
+	addButton(6, text7, butt7);
+	addButton(7, text8, butt8);
+	addButton(8, text9, butt9);
+	addButton(9, text0, butt0);
+/*
 	var callback :Function;
 	var toolTipText :String;
 
@@ -1053,6 +1142,7 @@ public function choices(text1:String, butt1:*,
 	// args = new Array();
 	//mainView.setOutputText( currentText );
 	flushOutputTextToGUI();
+*/
 }
 
 /****
@@ -1178,15 +1268,14 @@ public function multipageChoices( cancelFunction :*, menuItems :Array ) :void {
 }
 
 // simpleChoices and doYesNo are convenience functions. They shouldn't re-implement code from choices()
-public function simpleChoices(text1:String, butt1:*, 
-						text2:String, butt2:*, 
-						text3:String, butt3:*, 
-						text4:String, butt4:*, 
-						text5:String, butt5:*):void 
-{
+public function simpleChoices(text1:String, butt1:Function, 
+						text2:String, butt2:Function, 
+						text3:String, butt3:Function, 
+						text4:String, butt4:Function, 
+						text5:String, butt5:Function):void { //New typesafe version
 
 	//trace("SimpleChoices");
-	choices(text1,butt1,
+/*	choices(text1,butt1,
 			text2,butt2,
 			text3,butt3,
 			text4,butt4,
@@ -1195,10 +1284,20 @@ public function simpleChoices(text1:String, butt1:*,
 			"",0,
 			"",0,
 			"",0,
-			"",0);
+			"",0);*/
+	menu();
+	addButton(0, text1, butt1);
+	addButton(1, text2, butt2);
+	addButton(2, text3, butt3);
+	addButton(3, text4, butt4);
+	addButton(4, text5, butt5);
 }
 
-public function doYesNo(eventYes:*, eventNo:*):void {
+public function doYesNo(eventYes:Function, eventNo:Function):void { //New typesafe version
+	menu();
+	addButton(0, "Yes", eventYes);
+	addButton(1, "No", eventNo);
+/*
 	//Make buttons 1-2 visible and hide the rest.
 
 	//trace("doYesNo");
@@ -1214,20 +1313,23 @@ public function doYesNo(eventYes:*, eventNo:*):void {
 			"",0);
 
 }
+*/
+}
 
-
-
-public function doNext(eventNo:*):void {
+public function doNext(event:Function):void { //Now typesafe
 	//Prevent new events in combat from automatically overwriting a game over. 
-	if(mainView.getButtonText( 0 ).indexOf("Game Over") != -1) {
+	if (mainView.getButtonText(0).indexOf("Game Over") != -1) {
 		trace("Do next setup cancelled by game over");
 		return;
 	}
 	
 	//trace("DoNext have item:", eventNo);
-	choices("Next", eventNo, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0); 
+	//choices("Next", event, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0); 
+	menu();
+	addButton(0, "Next", event);
 }
 
+/* Was never called
 public function doNextClear(eventNo:*):void 
 {
 	outputText("", true, true);
@@ -1235,6 +1337,7 @@ public function doNextClear(eventNo:*):void
 	//trace("DoNext have item:", eventNo);
 	choices("Next", eventNo, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0);
 }
+*/
 
 public function invertGo():void{ 
 	mainView.invert();
@@ -1358,153 +1461,338 @@ public function displayStats(e:MouseEvent = null):void
 {
 	spriteSelect(-1);
 	outputText("", true);
-	outputText("<b><u>Combat Stats</u></b>\n", false);
-	if(player.hasKeyItem("Bow") >= 0) outputText("<b>Bow Skill: </b>" + Math.round(player.statusAffectv1(StatusAffects.Kelt)) + "\n", false);
-	outputText("<b>Lust Resistance: </b>" + (100-Math.round(lustPercent())) + "% (Higher is better.)\n", false);
-	outputText("<b>Spell Effect Multiplier: </b>" + (100 * spellMod()) + "%\n");
-	outputText("<b>Spell Cost: </b>" + spellCost(100) + "%\n");
-	outputText("<b>Tease Skill Level (Out of 5): </b> " + player.teaseLevel + "\n", false);
 	
-	outputText("\n<b><u>Hidden Stats</u></b>\n", false);
-	outputText("<b>Anal Capacity: </b>" + Math.round(player.analCapacity()) + "\n");
-	outputText("<b>Anal Looseness: </b>" + Math.round(player.ass.analLooseness) + "\n");
+	// Begin Combat Stats
+	var combatStats:String = "";
+	if (player.hasKeyItem("Bow") >= 0)
+		combatStats += "<b>Bow Skill:</b> " + Math.round(player.statusAffectv1(StatusAffects.Kelt)) + "\n";
+		
+	combatStats += "<b>Lust Resistance:</b> " + (100 - Math.round(lustPercent())) + "% (Higher is better.)\n";
 	
-	outputText("<b>Fertility (Base) Rating: </b>" + Math.round(player.fertility) + "\n", false);
-	outputText("<b>Fertility (With Bonuses) Rating: </b>" + Math.round(player.totalFertility()) + "\n", false);
-	if(player.findStatusAffect(StatusAffects.Feeder) >= 0) {
-		outputText("<b>Hours Since Last Time Breastfed Someone: </b> " + player.statusAffectv2(StatusAffects.Feeder), false);
-		if(player.statusAffectv2(StatusAffects.Feeder) >= 72) outputText(" (Too long! Sensitivity Increasing!)", false);
-		outputText("\n", false);
+	combatStats += "<b>Spell Effect Multiplier:</b> " + (100 * spellMod()) + "%\n";
+	
+	combatStats += "<b>Spell Cost:</b> " + spellCost(100) + "%\n";
+	
+	if (flags[kFLAGS.RAPHAEL_RAPIER_TRANING] > 0)
+		combatStats += "<b>Rapier Skill (Out of 4):</b> " + flags[kFLAGS.RAPHAEL_RAPIER_TRANING] + "\n";
+	
+	combatStats += "<b>Tease Skill (Out of 5):</b>  " + player.teaseLevel + "\n";
+	
+	if (combatStats != "")
+		outputText("<b><u>Combat Stats</u></b>\n" + combatStats, false);
+	// End Combat Stats
+	
+	// Begin Children Stats
+	var childStats:String = "";
+	
+	if (player.statusAffectv1(StatusAffects.Birthed) > 0)
+		childStats += "<b>Times Given Birth:</b> " + player.statusAffectv1(StatusAffects.Birthed) + "\n";
+		
+	if (flags[kFLAGS.AMILY_MET] > 0)
+		childStats += "<b>Litters With Amily:</b> " + (flags[kFLAGS.AMILY_BIRTH_TOTAL] + flags[kFLAGS.PC_TIMES_BIRTHED_AMILYKIDS]) + "\n";
+		
+	if (flags[kFLAGS.BENOIT_EGGS] > 0)
+		childStats += "<b>Benoit Eggs Laid:</b> " + flags[kFLAGS.BENOIT_EGGS] + "\n";
+		
+	if (flags[kFLAGS.COTTON_KID_COUNT] > 0)
+		childStats += "<b>Children With Cotton:</b> " + flags[kFLAGS.COTTON_KID_COUNT] + "\n";
+	
+	if (flags[kFLAGS.EDRYN_NUMBER_OF_KIDS] > 0)
+		childStats += "<b>Children With Edryn:</b> " + flags[kFLAGS.EDRYN_NUMBER_OF_KIDS] + "\n";
+		
+	if (flags[kFLAGS.EMBER_CHILDREN_MALES] > 0)
+		childStats += "<b>Ember Offspring (Males):</b> " + flags[kFLAGS.EMBER_CHILDREN_MALES] + "\n";
+	if (flags[kFLAGS.EMBER_CHILDREN_FEMALES] > 0)
+		childStats += "<b>Ember Offspring (Females):</b> " + flags[kFLAGS.EMBER_CHILDREN_FEMALES] + "\n";
+	if (flags[kFLAGS.EMBER_CHILDREN_HERMS] > 0)
+		childStats += "<b>Ember Offspring (Herms):</b> " + flags[kFLAGS.EMBER_CHILDREN_HERMS] + "\n";
+			
+	if (flags[kFLAGS.EMBER_EGGS] > 0)
+		childStats += "<b>Ember Eggs Produced:</b> " + flags[kFLAGS.EMBER_EGGS] + "\n";
+		
+	if (flags[kFLAGS.IZMA_CHILDREN_SHARKGIRLS] > 0)
+		childStats += "<b>Children With Izma (Sharkgirls):</b> " + flags[kFLAGS.IZMA_CHILDREN_SHARKGIRLS] + "\n";
+		
+	if (flags[kFLAGS.IZMA_CHILDREN_TIGERSHARKS] > 0)
+		childStats += "<b>Children With Izma (Tigersharks):</b> " + flags[kFLAGS.IZMA_CHILDREN_TIGERSHARKS] + "\n";
+		
+	if (flags[kFLAGS.KELLY_KIDS_MALE] > 0)
+		childStats += "<b>Children With Kelly (Males):</b> " + flags[kFLAGS.KELLY_KIDS_MALE] + "\n";
+		
+	if (flags[kFLAGS.KELLY_KIDS] - flags[kFLAGS.KELLY_KIDS_MALE] > 0)
+		childStats += "<b>Children With Kelly (Females):</b> " + (flags[kFLAGS.KELLY_KIDS] - flags[kFLAGS.KELLY_KIDS_MALE]) + "\n";
+		
+	if (mountain.salon.lynnetteApproval() != 0)
+		childStats += "<b>Lynnette Children:</b> " + flags[kFLAGS.LYNNETTE_BABY_COUNT] + "\n";
+		
+	if (flags[kFLAGS.MARBLE_KIDS] > 0)
+		childStats += "<b>Children With Marble:</b> " + flags[kFLAGS.MARBLE_KIDS] + "\n";
+		
+	if (flags[kFLAGS.ANT_KIDS] > 0)
+		childStats += "<b>Ant Children With Phylla:</b> " + flags[kFLAGS.ANT_KIDS] + "\n";
+		
+	if (flags[kFLAGS.PHYLLA_DRIDER_BABIES_COUNT] > 0)
+		childStats += "<b>Drider Children With Phylla:</b> " + flags[kFLAGS.PHYLLA_DRIDER_BABIES_COUNT] + "\n";
+		
+	if (flags[kFLAGS.SHEILA_JOEYS] > 0)
+		childStats += "<b>Children With Sheila (Joeys):</b> " + flags[kFLAGS.SHEILA_JOEYS] + "\n";
+		
+	if (flags[kFLAGS.SHEILA_IMPS] > 0)
+		childStats += "<b>Children With Sheila (Imps):</b> " + flags[kFLAGS.SHEILA_IMPS] + "\n";
+		
+	if (flags[kFLAGS.SOPHIE_ADULT_KID_COUNT] > 0 || flags[kFLAGS.SOPHIE_DAUGHTER_MATURITY_COUNTER] > 0) 
+	{
+		childStats += "<b>Children With Sophie:</b> ";
+		var sophie:int = 0;
+		if (flags[kFLAGS.SOPHIE_DAUGHTER_MATURITY_COUNTER] > 0) sophie++;
+		sophie += flags[kFLAGS.SOPHIE_ADULT_KID_COUNT];
+		if (flags[kFLAGS.SOPHIE_CAMP_EGG_COUNTDOWN] > 0) sophie++;
+		childStats += sophie + "\n";
 	}
 	
-	outputText("<b>Cum Production:</b> " + Math.round(player.cumQ()) + "mL\n", false);
-	outputText("<b>Milk Production:</b> " + Math.round(player.lactationQ()) + "mL\n", false);
-	//MARBLE
-	if(player.statusAffectv3(StatusAffects.Marble) > 0) {
-		outputText("<b>Marble Milk Addiction: </b>", false);
-		if(player.findPerk(PerkLib.MarbleResistant) < 0 && player.findPerk(PerkLib.MarblesMilk) < 0) outputText(Math.round(player.statusAffectv2(StatusAffects.Marble)) + "%\n", false);
-		else if(player.findPerk(PerkLib.MarbleResistant) >= 0) outputText("0%\n", false);
-		else outputText("100%\n", false);
+	if (flags[kFLAGS.SOPHIE_EGGS_LAID] > 0)
+		childStats += "<b>Eggs Fertilized For Sophie:</b> " + (flags[kFLAGS.SOPHIE_EGGS_LAID] + sophie) + "\n";
+		
+	if (flags[kFLAGS.TAMANI_NUMBER_OF_DAUGHTERS] > 0)
+		childStats += "<b>Children With Tamani:</b> " + flags[kFLAGS.TAMANI_NUMBER_OF_DAUGHTERS] + " (after all forms of natural selection)\n";
+		
+	if (urtaPregs.urtaKids() > 0)
+		childStats += "<b>Children With Urta:</b> " + urtaPregs.urtaKids() + "\n";
+		
+	//Mino sons
+	if (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00326] > 0)
+		childStats += "<b>Number of Adult Minotaur Offspring:</b> " + flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00326] + "\n";
+	
+	if (childStats != "")
+		outputText("\n<b><u>Children</u></b>\n" + childStats, false);
+	// End Children Stats
+
+	// Begin Body Stats
+	var bodyStats:String = "";
+	
+	bodyStats += "<b>Anal Capacity:</b> " + Math.round(player.analCapacity()) + "\n";
+	bodyStats += "<b>Anal Looseness:</b> " + Math.round(player.ass.analLooseness) + "\n";
+	
+	bodyStats += "<b>Fertility (Base) Rating:</b> " + Math.round(player.fertility) + "\n";
+	bodyStats += "<b>Fertility (With Bonuses) Rating:</b> " + Math.round(player.totalFertility()) + "\n";
+	
+	if (player.cumQ() > 0)
+		bodyStats += "<b>Cum Production:</b> " + Math.round(player.cumQ()) + "mL\n";
+	if (player.lactationQ() > 0)
+		bodyStats += "<b>Milk Production:</b> " + Math.round(player.lactationQ()) + "mL\n";
+	
+	if (player.findStatusAffect(StatusAffects.Feeder) >= 0) {
+		bodyStats += "<b>Hours Since Last Time Breastfed Someone:</b>  " + player.statusAffectv2(StatusAffects.Feeder);
+		if (player.statusAffectv2(StatusAffects.Feeder) >= 72)
+			bodyStats += " (Too long! Sensitivity Increasing!)";
+		
+		bodyStats += "\n";
 	}
-	//MINO!
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00340] > 0 || flags[kFLAGS.MINOTAUR_CUM_ADDICTION_TRACKER] > 0 || player.findPerk(PerkLib.MinotaurCumAddict) >= 0) {
-		if(player.findPerk(PerkLib.MinotaurCumAddict) < 0) outputText("<b>Minotaur Cum Addiction:</b> " + Math.round(flags[kFLAGS.MINOTAUR_CUM_ADDICTION_TRACKER] * 10)/10 + "%\n", false);
-		else outputText("<b>Minotaur Cum Addiction:</b> 100+%\n", false);
-	}
-	if(player.findPerk(PerkLib.SpiderOvipositor) >= 0 || player.findPerk(PerkLib.BeeOvipositor) >= 0) outputText("<b>Ovipositor Total Egg Count: " + player.eggs() + "\nOvipositor Fertilized Egg Count: " + player.fertilizedEggs() + "</b>\n");
-	outputText("<b>Pregnancy Speed Multiplier:</b> ", false);
+	
+	bodyStats += "<b>Pregnancy Speed Multiplier:</b> ";
 	var preg:Number = 1;
-	if(player.findPerk(PerkLib.Diapause) >= 0) outputText("? (Variable due to Diapause)\n", false);
+	if (player.findPerk(PerkLib.Diapause) >= 0)
+		bodyStats += "? (Variable due to Diapause)\n";
 	else {
-		if(player.findPerk(PerkLib.MaraesGiftFertility) >= 0) preg++;
-		if(player.findPerk(PerkLib.BroodMother) >= 0) preg++;
-		if(player.findPerk(PerkLib.FerasBoonBreedingBitch) >= 0) preg++;
-		if(player.findPerk(PerkLib.MagicalFertility) >= 0) preg++;
-		if(player.findPerk(PerkLib.FerasBoonWideOpen) >= 0 || player.findPerk(PerkLib.FerasBoonMilkingTwat) >= 0) preg++;
-		outputText(preg + "\n", false);
-	}        
-	if(player.findStatusAffect(StatusAffects.SlimeCraving) >= 0) {
-		if(player.statusAffectv1(StatusAffects.SlimeCraving) >= 18) outputText("<b>Slime Craving:  </b>Active! You are currently losing strength and speed.  You should find fluids.\n", false);
+		if (player.findPerk(PerkLib.MaraesGiftFertility) >= 0) preg++;
+		if (player.findPerk(PerkLib.BroodMother) >= 0) preg++;
+		if (player.findPerk(PerkLib.FerasBoonBreedingBitch) >= 0) preg++;
+		if (player.findPerk(PerkLib.MagicalFertility) >= 0) preg++;
+		if (player.findPerk(PerkLib.FerasBoonWideOpen) >= 0 || player.findPerk(PerkLib.FerasBoonMilkingTwat) >= 0) preg++;
+		bodyStats += preg + "\n";
+	}
+	
+	if (player.cocks.length > 0) {
+		bodyStats += "<b>Total Cocks:</b> " + player.cocks.length + "\n";
+
+		var totalCockLength:Number = 0;
+		var totalCockGirth:Number = 0;
+		
+		for (var i:Number = 0; i < player.cocks.length; i++) {
+				totalCockLength += player.cocks[i].cockLength;
+				totalCockGirth += player.cocks[i].cockThickness
+		}
+				
+		bodyStats += "<b>Total Cock Length:</b> " + Math.round(totalCockLength) + " inches\n";
+		bodyStats += "<b>Total Cock Girth:</b> " + Math.round(totalCockGirth) + " inches\n";
+		
+	}
+	
+	if (player.vaginas.length > 0)
+		bodyStats += "<b>Vaginal Capacity:</b> " + Math.round(player.vaginalCapacity()) + "\n" + "<b>Vaginal Looseness:</b> " + Math.round(player.looseness()) + "\n";
+
+	if (player.findPerk(PerkLib.SpiderOvipositor) >= 0 || player.findPerk(PerkLib.BeeOvipositor) >= 0)
+		bodyStats += "<b>Ovipositor Total Egg Count: " + player.eggs() + "\nOvipositor Fertilized Egg Count: " + player.fertilizedEggs() + "</b>\n";
+		
+	if (player.findStatusAffect(StatusAffects.SlimeCraving) >= 0) {
+		if (player.statusAffectv1(StatusAffects.SlimeCraving) >= 18)
+			bodyStats += "<b>Slime Craving:</b> Active! You are currently losing strength and speed.  You should find fluids.\n";
 		else {
-			if(player.findPerk(PerkLib.SlimeCore) >= 0) outputText("<b>Slime Stored:  </b>" + ((17 - player.statusAffectv1(StatusAffects.SlimeCraving)) * 2) + " hours until you start losing strength.\n", false);
-			else outputText("<b>Slime Stored:  </b>" + (17 - player.statusAffectv1(StatusAffects.SlimeCraving)) + " hours until you start losing strength.\n", false);
+			if (player.findPerk(PerkLib.SlimeCore) >= 0)
+				bodyStats += "<b>Slime Stored:</b> " + ((17 - player.statusAffectv1(StatusAffects.SlimeCraving)) * 2) + " hours until you start losing strength.\n";
+			else
+				bodyStats += "<b>Slime Stored:</b> " + (17 - player.statusAffectv1(StatusAffects.SlimeCraving)) + " hours until you start losing strength.\n";
 		}
 	}
-	outputText("<b>Spells Cast: </b>" + flags[kFLAGS.SPELLS_CAST] + "\n");
-	if(player.hasVagina()) outputText("<b>Vaginal Capacity: </b>" + Math.round(player.vaginalCapacity()) + "\n");
-	if(player.hasVagina()) outputText("<b>Vaginal Looseness: </b>" + Math.round(player.looseness()) + "\n");
 	
-	outputText("<b><u>\nInterpersonal Stats</u></b>\n", false);
-	if(flags[kFLAGS.ARIAN_PARK] > 0) outputText("<b>Arian's Health: </b>" + Math.round(arianScene.arianHealth()) + "\n");
-	if(flags[kFLAGS.ARIAN_VIRGIN] > 0) outputText("<b>Arian Sex Counter: </b>" + Math.round(flags[kFLAGS.ARIAN_VIRGIN]) + "\n");
-	if(bazaar.benoit.benoitAffection() > 0) outputText("<b>" + bazaar.benoit.benoitMF("Benoit","Benoite") + " Affection: </b>" + Math.round(bazaar.benoit.benoitAffection()) + "%\n");
-	if(flags[kFLAGS.BENOIT_EGGS] > 0) outputText("<b>Benoit Eggs Laid: </b>" + flags[kFLAGS.BENOIT_EGGS] + "\n");
-	if(flags[kFLAGS.BROOKE_MET] > 0) outputText("<b>Brooke Affection: </b>" + Math.round(telAdre.brooke.brookeAffection()) + "\n");
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00218]+flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00219]+flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00220] > 0) outputText("<b>Body Parts Taken By Ceraph: </b>" + (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00218]+flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00219]+flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00220]) + "\n", false);
-	if(flags[kFLAGS.COTTON_KID_COUNT] > 0) outputText("<b>Children With Cotton: </b>" + flags[kFLAGS.COTTON_KID_COUNT] + "\n");
-	if(flags[kFLAGS.EDRYN_NUMBER_OF_KIDS] > 0) outputText("<b>Children With Edryn: </b>" + flags[kFLAGS.EDRYN_NUMBER_OF_KIDS] + "\n", false);
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00251]+flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00252] > 0) outputText("<b>Children With Izma: </b>" + (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00251]+flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00252]) + "\n", false);
-	if(flags[kFLAGS.MARBLE_KIDS] > 0) outputText("<b>Children With Marble:</b> " + flags[kFLAGS.MARBLE_KIDS] + "\n", false);
-	if(flags[kFLAGS.ANT_KIDS] > 0) outputText("<b>Ant Children With Phylla:</b> " + flags[kFLAGS.ANT_KIDS] + "\n");
-	if(flags[kFLAGS.PHYLLA_DRIDER_BABIES_COUNT] > 0) outputText("<b>Drider Children With Phylla:</b> " + flags[kFLAGS.PHYLLA_DRIDER_BABIES_COUNT] + "\n");
-	if(flags[kFLAGS.SHEILA_JOEYS] > 0) outputText("<b>Children With Sheila (Joeys):</b> " + flags[kFLAGS.SHEILA_JOEYS] + "\n");
-	if(flags[kFLAGS.SHEILA_IMPS] > 0) outputText("<b>Children With Sheila (Imps):</b> " + flags[kFLAGS.SHEILA_IMPS] + "\n");
+	if (bodyStats != "")
+		outputText("\n<b><u>Body Stats</u></b>\n" + bodyStats, false);
+	// End Body Stats
+
+	// Begin Misc Stats
+	var miscStats:String = "";
+
+	if (flags[kFLAGS.EGGS_BOUGHT] > 0)
+		miscStats += "<b>Eggs Traded For:</b> " + flags[kFLAGS.EGGS_BOUGHT] + "\n";
+		
+	if (flags[kFLAGS.TIMES_AUTOFELLATIO_DUE_TO_CAT_FLEXABILITY] > 0)
+		miscStats += "<b>Times Had Fun with Feline Flexibility:</b> " + flags[kFLAGS.TIMES_AUTOFELLATIO_DUE_TO_CAT_FLEXABILITY] + "\n";
 	
-	if(flags[kFLAGS.SOPHIE_ADULT_KID_COUNT] > 0 || flags[kFLAGS.SOPHIE_DAUGHTER_MATURITY_COUNTER] > 0) 
-	{        
-		outputText("<b>Children With Sophie:</b> ");
-		var sophie:int = 0;
-		if(flags[kFLAGS.SOPHIE_DAUGHTER_MATURITY_COUNTER] > 0) sophie++;
-		sophie += flags[kFLAGS.SOPHIE_ADULT_KID_COUNT];
-		if(flags[kFLAGS.SOPHIE_CAMP_EGG_COUNTDOWN] > 0) sophie++;
-		outputText(sophie + "\n");
+	if (flags[kFLAGS.FAP_ARENA_SESSIONS] > 0)
+		miscStats += "<b>Times Circle Jerked in the Arena:</b> " + flags[kFLAGS.FAP_ARENA_SESSIONS] + "\n<b>Victories in the Arena:</b> " + flags[kFLAGS.FAP_ARENA_VICTORIES] + "\n";
+	
+	if (flags[kFLAGS.SPELLS_CAST] > 0)
+		miscStats += "<b>Spells Cast:</b> " + flags[kFLAGS.SPELLS_CAST] + "\n";
+		
+	if (miscStats != "")
+		outputText("\n<b><u>Miscellaneous Stats</u></b>\n" + miscStats);
+	// End Misc Stats
+	
+	// Begin Addition Stats
+	var addictStats:String = "";
+	//Marble Milk Addition
+	if (player.statusAffectv3(StatusAffects.Marble) > 0) {
+		addictStats += "<b>Marble Milk:</b> ";
+		if (player.findPerk(PerkLib.MarbleResistant) < 0 && player.findPerk(PerkLib.MarblesMilk) < 0)
+			addictStats += Math.round(player.statusAffectv2(StatusAffects.Marble)) + "%\n";
+		else if (player.findPerk(PerkLib.MarbleResistant) >= 0)
+			addictStats += "0%\n";
+		else
+			addictStats += "100%\n";
 	}
-	if(player.statusAffectv2(StatusAffects.Tamani) > 0) outputText("<b>Children With Tamani: </b>" + player.statusAffectv2(StatusAffects.Tamani) + " (after all forms of natural selection)\n", false);
-	if(urtaPregs.urtaKids() > 0) outputText("<b>Children With Urta: </b>" + urtaPregs.urtaKids() + "\n");
-	if(flags[kFLAGS.SOPHIE_EGGS_LAID] > 0) outputText("<b>Eggs Fertilized For Sophie: </b>" + (flags[kFLAGS.SOPHIE_EGGS_LAID] + sophie) + "\n", false);
-	if(emberScene.emberAffection() > 0) outputText("<b>Ember Affection:</b> " + Math.round(emberScene.emberAffection()) + "%\n");
-	if(emberScene.emberChildren() > 0) {
-		outputText("<b>Ember Offspring (Males): </b>" + flags[kFLAGS.EMBER_CHILDREN_MALES] + "\n");
-		outputText("<b>Ember Offspring (Females): </b>" + flags[kFLAGS.EMBER_CHILDREN_FEMALES] + "\n");
-		outputText("<b>Ember Offspring (Herms): </b>" + flags[kFLAGS.EMBER_CHILDREN_HERMS] + "\n");
+	
+	// Mino Cum Addiction
+	if (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00340] > 0 || flags[kFLAGS.MINOTAUR_CUM_ADDICTION_TRACKER] > 0 || player.findPerk(PerkLib.MinotaurCumAddict) >= 0) {
+		if (player.findPerk(PerkLib.MinotaurCumAddict) < 0)
+		addictStats += "<b>Minotaur Cum:</b> " + Math.round(flags[kFLAGS.MINOTAUR_CUM_ADDICTION_TRACKER] * 10)/10 + "%\n";
+		else
+			addictStats += "<b>Minotaur Cum:</b> 100+%\n";
 	}
-	if(flags[kFLAGS.EMBER_EGGS] > 0) outputText("<b>Ember Eggs Produced:</b> " + flags[kFLAGS.EMBER_EGGS] + "\n");
-	if(helFollower.helAffection() > 0) outputText("<b>Helia Affection: </b>" + Math.round(helFollower.helAffection()) + "%\n");
-	if(helFollower.helAffection() >= 100) outputText("<b>Helia Bonus Points: </b>" + Math.round(flags[kFLAGS.HEL_BONUS_POINTS]) + "\n");
-	if(flags[kFLAGS.ISABELLA_AFFECTION] > 0) {
-		outputText("<b>Isabella Affection:</b> ", false);
-		if(!isabellaFollowerScene.isabellaFollower()) outputText(Math.round(flags[kFLAGS.ISABELLA_AFFECTION]) + "%\n", false);
-		else outputText("100%\n", false);
+	
+	if (addictStats != "")
+		outputText("\n<b><u>Addictions</u></b>\n" + addictStats, false);
+	// End Addition Stats
+	
+	// Begin Interpersonal Stats
+	var interpersonStats:String = "";
+	
+	if (flags[kFLAGS.ARIAN_PARK] > 0)
+		interpersonStats += "<b>Arian's Health:</b> " + Math.round(arianScene.arianHealth()) + "\n";
+		
+	if (flags[kFLAGS.ARIAN_VIRGIN] > 0)
+		interpersonStats += "<b>Arian Sex Counter:</b> " + Math.round(flags[kFLAGS.ARIAN_VIRGIN]) + "\n";
+	
+	if (bazaar.benoit.benoitAffection() > 0)
+		interpersonStats += "<b>" + bazaar.benoit.benoitMF("Benoit", "Benoite") + " Affection:</b> " + Math.round(bazaar.benoit.benoitAffection()) + "%\n";
+	
+	if (flags[kFLAGS.BROOKE_MET] > 0)
+		interpersonStats += "<b>Brooke Affection:</b> " + Math.round(telAdre.brooke.brookeAffection()) + "\n";
+		
+	if (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00218] + flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00219] + flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00220] > 0)
+		interpersonStats += "<b>Body Parts Taken By Ceraph:</b> " + (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00218] + flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00219] + flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00220]) + "\n";
+		
+	if (emberScene.emberAffection() > 0)
+		interpersonStats += "<b>Ember Affection:</b> " + Math.round(emberScene.emberAffection()) + "%\n";
+	
+	if (helFollower.helAffection() > 0)
+		interpersonStats += "<b>Helia Affection:</b> " + Math.round(helFollower.helAffection()) + "%\n";
+	if (helFollower.helAffection() >= 100)
+		interpersonStats += "<b>Helia Bonus Points:</b> " + Math.round(flags[kFLAGS.HEL_BONUS_POINTS]) + "\n";
+	
+	if (flags[kFLAGS.ISABELLA_AFFECTION] > 0) {
+		interpersonStats += "<b>Isabella Affection:</b> ";
+		
+		if (!isabellaFollowerScene.isabellaFollower())
+			interpersonStats += Math.round(flags[kFLAGS.ISABELLA_AFFECTION]) + "%\n", false;
+		else
+			interpersonStats += "100%\n";
 	}
-	if(flags[kFLAGS.ANEMONE_KID] > 0) {
-		outputText("<b>Kid A's Confidence:</b> " + anemoneScene.kidAXP() + "%\n");
+	
+	if (flags[kFLAGS.KATHERINE_UNLOCKED] >= 4) {
+		interpersonStats += "<b>Katherine Submissiveness:</b> " + telAdre.katherine.submissiveness() + "\n";
 	}
-	if(flags[kFLAGS.KIHA_AFFECTION_LEVEL] == 2) {
-		if(kihaFollower.followerKiha()) outputText("<b>Kiha Affection:</b> " + 100 + "%\n", false);
-		else outputText("<b>Kiha Affection:</b> " + Math.round(flags[kFLAGS.KIHA_AFFECTION]) + "%\n", false);
+
+	if (player.findStatusAffect(StatusAffects.Kelt) >= 0 && flags[kFLAGS.KELT_BREAK_LEVEL] == 0) {
+		if (player.statusAffectv2(StatusAffects.Kelt) >= 130)
+			interpersonStats += "<b>Submissiveness To Kelt:</b> " + 100 + "%\n";
+		else
+			interpersonStats += "<b>Submissiveness To Kelt:</b> " + Math.round(player.statusAffectv2(StatusAffects.Kelt)/130*100) + "%\n";
 	}
-	if(flags[kFLAGS.AMILY_MET] > 0) outputText("<b>Litters With Amily: </b>" + (flags[kFLAGS.AMILY_BIRTH_TOTAL] + flags[kFLAGS.PC_TIMES_BIRTHED_AMILYKIDS]) + "\n", false);
+	
+	if (flags[kFLAGS.ANEMONE_KID] > 0)
+		interpersonStats += "<b>Kid A's Confidence:</b> " + anemoneScene.kidAXP() + "%\n";
+
+	if (flags[kFLAGS.KIHA_AFFECTION_LEVEL] == 2) {
+		if (kihaFollower.followerKiha())
+			interpersonStats += "<b>Kiha Affection:</b> " + 100 + "%\n";
+		else
+			interpersonStats += "<b>Kiha Affection:</b> " + Math.round(flags[kFLAGS.KIHA_AFFECTION]) + "%\n";
+	}
 	//Lottie stuff
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00281] > 0) {
-		outputText("<b>Lottie's Encouragement: </b>" + telAdre.lottie.lottieMorale() + " (higher is better)\n", false);
-		outputText("<b>Lottie's Figure: </b>" + telAdre.lottie.lottieTone() + " (higher is better)\n", false);
-	}
-	if(mountain.salon.lynnetteApproval() != 0) {
-		outputText("<b>Lynnette's Approval: </b>" + mountain.salon.lynnetteApproval() + "\n");
-		outputText("<b>Lynnette Children: </b>" + flags[kFLAGS.LYNNETTE_BABY_COUNT] + "\n");
-	}
-	//Mino sons
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00326] > 0) {
-		outputText("<b>Number of Adult Minotaur Offspring: </b>" + flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00326] + "\n", false);
-	}
-	if(flags[kFLAGS.OWCAS_ATTITUDE] > 0) outputText("<b>Owca's Attitude: </b>" + flags[kFLAGS.OWCAS_ATTITUDE] + "\n");
-	if(flags[kFLAGS.SHEILA_XP] != 0) {
-		outputText("<b>Sheila's Corruption: </b>" + sheilaScene.sheilaCorruption());
-		if(sheilaScene.sheilaCorruption() > 100) outputText(" (Yes, it can go above 100)");
-		outputText("\n");
-	}
-	if(player.findStatusAffect(StatusAffects.Kelt) >= 0 && flags[kFLAGS.KELT_BREAK_LEVEL] == 0) {
-		if(player.statusAffectv2(StatusAffects.Kelt) >= 130) outputText("<b>Submissiveness To Kelt:</b> " + 100 + "%\n", false);
-		else outputText("<b>Submissiveness To Kelt:</b> " + Math.round(player.statusAffectv2(StatusAffects.Kelt)/130*100) + "%\n", false);
-	}
-	if(telAdre.rubi.rubiAffection() > 0) outputText("<b>Rubi's Affection:</b> " + Math.round(telAdre.rubi.rubiAffection()) + "%\n");
-	if(telAdre.rubi.rubiAffection() > 0) outputText("<b>Rubi's Orifice Capacity:</b> " + Math.round(telAdre.rubi.rubiCapacity()) + "%\n");
+	if (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00281] > 0)
+		interpersonStats += "<b>Lottie's Encouragement:</b> " + telAdre.lottie.lottieMorale() + " (higher is better)\n" + "<b>Lottie's Figure:</b> " + telAdre.lottie.lottieTone() + " (higher is better)\n";
 	
-	if(flags[kFLAGS.URTA_COMFORTABLE_WITH_OWN_BODY] != 0) {
-		if(urta.urtaLove()) outputText("<b>Urta Status: </b>Lover\n");
-		else if(flags[kFLAGS.URTA_COMFORTABLE_WITH_OWN_BODY] == -1) outputText("<b>Urta Status: </b>Ashamed\n");
-		else if(flags[kFLAGS.URTA_PC_AFFECTION_COUNTER] < 30) outputText("<b>Urta Status: </b>" + Math.round(flags[kFLAGS.URTA_PC_AFFECTION_COUNTER] * 3.3333) + "% Affection\n");
-		else outputText("<b>Urta Status: </b>Ready To Confess Love\n");
+	if (mountain.salon.lynnetteApproval() != 0)
+		interpersonStats += "<b>Lynnette's Approval:</b> " + mountain.salon.lynnetteApproval() + "\n";
+		
+	if (flags[kFLAGS.OWCAS_ATTITUDE] > 0)
+		interpersonStats += "<b>Owca's Attitude:</b> " + flags[kFLAGS.OWCAS_ATTITUDE] + "\n";
+		
+	if (telAdre.rubi.rubiAffection() > 0)
+		interpersonStats += "<b>Rubi's Affection:</b> " + Math.round(telAdre.rubi.rubiAffection()) + "%\n" + "<b>Rubi's Orifice Capacity:</b> " + Math.round(telAdre.rubi.rubiCapacity()) + "%\n";
+
+	if (flags[kFLAGS.SHEILA_XP] != 0) {
+		interpersonStats += "<b>Sheila's Corruption:</b> " + sheilaScene.sheilaCorruption();
+		if (sheilaScene.sheilaCorruption() > 100)
+			interpersonStats += " (Yes, it can go above 100)";
+		interpersonStats += "\n";
 	}
 	
-	outputText("\n<b><u>Ongoing Status Effects</u></b>\n", false);
-	if(player.findStatusAffect(StatusAffects.Heat) >= 0) outputText("Heat - " + Math.round(player.statusAffectv3(StatusAffects.Heat)) + " hours remaining.\n", false);
-	if(player.findStatusAffect(StatusAffects.Rut) >= 0) outputText("Rut - " + Math.round(player.statusAffectv3(StatusAffects.Rut)) + " hours remaining.\n", false);
-	if(player.statusAffectv1(StatusAffects.Luststick) > 0) outputText("Luststick - " + Math.round(player.statusAffectv1(StatusAffects.Luststick)) + " hours remaining.\n", false);
-	if(player.statusAffectv1(StatusAffects.BlackCatBeer) > 0) outputText("Black Cat Beer - " + player.statusAffectv1(StatusAffects.BlackCatBeer) + " hours remaining.  Lust resistance 20% lower, physical resistance 25% higher.\n");
-	outputText("\n<b><u>Miscellaneous Stats</u></b>\n");
-	outputText("<b>Eggs Traded For: </b>" + flags[kFLAGS.EGGS_BOUGHT] + "\n");
-	doNext(1);
+	if (flags[kFLAGS.URTA_COMFORTABLE_WITH_OWN_BODY] != 0) {
+		if (urta.urtaLove())
+			interpersonStats += "<b>Urta Status:</b> Lover\n";
+		else if (flags[kFLAGS.URTA_COMFORTABLE_WITH_OWN_BODY] == -1)
+			interpersonStats += "<b>Urta Status:</b> Ashamed\n";
+		else if (flags[kFLAGS.URTA_PC_AFFECTION_COUNTER] < 30)
+			interpersonStats += "<b>Urta's Affection:</b> " + Math.round(flags[kFLAGS.URTA_PC_AFFECTION_COUNTER] * 3.3333) + "%\n";
+		else
+			interpersonStats += "<b>Urta Status:</b> Ready To Confess Love\n";
+	}
+	
+	if (interpersonStats != "")
+		outputText("\n<b><u>Interpersonal Stats</u></b>\n" + interpersonStats, false);
+	// End Interpersonal Stats
+	
+	// Begin Ongoing Stat Effects
+	var statEffects:String = "";
+	
+	if (player.inHeat)
+		statEffects += "Heat - " + Math.round(player.statusAffectv3(StatusAffects.Heat)) + " hours remaining\n";
+		
+	if (player.inRut)
+		statEffects += "Rut - " + Math.round(player.statusAffectv3(StatusAffects.Rut)) + " hours remaining\n";
+		
+	if (player.statusAffectv1(StatusAffects.Luststick) > 0)
+		statEffects += "Luststick - " + Math.round(player.statusAffectv1(StatusAffects.Luststick)) + " hours remaining\n";
+		
+	if (player.statusAffectv1(StatusAffects.BlackCatBeer) > 0)
+		statEffects += "Black Cat Beer - " + player.statusAffectv1(StatusAffects.BlackCatBeer) + " hours remaining (Lust resistance 20% lower, physical resistance 25% higher.)\n";
+	
+	if (statEffects != "")
+		outputText("\n<b><u>Ongoing Status Effects</u></b>\n" + statEffects, false);
+	// End Ongoing Stat Effects
+	
+	doNext(playerMenu);
 }
 
 public function lustPercent():Number {
@@ -1589,7 +1877,7 @@ public function testDynStatsEvent():void {
 	dynStats("tou", 1, "spe+", 2, "int-", 3, "lib*", 2, "sen=", 25,"lust/",2);
 	outputText("Mod: 0 1 +2 -3 *2 =25 /2\n");
 	outputText("New: "+player.str+" "+player.tou+" "+player.spe+" "+player.inte+" "+player.lib+" "+player.sens+" "+player.lust+"\n");
-	doNext(1);
+	doNext(playerMenu);
 }
 
 /**
@@ -1827,7 +2115,7 @@ public function range(min:Number, max:Number, round:Boolean = false):Number
 public function cuntChangeOld(cIndex:Number, vIndex:Number, display:Boolean):void {
 	//Virginity check
 	if(player.vaginas[vIndex].virgin) {
-		if(display) outputText("\nYour " + vaginaDescript(vIndex) + " loses it's virginity!", false);
+		if(display) outputText("\nYour " + vaginaDescript(vIndex) + " loses its virginity!", false);
 		player.vaginas[vIndex].virgin = false;
 	}        
 	//If cock is bigger than unmodified vagina can hold - 100% stretch!
@@ -1839,7 +2127,7 @@ public function cuntChangeOld(cIndex:Number, vIndex:Number, display:Boolean):voi
 				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_GAPING) outputText("<b>Your " + vaginaDescript(0) + " painfully stretches, gaping wide-open.</b>  ", false);
 				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_LOOSE) outputText("<b>Your " + vaginaDescript(0) + " is now very loose.</b>  ", false);
 				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_NORMAL) outputText("<b>Your " + vaginaDescript(0) + " is now loose.</b>  ", false);
-				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_TIGHT) outputText("<b>Your " + vaginaDescript(0) + " looses its virgin-like tightness.</b>  ", false);
+				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_TIGHT) outputText("<b>Your " + vaginaDescript(0) + " loses its virgin-like tightness.</b>  ", false);
 			}
 			player.vaginas[vIndex].vaginalLooseness++;
 		}
@@ -1853,7 +2141,7 @@ public function cuntChangeOld(cIndex:Number, vIndex:Number, display:Boolean):voi
 				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_GAPING) outputText("<b>Your " + vaginaDescript(0) + " painfully stretches, gaping wide-open.</b>  ", false);
 				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_LOOSE) outputText("<b>Your " + vaginaDescript(0) + " is now very loose.</b>  ", false);
 				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_NORMAL) outputText("<b>Your " + vaginaDescript(0) + " is now loose.</b>  ", false);
-				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_TIGHT) outputText("<b>Your " + vaginaDescript(0) + " looses its virgin-like tightness.</b>  ", false);
+				if(player.vaginas[vIndex].vaginalLooseness == VAGINA_LOOSENESS_TIGHT) outputText("<b>Your " + vaginaDescript(0) + " loses its virgin-like tightness.</b>  ", false);
 			}
 			player.vaginas[vIndex].vaginalLooseness++;
 		}

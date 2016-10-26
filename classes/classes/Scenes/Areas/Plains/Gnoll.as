@@ -15,7 +15,7 @@ package classes.Scenes.Areas.Plains
 			var damage:Number = 0;
 			var attack:Number = rand(6);
 			//return to combat menu when finished
-			doNext(1);
+			doNext(game.playerMenu);
 			//Blind dodge change
 			if(findStatusAffect(StatusAffects.Blind) >= 0 && rand(3) < 2) {
 				outputText(capitalA + short + " completely misses you with a blind attack!\n", false);
@@ -129,7 +129,7 @@ package classes.Scenes.Areas.Plains
 			var damage:Number = 0;
 			var attack:Number = rand(6);
 //return to combat menu when finished
-			doNext(1);
+			doNext(game.playerMenu);
 //Blind dodge change
 			if (findStatusAffect(StatusAffects.Blind) >= 0 && rand(3) < 2) {
 				outputText(capitalA + short + " completely misses you with a blind attack!\n", false);
@@ -247,6 +247,7 @@ package classes.Scenes.Areas.Plains
 				combatRoundOver();
 			}
 //If grappling...
+/* Grappling was never included
 			if (game.gameState == 2) {
 				//temperment - used for determining grapple behaviors
 				//0 - avoid grapples/break grapple
@@ -261,12 +262,13 @@ package classes.Scenes.Areas.Plains
 				outputText("Lust Placeholder!!", false);
 				doNext(3);
 			}
+*/
 			if (rand(2) == 0) gnollTease();
 			else {
 				var damage:Number = 0;
 				var attack:Number = rand(6);
 //return to combat menu when finished
-				doNext(1);
+				doNext(game.playerMenu);
 //Blind dodge change
 				if (findStatusAffect(StatusAffects.Blind) >= 0 && rand(3) < 2) {
 					outputText(capitalA + short + " completely misses you with a blind attack!\n", false);

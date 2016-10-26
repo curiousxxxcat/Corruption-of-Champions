@@ -1,7 +1,9 @@
-﻿//Set custom stats and display a blurb about them.  No need to set up buttons, handled outside in 10045
+﻿//Moved to CharCreation so all character creation functions are in one file and are not inside the game engine itself
+/*
+//Set custom stats and display a blurb about them.  No need to set up buttons, handled outside in 10045
 public function customPCSetup():void {
 	//Set as having history perk
-	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00418] = 1;
+	flags[kFLAGS.HISTORY_PERK_SELECTED] = 1;
 	
 	if (player.short == "TestChar")
 	{
@@ -10,18 +12,7 @@ public function customPCSetup():void {
 		player.createBreastRow();
 		player.createVagina();
 		player.breastRows[0].breastRating = 5;
-		
-		player.createCock();
-		player.cocks[0].cockLength = 10;
-		player.cocks[0].cockThickness = 2;
-		player.cocks[0].cockType = CockTypesEnum.TENTACLE;
-		player.cocks[0].knotMultiplier = 1.5;
-		
-		player.createCock();
-		player.cocks[1].cockLength = 20;
-		player.cocks[1].cockThickness = 2;
-		player.cocks[1].cockType = CockTypesEnum.HORSE
-		player.cocks[1].knotMultiplier = 1.5;
+		player.breastRows[0].lactationMultiplier = 2;
 	
 		player.clitLength = 0.5;
 		player.fertility = 50;
@@ -33,7 +24,7 @@ public function customPCSetup():void {
 		player.spe = 100;
 		player.inte = 100;
 		player.sens = 100;
-		player.lib = 100;
+		player.lib = 30;
 		player.cor = 71;
 		notes = "Cheater!";
 		player.HP = maxHP();
@@ -74,7 +65,10 @@ public function customPCSetup():void {
 		player.hairType = 4;
 		//Bow skill 100 (Sorry Kelt, I can't hear your insults over my mad Robin Hood skillz)
 		player.createStatusAffect(StatusAffects.Kelt,100,0,0,0);
-		player.createKeyItem("Bow",0,0,0,0);
+		player.createKeyItem("Bow", 0, 0, 0, 0);
+		
+		player.createKeyItem("Zetaz's Map", 0, 0, 0, 0);
+		
 		inventory.createStorage();
 		inventory.createStorage();
 		inventory.createStorage();
@@ -87,6 +81,8 @@ public function customPCSetup():void {
 		player.createKeyItem("Equipment Rack - Armor",0,0,0,0);
 		flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00255] = 1;
 	
+		player.createStatusAffect(StatusAffects.KnowsWhitefire, 0, 0, 0, 0);
+		
 		player.createPerk(PerkLib.HistoryFighter, 		0, 0, 0, 0);
 		player.createPerk(PerkLib.Acclimation, 			0, 0, 0, 0);
 		player.createPerk(PerkLib.Berzerker, 			0, 0, 0, 0);
@@ -111,17 +107,20 @@ public function customPCSetup():void {
 		player.createPerk(PerkLib.SensualLover, 		0, 0, 0, 0);
 		player.createPerk(PerkLib.SensualLover, 		0, 0, 0, 0);
 		
-		player.createStatusAffect(StatusAffects.Heat, 10, 15, 96, 0);
-		
 		flags[kFLAGS.VALARIA_AT_CAMP] = 1;
 		
 		player.gems += 30000;
 		outputText("You're something of a powerhouse, and you wager that between your odd mutations, power strong enough to threaten the village order, and talents, you're the natural choice to send through the portal.");
 		
-		inventory.takeItem(consumables.KITGIFT);
+		player.itemSlot4.unlocked = true;
+		player.itemSlot5.unlocked = true;
+		player.itemSlot1.setItemAndQty(consumables.P_LBOVA, 5);
+		player.itemSlot2.setItemAndQty(consumables.L_PNKEG, 1);
+		player.itemSlot3.setItemAndQty(consumables.OVIELIX, 1);
+		player.itemSlot4.setItemAndQty(consumables.REPTLUM, 1);
 		
 		player.createStatusAffect(StatusAffects.TelAdre, 1, 0, 0, 0);
-		player.createStatusAffect(StatusAffects.MetWhitney, 2, 0, 0, 0);
+		//player.createStatusAffect(StatusAffects.MetWhitney, 2, 0, 0, 0);
 		
 		// Izma
 		flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00238] = 1;
@@ -159,20 +158,23 @@ public function customPCSetup():void {
 		flags[kFLAGS.MILK_SIZE] = 2;
 		
 		// Rubi Testing
-		flags[kFLAGS.RUBI_SUITCLOTHES] = 1;
-		flags[kFLAGS.RUBI_FETISH_CLOTHES] = 1;
-		flags[kFLAGS.RUBI_GREEN_ADVENTURER] = 1;
-		flags[kFLAGS.RUBI_TUBE_TOP] = 1;
-		flags[kFLAGS.RUBI_BODYSUIT] = 1;
-		flags[kFLAGS.RUBI_LONGDRESS] = 1;
-		flags[kFLAGS.RUBI_TIGHT_PANTS] = 1;
-		flags[kFLAGS.RUBI_NURSE_CLOTHES] = 1;
-		flags[kFLAGS.RUBI_SWIMWEAR] = 1;
-		flags[kFLAGS.RUBI_BIMBO_MINIDRESS] = 1;
-		flags[kFLAGS.RUBI_BONDAGE_STRAPS] = 1;
-		flags[kFLAGS.RUBI_INQUISITORS_CORSET] = 1;
-		flags[kFLAGS.RUBI_AFFECTION] = 100;
+		//flags[kFLAGS.RUBI_SUITCLOTHES] = 1;
+		//flags[kFLAGS.RUBI_FETISH_CLOTHES] = 1;
+		//flags[kFLAGS.RUBI_GREEN_ADVENTURER] = 1;
+		//flags[kFLAGS.RUBI_TUBE_TOP] = 1;
+		//flags[kFLAGS.RUBI_BODYSUIT] = 1;
+		//flags[kFLAGS.RUBI_LONGDRESS] = 1;
+		//flags[kFLAGS.RUBI_TIGHT_PANTS] = 1;
+		//flags[kFLAGS.RUBI_NURSE_CLOTHES] = 1;
+		//flags[kFLAGS.RUBI_SWIMWEAR] = 1;
+		//flags[kFLAGS.RUBI_BIMBO_MINIDRESS] = 1;
+		//flags[kFLAGS.RUBI_BONDAGE_STRAPS] = 1;
+		//flags[kFLAGS.RUBI_INQUISITORS_CORSET] = 1;
+		flags[kFLAGS.RUBI_AFFECTION] = 75;
 		flags[kFLAGS.RUBI_INTRODUCED] = 1;
+		
+		// Bazaar
+		flags[kFLAGS.BAZAAR_ENTERED] = 1;
 	}
 	if(player.short == "Vahdunbrii") {
 		player.createBreastRow();
@@ -244,8 +246,8 @@ public function customPCSetup():void {
 		player.clitLength = 0.2;
 		player.femininity = 85;
 		//Beautiful Sword
-		player.weapon = weapons.B_SWORD;
-		player.armor = armors.SSARMOR;
+		player.setWeapon(weapons.B_SWORD);
+		player.setArmor(armors.SSARMOR);
 		//Bow skill 100 (Sorry Kelt, I can't hear your insults over my mad Robin Hood skillz)
 		player.createStatusAffect(StatusAffects.Kelt,100,0,0,0);
 		player.createKeyItem("Bow",0,0,0,0);
@@ -286,9 +288,9 @@ public function customPCSetup():void {
 		outputText("You're something of a powerhouse, and you wager that between your odd mutations, power strong enough to threaten the village order, and talents, you're the natural choice to send through the portal.");
 	}
 	if(player.short == "Leah") {
-		player.armor = armors.LEATHRA;
-		if(player.findPerk(PerkLib.WizardsEndurance) < 0) player.createPerk(PerkLib.WizardsEndurance,30,0,0,0);
-		player.weapon = weapons.W_STAFF;
+		player.setArmor(armors.LEATHRA);
+//		if(player.findPerk(PerkLib.WizardsEndurance) < 0) player.createPerk(PerkLib.WizardsEndurance,30,0,0,0);
+		player.setWeapon(weapons.W_STAFF);
 		player.itemSlot1.setItemAndQty(consumables.B__BOOK, 1);
 		player.itemSlot2.setItemAndQty(consumables.W__BOOK, 2);
 
@@ -508,10 +510,10 @@ public function customPCSetup():void {
 		player.earType = EARS_DOG;
 		////"	"I'm picturing a tall, feminine German-Shepherd morph, solid white and gorgeous. She has both sets of genitals, with no balls, and a large set of breasts. She wields a large claymore and is dressed in a full chain vest and pants. 
 		//large claymore (and the strength to use it)
-		player.weapon = weapons.CLAYMOR;
+		player.setWeapon(weapons.CLAYMOR);
 		player.str = 40;
 		//full chain
-		player.armor = armors.FULLCHN;
+		player.setArmor(armors.FULLCHN);
 		outputText("As a German-Shepherd morph, the rest of the village never really knew what to do with you... until they sent you through the portal to face whatever's on the other side...");
 	}
 	if(player.short == "Galatea") {
@@ -540,10 +542,10 @@ public function customPCSetup():void {
 
 		//Equipment: 
     	//Weapon: Warhammer
-		player.weapon = weapons.WARHAMR;
+		player.setWeapon(weapons.WARHAMR);
     	//Armor: Lusty shit
-		player.armor = armors.LMARMOR;
-		player.createPerk(PerkLib.SluttySeduction, 10 + flags[kFLAGS.BIKINI_ARMOR_BONUS], 0, 0, 0);
+		player.setArmor(armors.LMARMOR);
+		//player.createPerk(PerkLib.SluttySeduction, 10 + flags[kFLAGS.BIKINI_ARMOR_BONUS], 0, 0, 0);
 
 		//Stats: (if possible)
   		//Strength: 90
@@ -589,7 +591,7 @@ public function customPCSetup():void {
 		//Fallen Angel gear (complete with flaming sword and light arrows)
 		//dark skin tone
 		player.skinTone = "dark";
-		player.weapon = weapons.S_BLADE;
+		player.setWeapon(weapons.S_BLADE);
 
 		//Elfin ears
 		player.earType = EARS_ELFIN;
@@ -597,7 +599,7 @@ public function customPCSetup():void {
 		//human tongue
 		//human face
 		//no tail, fur, or scales"
-		flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00418] = 0;
+		flags[kFLAGS.HISTORY_PERK_SELECTED] = 0;
 		player.str = 25;
 		player.tou = 25;
 		player.inte = 25;
@@ -661,9 +663,9 @@ public function customPCSetup():void {
 			
 		player.skinTone = "ghostly pale";
 		player.createPerk(PerkLib.Incorporeality, 0, 0, 0, 0);
-		player.armor = armors.I_CORST;
+		player.setArmor(armors.I_CORST);
 		player.level = 5;
-		player.weapon = weapons.W_STAFF;
+		player.setWeapon(weapons.W_STAFF);
 
 		player.createPerk(PerkLib.Regeneration, 0, 0, 0, 0);
 		player.createPerk(PerkLib.Smart, 0, 0, 0, 0);
@@ -726,9 +728,9 @@ public function customPCSetup():void {
 		player.skinTone = "light";
 		//Starting Equipment: Wizard's Robe, Wizards Staff, and one White and one Black book in inventory.
 		//equipArmor("inquisitor's corset",false);
-		player.armor = armors.W_ROBES;
+		player.setArmor(armors.W_ROBES);
 
-		player.weapon = weapons.W_STAFF;
+		player.setWeapon(weapons.W_STAFF);
 		//Gift Perk- Smarts
 		player.createPerk(PerkLib.Smart,0,0,0,0);
 		//History- Schooling
@@ -836,8 +838,8 @@ public function customPCSetup():void {
 		//Posted everything above sorry if it wasn't supposed to go there.
 		//starting equipment: black leather armor surrounded by voluminous robes
 		//starting weapon: Spellblade if not gamebreaking otherwise spear is fine.
-		player.armor = armors.LTHRROB;
-		player.weapon = weapons.S_BLADE;
+		player.setArmor(armors.LTHRROB);
+		player.setWeapon(weapons.S_BLADE);
 
 	}
 	if(player.short == "Aria") {
@@ -880,8 +882,8 @@ public function customPCSetup():void {
 		player.createPerk(PerkLib.PureAndLoving,0,0,0,0);
 		player.createPerk(PerkLib.SensualLover,0,0,0,0);
 		player.createPerk(PerkLib.OneTrackMind,0,0,0,0);
-		player.weapon = weapons.SUCWHIP;
-		player.armor = armors.NURSECL;
+		player.setWeapon(weapons.SUCWHIP);
+		player.setArmor(armors.NURSECL);
 
 	}
 	if(player.short == "Lucina") {
@@ -966,8 +968,8 @@ public function customPCSetup():void {
 		player.tongueType = TONUGE_DEMONIC;
 		player.nippleLength = 0.1;
 		//Starting with an Inscribed Spellblade and Bondage Straps.	Charaun
-		player.armor = armors.BONSTRP;
-		player.weapon = weapons.S_BLADE;
+		player.setArmor(armors.BONSTRP);
+		player.setWeapon(weapons.S_BLADE);
 
 	}
 	if(player.short == "Navorn") {
@@ -977,9 +979,9 @@ public function customPCSetup():void {
 		player.createPerk(PerkLib.Dragonfire,0,0,0,0);
 		//equipment: Large claymore, and platemail
 		//-Chainmail armor
-		player.armor = armors.FULLPLT;
+		player.setArmor(armors.FULLPLT);
 		//-Large Claymore (i understand 40 Strength is need so if he could start with that would be great if not hit the gyms)"
-		player.weapon = weapons.CLAYMOR;
+		player.setWeapon(weapons.CLAYMOR);
 
 		player.str = 41;
 		//femininity: 95
@@ -1074,7 +1076,7 @@ public function customPCSetup():void {
 		if(!player.hasVagina()) player.createVagina();
 		player.breastRows[0].breastRating = 4;
 		player.hairLength = 10;
-		player.armor = armors.GELARMR;
+		player.setArmor(armors.GELARMR);
 		player.gender = 3;
 	}
 	if(player.short == "Isaac") {
@@ -1144,9 +1146,9 @@ public function customPCSetup():void {
 		//equipment;
 		//- katana (don't suppose you could rename the katana 'Zon'ith' could you? ~.^)
 		//Items: Katana, Leather Armor
-		player.weapon = weapons.KATANA;
+		player.setWeapon(weapons.KATANA);
 		//- robes
-		player.armor = armors.M_ROBES;
+		player.setArmor(armors.M_ROBES);
 	}
 	//529315025394020	Character Creation	Neuter (no genitals) "50-50 masculine-feminine ratio. Shark teeth."	Rope
 	if(player.short == "Rope") {
@@ -1182,10 +1184,10 @@ public function customPCSetup():void {
 		player.skinType = SKIN_TYPE_FUR;
 		player.skinDesc = "fur";
 		//-Chainmail armor
-		player.armor = armors.FULLCHN;
+		player.setArmor(armors.FULLCHN);
 		//-Large Claymore (i understand 40 Strength is need so if he could start with that would be great if not hit the gyms)"
 		player.str = 41;
-		player.weapon = weapons.CLAYMOR;
+		player.setWeapon(weapons.CLAYMOR);
 
 	}
 	if(player.short == "Annetta") {
@@ -1228,7 +1230,7 @@ public function customPCSetup():void {
 		player.breastRows[0].lactationMultiplier += 20;
 		
 		//Equipment: Starts with spiked fist
-		player.weapon = weapons.S_GAUNT;
+		player.setWeapon(weapons.S_GAUNT);
 		//Perks: Fighter and Lotsa Jizz"	Annetta
 		player.createPerk(PerkLib.HistoryFighter,0,0,0,0);
 		player.createPerk(PerkLib.MessyOrgasms, 1.25, 0, 0, 0);
@@ -1314,8 +1316,8 @@ public function customPCSetup():void {
 		
 		//While we're on the subject, would glowing eyes be possible? I'll take normal eyes if not.
 		//Beautiful Sword
-		player.weapon = weapons.B_SWORD;
-		player.armor = armors.SSARMOR;
+		player.setWeapon(weapons.B_SWORD);
+		player.setArmor(armors.SSARMOR);
 		//Beautiful Armor (Or just Spider Silk Armor)
 		//Pure Pearl
 		//Tallness 84 (8 feet 0 inches)
@@ -1416,8 +1418,8 @@ public function customPCSetup():void {
 		player.wingType = WING_TYPE_BAT_LIKE_LARGE;
 		player.wingDesc = "large, bat-like";
 		//Items: Katana, Leather Armor
-		player.weapon = weapons.KATANA;
-		player.armor = armors.URTALTA;
+		player.setWeapon(weapons.KATANA);
+		player.setArmor(armors.URTALTA);
 		//Key Item: Deluxe Dildo
 		player.createKeyItem("Deluxe Dildo",0,0,0,0);
 	}
@@ -1474,8 +1476,8 @@ public function customPCSetup():void {
 		//Vulva Type = Equine
 		
 		//Beautiful Sword & Wizard Robe
-		player.weapon = weapons.B_SWORD;
-		player.armor = armors.W_ROBES;
+		player.setWeapon(weapons.B_SWORD);
+		player.setArmor(armors.W_ROBES);
 		//Herm, lots of jizz.
 		player.femininity -= 2;
 		player.cumMultiplier = 5.5;
@@ -1515,4 +1517,4 @@ public function customPCSetup():void {
 		player.teaseLevel = 3;
 	}
 }
-
+*/

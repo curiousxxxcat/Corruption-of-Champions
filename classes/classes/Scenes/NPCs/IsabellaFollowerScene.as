@@ -86,9 +86,9 @@ internal function isabellaMoovesInGreeting():void {
 		outputText("  Isabella takes a deep breath before rising to her full, seven-foot-plus height. \"<i>" + player.short + ", I have thought long and hard on zis,</i>\" she begins.  \"<i>I vould like to join you at your camp and assist you on your quest.  It seems a worthy cause.</i>\"  The tall cow-girl brushes her unruly red locks back and admits, \"<i>I could use ze companionship...</i>\"\n\n", false);
 		
 		outputText("Well, you didn't expect that.  While you muse over the idea, Isabella sashays up to give you a hug.  Her tits ", false);
-		if(player.tallness < 80) outputText("crush around your head, smothering you in heavy, milk-filled breast-flesh", false);
+		if(player.tallness < 80) outputText("crush around your head, smothering you in heavy, milk-filled breast flesh", false);
 		else outputText("squeeze against your " + chestDesc() + ", the four hard nipples capping each milk-flooded breast pressing on your own.", false);
-		outputText("  You blush and squirm a little from the dark-hued warrioress' affections, yet you endure them all the same.\n\n", false);
+		outputText("  You blush and squirm a little from the dark-hued warrioress's affections, yet you endure them all the same.\n\n", false);
 		
 		outputText("Do you invite her to camp?", false);
 		doYesNo(moveTheBitchIn,turnDownIsabellaFollower);
@@ -101,11 +101,13 @@ internal function isabellaMoovesInGreeting():void {
 		//(Raise threshold for next occurance to current affection + 15)
 		//[Accept - Use standard] [Normal Menu Options]
 		var suck:Function = null;
-		if(player.hasCock()) {
+		if (player.hasCock()) {
 			if(player.cocks[player.shortestCockIndex()].cockLength < 9)
 				suck = isabellaScene.izzyGivesSmallWangsFreeOral;
 		}
-		choices("Talk",isabellaScene.talkWithIsabella,"Drink",isabellaScene.nomOnMommaIzzysTits,"Get Licked",suck,"Fight 4 Rape",isabellaScene.fightIsabella,"Offer Oral",isabellaScene.volunteerToSlurpCowCunt,"Accept Offer",moveTheBitchIn,"",0,"",0,"",0,"Leave",13);
+		choices("Talk", isabellaScene.talkWithIsabella, "Drink", isabellaScene.nomOnMommaIzzysTits, "Get Licked", suck,
+			"Fight 4 Rape", isabellaScene.fightIsabella, "Offer Oral", isabellaScene.volunteerToSlurpCowCunt, "Accept Offer", moveTheBitchIn,
+			"", null, "", null, "", null, "Leave", camp.returnToCampUseOneHour);
 	}
 	flags[kFLAGS.ISABELLA_TIMES_OFFERED_FOLLOWER]++;
 }
@@ -122,7 +124,9 @@ private function turnDownIsabellaFollower():void {
 		if(player.cocks[player.shortestCockIndex()].cockLength < 9)
 			suck = isabellaScene.izzyGivesSmallWangsFreeOral;
 	}
-	choices("Talk",isabellaScene.talkWithIsabella,"Drink",isabellaScene.nomOnMommaIzzysTits,"Get Licked",suck,"Fight 4 Rape",isabellaScene.fightIsabella,"Offer Oral",isabellaScene.volunteerToSlurpCowCunt,"",0,"",0,"",0,"",0,"Leave",13);
+	choices("Talk", isabellaScene.talkWithIsabella, "Drink", isabellaScene.nomOnMommaIzzysTits, "Get Licked", suck,
+		"Fight 4 Rape", isabellaScene.fightIsabella, "Offer Oral", isabellaScene.volunteerToSlurpCowCunt, "", null,
+		"", null, "", null, "", null, "Leave", camp.returnToCampUseOneHour);
 }
 //Move Ze Bitch In! 
 private function moveTheBitchIn():void {
@@ -137,7 +141,7 @@ private function moveTheBitchIn():void {
 	flags[kFLAGS.ISABELLA_AFFECTION] = 100;
 	flags[kFLAGS.ISABELLA_FOLLOWER_ACCEPTED] = 1;
 	flags[kFLAGS.ISABELLA_PLAINS_DISABLED] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Follower Summoned Text: 
@@ -157,14 +161,22 @@ public function callForFollowerIsabella():void {
 		if(isabellaAccent()) outputText("Hi " + player.short + "!  Vat do you need from Izabella?", false);
 		else outputText("Hiya " + player.short + "!  Anything I can help you with?", false);
 		outputText("</i>\"", false);
-		if(player.hasCock()) {
-			if(flags[kFLAGS.ISABELLA_BLOWJOBS_DISABLED] == 0) {
-				outputText("\n\nYou could ask Isabella not to suck you off in the morning. (In Sex Menu)", false);
+		if (player.hasCock()) {
+			if (player.shortestCockLength() > 9)
+			{
+				outputText("\n\nSadly, you're too big for Isabella to be interested in providing you with morning blowjobs.");
 			}
-			else {
-				outputText("\n\nYou could ask Isabella to give you blowjobs in the morning. (In Sex Menu)", false);
+			else
+			{
+				if (flags[kFLAGS.ISABELLA_BLOWJOBS_DISABLED] == 0) 
+				{
+					outputText("\n\nYou could ask Isabella not to suck you off in the morning. (In Sex Menu)", false);
+				}
+				else 
+				{
+					outputText("\n\nYou could ask Isabella to give you blowjobs in the morning. (In Sex Menu)", false);
+				}
 			}
-			if(player.shortestCockLength() > 9) outputText("  Sadly, you're too big for her to be interested in sucking you off right now.", false);
 		}
 	}
 	else
@@ -184,7 +196,8 @@ public function callForFollowerIsabella():void {
 		pro = isabellaBurps;
 		outputText("\n\n<b>Isabella would probably drink a bottle of Pro Bova if you gave it to her.</b>", false);
 	}
-	choices("Accent Coach", accent, "Get Milk", milk, "GiveProBova", pro, "Sex", campIzzySexMenu, "Spar", isabellaSparMenu, "", 0, "", 0, "", 0, "", 0, "Back", camp.campLoversMenu);
+	choices("Accent Coach", accent, "Get Milk", milk, "GiveProBova", pro, "Sex", campIzzySexMenu, "Spar", isabellaSparMenu,
+		"", null, "", null, "", null, "", null, "Back", camp.campLoversMenu);
 	
 	if (flags[kFLAGS.FOLLOWER_AT_FARM_ISABELLA] == 0 && flags[kFLAGS.FARM_CORRUPTION_STARTED] == 1) addButton(5, "Farm Work", sendToFarm);
 	if (flags[kFLAGS.FOLLOWER_AT_FARM_ISABELLA] == 1) addButton(5, "Go Camp", backToCamp);
@@ -206,7 +219,7 @@ private function sendToFarm():void
 	
 	flags[kFLAGS.FOLLOWER_AT_FARM_ISABELLA] = 1;
 	
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function backToCamp():void
@@ -251,7 +264,8 @@ private function campIzzySexMenu():void {
 	if(player.hasCock() && player.lust >= 33) hotdog = repeatGermanBratwurstInCamp;
 	var fuckHer:Function = null;
 	if(player.cockThatFits(164) >= 0 && player.lust >= 33) fuckHer = fuckIsabella;
-	choices(bjTogText,bjToggle,"Drink Milk",isabellaScene.nomOnMommaIzzysTits,"Hotdog",hotdog,"Service Her",isabellaScene.volunteerToSlurpCowCunt,"TentacleSex",tentacle,"Get Sucked",getSucked,"Fuck Her",fuckHer,"",0,"",0,"Back",callForFollowerIsabella);
+	choices(bjTogText, bjToggle, "Drink Milk", isabellaScene.nomOnMommaIzzysTits, "Hotdog", hotdog, "Service Her", isabellaScene.volunteerToSlurpCowCunt, "TentacleSex", tentacle,
+		"Get Sucked", getSucked, "Fuck Her", fuckHer, "", null, "", null, "Back", callForFollowerIsabella);
 }
 
 
@@ -334,7 +348,7 @@ private function isabellasAccentCoaching():void {
 	if(flags[kFLAGS.ISABELLA_ACCENT_TRAINING_PERCENT] > 100) flags[kFLAGS.ISABELLA_ACCENT_TRAINING_PERCENT] = 100;
 	//4 to 12 hour cooldown
 	flags[kFLAGS.ISABELLA_ACCENT_TRAINING_COOLDOWN] = 4 + rand(13);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Morning Wakeup Call 
@@ -403,7 +417,7 @@ public function isabellaMorningWakeupCall():void {
 	outputText("You slump down while the tension oozes from your frame.  By the time you can move again, Isabella has walked off towards her section of camp.  Is it just you, or does her ass have a particularly sensuous sway this morning?", false);
 	player.orgasm();
 	dynStats("sen", -1.5);
-	doNext(1);
+	doNext(playerMenu);
 }
 //No BJ's Plz 
 private function toggleIsabellasMorningWoodChopping():void {
@@ -507,7 +521,7 @@ private function repeatGermanBratwurstInCamp():void {
 		if(silly() && (player.lust < 50 || player.lib <= 20)) {
 			outputText("  Your cock immediately deflates from her laughable doujin-tier pillow talk and falls out of her buttcheeks.  You'll be posting that line to 4chan later for laughs.", false);
 			dynStats("lus", -99);
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 			return;
 		}
 		outputText("  She doesn't even let you answer.  Her back-and-forth flexing abruptly halts as she switches to an up and down motion, hotdogging your " + cockDescript(x) + " in the tight vice of her spotted backside.\n\n", false);
@@ -516,7 +530,7 @@ private function repeatGermanBratwurstInCamp():void {
 		
 		if(isabellaAccent()) outputText("Isabella roughly lifts up and tuts, \"<i>No, zat vill not do.</i>\"  ", false);
 		else outputText("Isabella roughly lifts up and tuts, \"<i>No, that will not do.</i>\"  ", false);
-		outputText("You whine, trembling beneath her as she denies you penetration.  Then, she changes her angle and presses down.  Her pillowy cheeks slide around your cock, hugging it tightly as the cow-girl's wrinkled pucker comes to rest atop your " + cockHead(x) + ".  You both gasp at the sudden, electric sensation, immobilized by the new feeling for only the briefest of moments.  Then, Isabella is pressing down, her anus dilating to allow your lust-swollen shaft entrance to her back-door.  Her asshole is even tighter than her butt's cleavage was moments before, and as the cinching, puckered ring works its way towards your base, you know you won't be able to cum until it loosens a little.\n\n", false);
+		outputText("You whine, trembling beneath her as she denies you penetration.  Then, she changes her angle and presses down.  Her pillowy cheeks slide around your cock, hugging it tightly as the cow-girl's wrinkled pucker comes to rest atop your " + player.cockHead(x) + ".  You both gasp at the sudden, electric sensation, immobilized by the new feeling for only the briefest of moments.  Then, Isabella is pressing down, her anus dilating to allow your lust-swollen shaft entrance to her back-door.  Her asshole is even tighter than her butt's cleavage was moments before, and as the cinching, puckered ring works its way towards your base, you know you won't be able to cum until it loosens a little.\n\n", false);
 	
 		outputText("The owner of the perfectly-tight pucker asks, \"<i>Do I have to worry about you cumming yet?  No?  I didn't think so.</i>\"  She wiggles her rump against your groin, grinding those sweat-soaked buns on your hips and belly for a moment hard enough to rock the chair.  Your " + cockDescript(x) + " tries to dribble, tries to leak, but it's clutched so tightly that not even the smallest trickle of release can escape.  Slowly at first, the bovine beauty begins sliding up, dragging that ring around you with agonizing slowness and allowing the bottom-most portions to feel the sensual caress of her cheeks once again.  Then, once she's just below the tip, she plunges down, faster this time, and you feel almost like your cock is being crushed from stem to stern.\n\n", false);
 		
@@ -539,7 +553,7 @@ private function repeatGermanBratwurstInCamp():void {
 		if(isabellaAccent()) outputText("\"<i>Oh my, does mein ass feel zat good on ze huge, pervy thing you call a dick?</i>\" teases Isabella as she flexes one side then the other, forcing your " + cockDescript(x) + " to bend in response to the two dueling masses of her booty cheeks.  She keeps talking, \"<i>You have such a naughty look on your face, drooling all over yourself like a dog.  Is that what having a big dick does to you?  Does it make you so horny and weak-willed that you'll waste your cum all over my ass?</i>\"  Isabella stops her back-and-forth flexing in order to begin bouncing up and down.  Her soft, flexing buns caress your " + cockDescript(x) + " from base ", false);
 		else outputText("\"<i>Oh my, does my ass-job feel that good on that huge, pervy thing you call a dick?</i>\" teases Isabella as she flexes one side then the other, forcing your " + cockDescript(x) + " to bend in response to the two dueling masses of her booty cheeks.  She keeps talking, \"<i>You have such a naughty look on your face, drooling all over yourself like a dog.  Is that what having a big dick does to you?  Does it make you so horny and weak-willed that you'll waste your cum all over my ass?</i>\"  Isabella stops her back-and-forth flexing in order to begin bouncing up and down.  Her soft, flexing buns caress your " + cockDescript(x) + " from base ", false);
 		if(player.cocks[x].cockLength > 48) outputText("to as high as she can reach on the towering shaft's length", false);
-		else outputText("to " + cockHead(x), false);
+		else outputText("to " + player.cockHead(x), false);
 		outputText(" as she does so, drawing an anguished moan from your shivering, lust-overloaded body.\n\n", false);
 	
 		outputText("You grab back onto the chair as pleasure sweeps through your well-endowed body, whimpering, \"<i>G-gonna... gonna... gonna-cum-soon...</i>\"\n\n", false);
@@ -551,7 +565,7 @@ private function repeatGermanBratwurstInCamp():void {
 		if(isabellaAccent()) outputText(".  She teases you with a slight undercurrent of disdain in her melodious voice, \"<i>Cumming already?  Very vell, go on zen.  Let your disgusting, obscene cock control you.  I can feel it trickling and dribbling on mein bum.  Do vat your fat, over-sized dick commands and cum all over Momma Isabella's butt.  Big, thick pricks always seem to cum vay too fast.</i>\"\n\n", false);
 		else outputText(".  She teases you with a slight undercurrent of disdain in her melodious voice, \"<i>Cumming already?  Very well, go on then.  Let your disgusting, obscene cock control you.  I can feel it trickling and dribbling on my bum.  Do what your fat, over-sized dick commands and cum all over Momma Isabella's butt.  Big, thick pricks always seem to cum way too fast.</i>\"\n\n", false);
 		
-		outputText("You shudder, trying to hold still and prolong the pleasure, but " + sMultiCockDesc() + " is jerking up and down, defiantly grinding itself through the hot, slippery valley of Isabella's ass.  The " + cockHead(x) + " bounces above like a flag-pole in a hurricane, and then you can bear it no longer.  You're cumming... cumming so very hard.  Your whole body locks tight, back arching slightly from the strain.  Isabella slides down to the bottom of your convulsing pole and resumes rolling your " + cockDescript(x) + " between her bronzed ass-cheeks, causing your eruptions of seed to form lazy 'S' shapes in the air before splattering down on her heaving bottom.", false);
+		outputText("You shudder, trying to hold still and prolong the pleasure, but " + sMultiCockDesc() + " is jerking up and down, defiantly grinding itself through the hot, slippery valley of Isabella's ass.  The " + player.cockHead(x) + " bounces above like a flag-pole in a hurricane, and then you can bear it no longer.  You're cumming... cumming so very hard.  Your whole body locks tight, back arching slightly from the strain.  Isabella slides down to the bottom of your convulsing pole and resumes rolling your " + cockDescript(x) + " between her bronzed ass-cheeks, causing your eruptions of seed to form lazy 'S' shapes in the air before splattering down on her heaving bottom.", false);
 		if(player.cumQ() <= 200) outputText("  Her ass gets a nice glaze from your over-sized cock, though the cow-girl stands up just before you finish, letting the last spurt weakly drip on your belly.", false);
 		else if(player.cumQ() <= 500) outputText("  Her ass is completely glazed by your over-sized cock's heavy cum-flow in short order, though she stands up off of you to let you spurt the last few drizzles on your own belly.", false);
 		else {
@@ -565,7 +579,7 @@ private function repeatGermanBratwurstInCamp():void {
 	flags[kFLAGS.ISABELLA_TIMES_HOTDOGGED]++;
 	player.orgasm();
 	dynStats("lib", -1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function izzyTentacleRapeBool():Boolean {
@@ -638,8 +652,8 @@ private function tentacleBoneFollowerIzzy():void {
 	//[if wings]
 	if(player.canFly() && player.str >= 90) {
 		outputText("\"<i>Time for a wild ride, sweetheart.</i>\"  You flap your " + player.wingDesc + " wings, mobilizing all your muscles in order to lift yourself off.  The weight you are burdened with is absurdly heavy, and you groan and pant in your attempts at taking off; eventually, you manage to part from the possessive surface little by little, grunting in triumph as you see your redoubled effort paying off; soon you're way up in the sky and Isabella's dickflesh prison is wobbling back and forth as you drag her under you. If it weren't for your colossal tentacle strength, the poor cow-girl would probably crash to the earth in a matter of seconds.  You keep ascending until Isabella realizes how high you both are and shrieks.  \"<i>", false);
-		if(isabellaAccent()) outputText("But...but vait!  I'm going to fall- I'm going to...</i>\"\n\n", false);
-		else outputText("But...but wait!  I'm going to fall- I'm going to...</i>\"\n\n", false);
+		if(isabellaAccent()) outputText("But... but vait!  I'm going to fall- I'm going to...</i>\"\n\n", false);
+		else outputText("But... but wait!  I'm going to fall- I'm going to...</i>\"\n\n", false);
 		
 		outputText("You firmly assure that you're holding her all right, that you're never going to let her down and she should be ashamed to doubt your steadfast tentacle peckers.  You fly left and right, doing aimless zigzags and alternatively swooping down and rising up as you gain more and more momentum; this cocktail of insane speed, near-danger, and sexual teasing is sending shudders down your spine.  You laugh in exhilaration, flying everywhere and marvelling at the sight of Mareth lying below while you savagely grope your partner.\n\n", false);
 	}
@@ -648,7 +662,7 @@ private function tentacleBoneFollowerIzzy():void {
 	
 	//[if demon tongue]
 	if(player.tongueType == TONUGE_DEMONIC || player.tongueType == TONUGE_SNAKE || player.tongueType == TONUGE_DRACONIC) {
-		outputText("Using your long, extensible tongue, you decide to take a lick at her body.  Your tongue darts forward and gently locates her supple tits; you bring Isabelle closer with your vigorous tentacle dicks and start suckling at her breasts, drinking drops of her tasty milk one at a time.  Your constant stimulations arouse her more and more, and soon her nipples are releasing a regular trickle of her essence. You mercilessly drink her, probing your tongue around either of her udders as if to dig deeper to the source of this wonderful ambrosia. You keep gulping milk until you reach satiation, and then you drink some more. It's sweet, savoury and invigorating; you could feed off her breasts for days.  You suckle her until her body shakes from the steady tactile provocation, before darting your tongue back.\n\n", false);
+		outputText("Using your long, extensible tongue, you decide to take a lick at her body.  Your tongue darts forward and gently locates her supple tits; you bring Isabelle closer with your vigorous tentacle dicks and start suckling at her breasts, drinking drops of her tasty milk one at a time.  Your constant stimulations arouse her more and more, and soon her nipples are releasing a regular trickle of her essence. You mercilessly drink her, probing your tongue around either of her udders as if to dig deeper to the source of this wonderful ambrosia. You keep gulping milk until you reach satiation, and then you drink some more. It's sweet, savory and invigorating; you could feed off her breasts for days.  You suckle her until her body shakes from the steady tactile provocation, before darting your tongue back.\n\n", false);
 		//end d-tongue inset
 	}
 
@@ -712,7 +726,7 @@ private function tentacleBoneFollowerIzzy():void {
 	outputText("You keep holding her with " + sMultiCockDesc() + " for a moment, both of you enjoying the powerful embrace as you literally dick-hug her.  The entirety of her body is dripping with your jism but she doesn't seem to care.  Eventually, you put her down, letting her splat in the puddle of juices that formed below your junk-prison.  At last, you unfold your arms.\n\n", false);
 	player.orgasm();
 	dynStats("lib", -1, "sen", -1, "cor", .3);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Milking Isabella (dey terk Merble's jerb!)
@@ -737,7 +751,7 @@ private function izzyMilkYourselfDamnit():void {
 	//set Izzy Milked Yet flag to 0
 	//in other words, she handles it herself somehow but it repeats after another ten days without milking her
 	flags[kFLAGS.ISABELLA_MILKED_YET] = 0;
-	eventParser(13);
+	camp.returnToCampUseOneHour();
 }
 //[Yes]
 private function izzyMilkingMeinMilkersMya():void {
@@ -804,7 +818,7 @@ private function izzyMilkingMeinMilkersMya2():void {
 	outputText("  What do you say?", false);
 
 	//[I'll Allow It][Mine Mine MINE!]
-	simpleChoices("Allow It",AllowIzzyMilkerUse,"MINE!",noMilkingMilky,"",0,"",0,"",0);
+	simpleChoices("Allow It", AllowIzzyMilkerUse, "MINE!", noMilkingMilky, "", null, "", null, "", null);
 }
 
 //[I'll Allow It]
@@ -818,8 +832,7 @@ private function AllowIzzyMilkerUse():void {
 	if(player.hasCock()) outputText("(You have a hunch that you might be able to catch her using the milkers at the farm if you 'explore' there, provided she hasn't been recently milked.)\n\n");
 	//get 1 Izzit Milk or Cream? item, set Izzy Milked Yet flag to -1, which adds [GetMilk] button to follower menu
 	flags[kFLAGS.ISABELLA_MILKED_YET] = -1;
-	menuLoc = 2;
-	inventory.takeItem(consumables.IZYMILK);
+	inventory.takeItem(consumables.IZYMILK, camp.returnToCampUseOneHour);
 }
 
 //[Mine Mine MINE!]
@@ -834,8 +847,7 @@ private function noMilkingMilky():void {
 	outputText("arousal at your touch, blushing at putting on such a show in front of Whitney.  The farmer shrugs.  \"<i>Y'all please yourselves.  Milker'll be here if you need it.</i>\"\n\n", false);
 	//get 1 Izzit Milk or Cream? item, set Izzy Milked Yet flag to -2, which adds [GetMilk] button to follower menu
 	flags[kFLAGS.ISABELLA_MILKED_YET] = -2;
-	menuLoc = 2;
-	inventory.takeItem(consumables.IZYMILK);
+	inventory.takeItem(consumables.IZYMILK, camp.returnToCampUseOneHour);
 }
 
 //[GetMilk] 
@@ -873,17 +885,16 @@ private function getMilk():void {
 	//get 1 Izzit Milk or Cream? item, lose some fatigue and gain some lust if Izzy Milked Yet flag = -2
 	flags[kFLAGS.ISABELLA_MILKED_YET] = -2;
 	flags[kFLAGS.ISABELLA_MILK_COOLDOWN] = 7 + rand(4);
-	menuLoc = 2;
-	inventory.takeItem(consumables.IZYMILK);
+	inventory.takeItem(consumables.IZYMILK, camp.returnToCampUseOneHour);
 }
 //TDM's Angry Murble
 public function angryMurble():void {
 	outputText("", true);
 	outputText("You come to Isabella's part of the camp with Marble in tow, supposing now is as good a time as ever to introduce the two.  Marble greats Isabella warmly but immediately starts bombarding her with questions about her origin.  From her persistence, it seems she is interested in meeting another cow-girl.  Though a little overwhelmed, Isabella recovers quickly, explaining her origins and the impurity of her cow-girl nature.  Marble is visibly disappointed.\n\n", false);
 	
-	outputText("\"<i>Topic of conversation gradually shifts to the reason why Marble has come to the camp.  Marble seems to be happy to meet your friend, and is eager to spend some more time with her in the future.  Isabella, on the other hand, seems a little off-put regarding Marble's actions.  Only time will tell how the two take to each other.", false);
+	outputText("\"<i>The topic of conversation gradually shifts to the reason why Marble has come to the camp.  Marble seems to be happy to meet your friend, and is eager to spend some more time with her in the future.  Isabella, on the other hand, seems a little off-put regarding Marble's actions.  Only time will tell how the two take to each other.", false);
 	flags[kFLAGS.ISABELLA_MURBLE_BLEH] = 2;
-	doNext(1);
+	doNext(playerMenu);
 }
 
 //Sparring
@@ -905,7 +916,7 @@ private function isabellaSparMenu():void {
 	if(isabellaAccent()) outputText("Isabella asks, \"<i>Vhat stakes should ve use?  Vould you rather we spar light or fight like ze creatures of zis world?</i>\"", false);
 	else outputText("Isabella asks, \"<i>How should we fight?  Would you rather we spar light or fight like the creatures of this world?</i>\"", false);
 	outputText("\n\n(Do you spar 'light' with no consequences for losing, or would you rather spar 'hard' (with full consequences for loss/win)?)", false);
-	simpleChoices("Light",createCallBackFunction(sparring,2),"Hard",createCallBackFunction(sparring,1),"",0,"",0,"Back",callForFollowerIsabella);
+	simpleChoices("Light", createCallBackFunction(sparring, 2), "Hard", createCallBackFunction(sparring, 1), "", null, "", null, "Back", callForFollowerIsabella);
 }
 
 private function sparring(type:int = 1):void {
@@ -926,7 +937,6 @@ private function sparring(type:int = 1):void {
 	monster.gems = 0;
 	//Nerf XP if light mode
 	if(type == 2) monster.XP = Math.round(monster.XP / 2);
-	doNext(1);
 	spriteSelect(31);
 }
 
@@ -961,7 +971,7 @@ private function isabellaBurps():void {
 		outputText("Her eyes widen as realization strikes her.  \"<i>Back away,</i>\" she warns, weakly waving an arm at you. \"<i>Allergy...</i>\" It seems as if something might be coming. Do you flee from the pained cow-girl, or do you attempt to assist her with her problem?  Though, judging by her reaction, assistance might be a poor plan...", false);
 	
 		//put 'run' and 'help' buttons root hurr
-		simpleChoices("Run",runAwayFromIzzyBurps,"Help",getIzzyBurped,"",0,"",0,"",0);
+		simpleChoices("Run", runAwayFromIzzyBurps, "Help", getIzzyBurped, "", null, "", null, "", null);
 	}
 	//Repeat
 	else {
@@ -971,7 +981,7 @@ private function isabellaBurps():void {
 		else outputText("You're sure about this, huh?</i>\" she asks to confirm, shaking the bottle at you gently.  \"<i>You know what this does to me.</i>\"  Your mischievous smile is the only answer she needs.  She easily gulps down the potion, already rubbing her belly in apparent anticipation.  She notices your curious glance and answers with a nervous chuckle.  \"<i>It's one of those things...</i>\" she tries to explain while waiting for the onset of her reaction.  \"<i>Making you more like me... it's comforting somehow.</i>\"\n\n", false);
 
 		outputText("\"<i>Aaah, I can feel it,</i>\" she warns, and sure enough, the bottom hem of her top lifts to reveal an unhurriedly-swelling ponch.  \"<i>Are you ready, or are you having second thoughts?</i>\"  Your gaze falls to her gurgling pot-belly as you mull over her question.  Do you see any harm in getting another dose of Izzy-gas, or would you like to duck out of this one?", false);
-		simpleChoices("Run",runAwayFromIzzyBurps,"Stay",getIzzyBurped,"",0,"",0,"",0);
+		simpleChoices("Run", runAwayFromIzzyBurps, "Stay", getIzzyBurped, "", null, "", null, "", null);
 	}
 }
 
@@ -981,7 +991,7 @@ private function runAwayFromIzzyBurps():void {
 	spriteSelect(31);
 	//First time
 	if(flags[kFLAGS.ISABELLA_PROBOVA_BURP_COUNT] == 0) {
-		outputText("Allowing common sense to dictate your judgement, you step back from the dark-skinned woman, backing up until she stops waving at you.  She grimaces in an evident cross of pain and... pleasure?  Her cheeks are puffing up and chest, puffing out.  Despite yourself, you can't help but admire the way her 'udders' sit on her out-thrust torso, jiggling constantly from the tremors running through her body.  Finally, when she can't seem to hold herself back any longer, her mouth flies open as wide as you've ever seen it, a gigantic burp thundering out.  A visible misty cloud issues from her gaping gob, gaining volume and hovering ominously around her as subsequent belches ripple forth.  In an attempt to free all of the offending gas from her poor body, Isabella roughly squishes her midsection, wincing at each emission as she forces them out.\n\n", false);
+		outputText("Allowing common sense to dictate your judgment, you step back from the dark-skinned woman, backing up until she stops waving at you.  She grimaces in an evident cross of pain and... pleasure?  Her cheeks are puffing up and chest, puffing out.  Despite yourself, you can't help but admire the way her 'udders' sit on her out-thrust torso, jiggling constantly from the tremors running through her body.  Finally, when she can't seem to hold herself back any longer, her mouth flies open as wide as you've ever seen it, a gigantic burp thundering out.  A visible misty cloud issues from her gaping gob, gaining volume and hovering ominously around her as subsequent belches ripple forth.  In an attempt to free all of the offending gas from her poor body, Isabella roughly squishes her midsection, wincing at each emission as she forces them out.\n\n", false);
 	
 		outputText("The gaseous assault eventually diminishes, her belly returning to a healthy state and the cloud dispersing.  After waiting a few minutes to confirm the end of the episode, Isabella stomps up to you, a fierce blush painting her cheeks.  \"<i>", false);
 		if(isabellaAccent()) outputText("Vat did you give me?  Zat was zimply embarrassing!", false);
@@ -1149,7 +1159,7 @@ private function declineIzzysCowBurpApology():void {
 	else {
 		outputText("Despite your strangely inspired lust, you turn the cow-girl down.  Though crestfallen, she takes the news well, apologizing - sincerely and soberly - once more before moving back to her designated camping spot.  Happily, after about an hour, you get back to normal.", false);
 	}
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //yes
@@ -1225,7 +1235,7 @@ private function acceptCowpology():void {
 			outputText("A few minutes later both of you stir from your post-orgasmic lethargy, lying in the aftermath of your short-but-sweet adventure.  Without words, Isabella blows a kiss at you and rolls to her feet, shambling back to her bunk.  You lie there for the rest of the hour, feeling the effects of her burpy influence fade slowly away.", false);
 		}
 	}
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Get Licked in Return (seems incompatible with centaurs/driders due to lap-sitting)
@@ -1275,7 +1285,7 @@ internal function receiveAllTheCowTOngues():void {
 	if(isabellaAccent()) outputText("  A bit confused, she nonetheless leaves and returns with a drink, setting it beside you before leaving you to your rest.");
 	player.orgasm();
 	dynStats("sen", -1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 
@@ -1354,7 +1364,7 @@ private function fuckIsabella():void {
 	outputText("\n\nYou grin and rub the big cow's hair before getting dressed.");
 	player.orgasm();
 	dynStats("sen", -1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Isabella at the Farm
@@ -1363,13 +1373,13 @@ private function fuckIsabella():void {
 //(Chance to play when you EXPLORE the farm after Isabella moves to camp)
 public function findIzzyMilking():void {
 	clearOutput();
-	outputText("As you wander around Whitney's farm, your exploration brings you back toward the barn.  Wiping the sweat from your brow after nearly an hour under the hot sun, you lean back against the hard wooden wall to take a breather - only to hear a faint, yet clearly cstatic, mooing coming from inside.  You step over to the nearest window and, peering inside, are surprised to see a familiar towering cowgirl leaning over a railing, a pair of oversized milkers chugging away at her massive mounds.  Seeing her mooing softly as the milkers suckle the thick cream from her teats soon has you well aroused at the sight... and you think you could give her a sexy surprise while she's getting milked.");
+	outputText("As you wander around Whitney's farm, your exploration brings you back toward the barn.  Wiping the sweat from your brow after nearly an hour under the hot sun, you lean back against the hard wooden wall to take a breather - only to hear a faint, yet clearly ecstatic, mooing coming from inside.  You step over to the nearest window and, peering inside, are surprised to see a familiar towering cowgirl leaning over a railing, a pair of oversized milkers chugging away at her massive mounds.  Seeing her mooing softly as the milkers suckle the thick cream from her teats soon has you well aroused at the sight... and you think you could give her a sexy surprise while she's getting milked.");
 	
 	menu();
 	flags[kFLAGS.FOUND_ISABELLA_AT_FARM_TODAY] = 1;
 	//[Fuck her] [Leave]
 	addButton(0,"Fuck Her",fuckIsabellaInTheBarn);
-	addButton(4,"Leave",eventParser,13);
+	addButton(4,"Leave",camp.returnToCampUseOneHour);
 	  
 }
 
@@ -1391,17 +1401,17 @@ private function fuckIsabellaInTheBarn():void {
 	
 	outputText("\n\nYou quickly agree, and reach around the big cowgirl's shoulders to pull the milker tubes off her breasts, leaning down until your [chest] press");
 	if(player.biggestTitSize() < 1) outputText("es");
-	outputText(" against her back, your cheek pushing further and further between her cheeks until you lay hands upon her eight nipples, taking her many buds between your fingers until a hesitant trickle of milk flows forth over your hands, pouring onto the barn floor as you give the cow a more sensual milking.  Your fingers glide across her nipples, going from one large, needy teat to the next, gently caressing her milky breasts until Isabella's head rolls back in a throaty moo, her backside clenching powerfully around your prick.  You let out a low groan, reminded for a moment of your own needs.  You start to move your hips, slowly starting to fuck Isabella's asscheeks as you bury your chin in her shoulder, pressing kisses all along the nape of her neck.");
+	outputText(" against her back, your [cock] pushing further and further between her cheeks until you lay hands upon her eight nipples, taking her many buds between your fingers until a hesitant trickle of milk flows forth over your hands, pouring onto the barn floor as you give the cow a more sensual milking.  Your fingers glide across her nipples, going from one large, needy teat to the next, gently caressing her milky breasts until Isabella's head rolls back in a throaty moo, her backside clenching powerfully around your prick.  You let out a low groan, reminded for a moment of your own needs.  You start to move your hips, slowly starting to fuck Isabella's asscheeks as you bury your chin in her shoulder, pressing kisses all along the nape of her neck.");
 	
 	outputText("\n\nAfter a moment of basking in your affections, Isabella turns and catches you, pressing her lips to yours as one of her powerful arms hooks around your waist.  She opens her mouth, inviting your tongue to enter, playing across her own, inhumanly wide and warm.  You drag your tip across the flat of her tongue, feeling her hot, ragged breath flitting into your throat.  Between movements of your mouth, you reach up to cup Isabella's cheek, brushing away a strand of auburn hair to look into her bright, luminous eyes, each a well of white in the dim barn stall.");
 	
 	outputText("\n\nShe breaks the kiss, lithe strands of saliva hanging between your lips and hers, still connecting you even as the cowgirl silently mouths, \"<i>I want you....</i>\"  You kiss her again, but this time your hand traces down from her cheek, caressing and cupping every curve as it makes its way down to her thick, fleshy thighs.  Your fingers slide into the tangled red brush between Isabella's legs, the tips just teasing the lips of her womanhood.  She moans into your mouth, her wide tongue slipping past yours as you start to tease her pleasure nub and outer lips, giving her tantalizing bursts of pleasure without the satisfaction of penetration.");
 
-	outputText("\n\nWith each of your movements, Isabella's cheeks clench, tormenting the " + cockDescript(x) + " trapped between your belly and her backside.  Your hips move slowly against her, gently pushing into her soft, forgiving flesh before leaning back until just the " + cockHead(x) + " remains caught in her tender embrace.  Between kisses and caresses, you hear your love begging for more, for you to slide your thick shaft into her eager hole, but not yet...  not yet...");
+	outputText("\n\nWith each of your movements, Isabella's cheeks clench, tormenting the " + cockDescript(x) + " trapped between your belly and her backside.  Your hips move slowly against her, gently pushing into her soft, forgiving flesh before leaning back until just the " + player.cockHead(x) + " remains caught in her tender embrace.  Between kisses and caresses, you hear your love begging for more, for you to slide your thick shaft into her eager hole, but not yet...  not yet...");
 	
 	outputText("\n\nYou break the long kiss, nuzzling your cheek against Isabella's even as the hand not busy between her legs comes free of her soft breast and gives her a gentle push downward.  The cowgirl looks quizzically at you, but soon yields as you pull her away from the milking machine and onto the ground, getting her onto her hands and knees with you firmly placed behind her.  Your hips rock back, freeing your prick from her lush cheeks as you part them with your hands, revealing her most private parts.  The bovine gasps as your tongue flicks out, running from taint to clit, and lavishing kisses and suckles upon her slick slit as you go.");
 	
-	outputText("\n\nA throaty moo urges you on as you bury yourself in Isabella's cunt, slipping your tongue tantalizingly past her lips..  only to withdrawn and caress her nub instead.");
+	outputText("\n\nA throaty moo urges you on as you bury yourself in Isabella's cunt, slipping your tongue tantalizingly past her lips..  only to withdraw and caress her nub instead.");
 	if(isabellaAccent()) outputText("  \"<i>I vhant it...  please, [name], do not tease me so...</i>\"");
 	else outputText("  \"<i>Come on, [name], give it to me already...  enough with the teasing...</i>\"");
 	outputText("  The quivering of her legs only spurs you on, causing you to wet a pair of fingers in her now-dripping cunt before sliding them up her cheeks, to her other, untouched hole.");
@@ -1437,7 +1447,7 @@ private function isabellaBarnFuckPartII():void {
 	else {
 		outputText("  Isabella bites her lip as your oversized prick stretches her wide, whimpering that you'll tear her apart as your [cock smallest] pushes into her womb, her cervical lips clamping hard around your first inches of thick cockflesh.  \"<i>Aaaaahhhhhh, ");
 		if(isabellaAccent()) outputText("It iz sehr too big, zo huge?</i>\"");
-		else outputText("God it's so huge, I...  its tearing me apart!</i>\"");
+		else outputText("God it's so huge, I... it's tearing me apart!</i>\"");
 	}
 	outputText("\n\nOnce you're as far into Isabella as you can go, she relaxes her death grip on your [ass], and you start to move your hips, slowly rocking yourself back and dragging inches of thick cockmeat slowly, tantalizingly out of her.  Isabella moans lewdly, arching her back as you leave her box empty, her inner depths left gaping as you withdraw...  before plunging back in.  She cries out in ecstasy as you hammer back in with a single thrust, throwing yourself ");
 	if(player.smallestCockArea() <= 164) outputText("in up to the hilt, smearing her wildly contracting walls with thick smears of leaking pre");
@@ -1447,7 +1457,7 @@ private function isabellaBarnFuckPartII():void {
 	outputText("\n\nShe breaks the short kiss for a moment, just long enough to grasp one of her huge, milky jugs and cup it up, letting her lips wrap around one of the little nubs.  You join, taking another of her four teats into your mouth, your lips close enough to touch as you each enjoy the sweet cream flowing freely from her bosom.  With every thrust, though, Isabella's ample chest quivers, boob-quakes rolling across her chest as you hammer her cunt, sending splashes of her vaginal lubricant arcing out even as trickles of milk run freely down her jiggling cleavage.");
 	
 	if(isabellaAccent()) outputText("\n\n\"<i>Ach, [name], do eet harder!  Fuck me like ze animal I am...");
-	else outputText("\n\n\"<i>Oh, [name]!  Fuck me?  Fuck me harder, yeah, just like the animal I am...");
+	else outputText("\n\n\"<i>Oh, [name]!  Fuck me!  Fuck me harder, yeah, just like the animal I am...");
 	outputText("  Ahhhh, I'm cumming!</i>\"  You groan as Isabella shrieks her pleasure, her muscles squeezing and milking your [cock smallest] as they contract, her orgasm rocking her entire body, thighs quivering and tits bouncing.  She convulses wildly, screaming as you pound her harder, throwing every last ounce of power you have left into the final seconds until you, too, soar over the edge, the first jets of your hot jizz spurting into her, filling Isabella with your potent seed.  You nearly cry out as waves of orgasmic pleasure crash through your body, setting every nerve afire with an overload of sensation.");
 	
 	outputText("\n\nIsabella buries her face against your [chest] this time, little gasps and pants shuddering through her as your final erratic thrusts finish inside her, smearing the lips of her cunt with white as you slowly withdraw.  \"<i>");
@@ -1464,7 +1474,7 @@ private function isabellaBarnFuckPartII():void {
 	player.orgasm();
 	dynStats("lib", -1, "sen", -3);
 	fatigue(-25);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 }
 }

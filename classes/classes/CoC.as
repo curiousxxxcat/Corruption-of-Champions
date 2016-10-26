@@ -3,6 +3,7 @@
 	// BREAKING ALL THE RULES.
 	import classes.GlobalFlags.kFLAGS;
 	import classes.GlobalFlags.kGAMECLASS;
+	import classes.Scenes.Dungeons.D3.D3;
 
 	import classes.CoC_Settings;
 
@@ -79,19 +80,19 @@
 	{
 
 		// Include the functions. ALL THE FUNCTIONS
-		include "../../includes/customCharCreation.as";
+//No longer needed. Added into CharCreation.as:		include "../../includes/customCharCreation.as";
 		
 		include "../../includes/descriptors.as";
 		include "../../includes/appearance.as";
 
-		include "../../includes/InitialiseUI.as";
+//No longer needed:		include "../../includes/InitialiseUI.as";
 		include "../../includes/input.as";
 		include "../../includes/OnLoadVariables.as";
 		include "../../includes/startUp.as";
 		include "../../includes/debug.as";
 		
 		include "../../includes/combat.as";
-		include "../../includes/doEvent.as";
+//No longer needed. This file has been chopped up and spread throughout the codebase:		include "../../includes/doEvent.as";
 		include "../../includes/eventParser.as";
 		
 
@@ -106,23 +107,47 @@
 		//include "../../includes/flagDefs.as";
 		include "../../includes/appearanceDefs.as";
 
+		//Any classes that need to be made aware when the game is saved or loaded can add themselves to this array using saveAwareAdd.
+		//	Once in the array they will be notified by Saves.as whenever the game needs them to write or read their data to the flags array.
+		private static var _saveAwareClassList:Vector.<SaveAwareInterface> = new Vector.<SaveAwareInterface>();
+	
+		//Called by the saveGameObject function in Saves
+		public static function saveAllAwareClasses(game:CoC):void { for (var sac:int = 0; sac < _saveAwareClassList.length ; sac++) _saveAwareClassList[sac].updateBeforeSave(game); }
+
+		//Called by the loadGameObject function in Saves
+		public static function loadAllAwareClasses(game:CoC):void { for (var sac:int = 0; sac < _saveAwareClassList.length ; sac++) _saveAwareClassList[sac].updateAfterLoad(game); }
+
+		public static function saveAwareClassAdd(newEntry:SaveAwareInterface):void { _saveAwareClassList.push(newEntry); }
+	
+		//Any classes that need to be aware of the passage of time can add themselves to this array using timeAwareAdd.
+		//	Once in the array they will be notified as each hour passes, allowing them to update actions, lactation, pregnancy, etc.
+		private static var _timeAwareClassList:Vector.<TimeAwareInterface> = new Vector.<TimeAwareInterface>(); //Accessed by goNext function in eventParser
+		private static var timeAwareLargeLastEntry:int = -1; //Used by the eventParser in calling timeAwareLarge
+		private var playerEvent:PlayerEvents;
+		
+		public static function timeAwareClassAdd(newEntry:TimeAwareInterface):void { _timeAwareClassList.push(newEntry); }
+		
+		private static var doCamp:Function; //Set by campInitialize, should only be called by playerMenu
+		private static function campInitialize(passDoCamp:Function):void { doCamp = passDoCamp; }
+		
 		// /
 		private var _perkLib:PerkLib = new PerkLib();// to init the static
 		private var _statusAffects:StatusAffects = new StatusAffects();// to init the static
 		public var charCreation:CharCreation = new CharCreation();
-		public var saves:Saves = new Saves();
+		public var saves:Saves = new Saves(gameStateDirectGet, gameStateDirectSet);
 		// Items/
 		public var mutations:Mutations = new Mutations();
 		public var consumables:ConsumableLib = new ConsumableLib();
-		public var useables:UseableLib = new UseableLib();
+		public var useables:UseableLib;
 		public var weapons:WeaponLib = new WeaponLib();
 		public var armors:ArmorLib = new ArmorLib();
 		public var miscItems:MiscItemLib = new MiscItemLib();
 		// Scenes/
-		public var camp:Camp = new Camp();
+		public var camp:Camp = new Camp(campInitialize);
 		public var exploration:Exploration = new Exploration();
-		public var inventory:Inventory = new Inventory();
 		public var followerInteractions:FollowerInteractions = new FollowerInteractions();
+		public var inventory:Inventory = new Inventory(saves);
+		public var masturbation:Masturbation = new Masturbation();
 		// Scenes/Areas/
 		public var bog:Bog = new Bog();
 		public var desert:Desert = new Desert();
@@ -134,6 +159,7 @@
 		public var swamp:Swamp = new Swamp();
 		// Scenes/Dungeons
 		public var brigidScene:BrigidScene = new BrigidScene();
+		public var d3:D3 = new D3();
 		// Scenes/Explore/
 		public var gargoyle:Gargoyle = new Gargoyle();
 		public var lumi:Lumi = new Lumi();
@@ -195,11 +221,11 @@
 		include "../../includes/dreams.as";
 		include "../../includes/dungeon2Supplimental.as";
 		include "../../includes/dungeonCore.as";
-		include "../../includes/dungeonEvents.as";
+//No longer needed. This file has been chopped up and spread throughout the codebase:		include "../../includes/dungeonEvents.as";
 		include "../../includes/dungeonHelSupplimental.as";
 		include "../../includes/dungeonSandwitch.as";
 		include "../../includes/fera.as";
-		include "../../includes/masturbation.as";
+//Moved to Scenes/Masturbation.as		include "../../includes/masturbation.as";
 		include "../../includes/pregnancy.as";
 		include "../../includes/runa.as";
 		include "../../includes/symGear.as";
@@ -220,7 +246,7 @@
 			certain functions, even though they were in the same scope as the
 			function calling them.
 		****/
-		public var semiglobalReferencer :* = {};
+//Looks like this dangerous little var is no longer used anywhere, huzzah.		public var semiglobalReferencer :* = {};
 
 		public var mainView :MainView;
 
@@ -238,14 +264,14 @@
 		public var images:ImageManager;
 		public var player:Player;
 		public var player2:Player;
-		public var tempPerk:PerkClass;
+//No longer used:		public var tempPerk:PerkClass;
 		public var monster:Monster;
-		public var itemSwapping:Boolean;
+//No longer used:		public var itemSwapping:Boolean;
 		public var flags:DefaultDict;
-		public var gameState:Number;
-		public var menuLoc:Number;
-		public var itemSubMenu:Boolean;
-		public var supressGoNext:Boolean = false;
+		private var gameState:int;
+//Gone, last use replaced by newRound arg for combatMenu:		public var menuLoc:Number;
+//No longer used:		public var itemSubMenu:Boolean;
+//No longer used:		public var supressGoNext:Boolean = false;
 		public var time :TimeModel;
 		public var currentText:String;
 
@@ -257,10 +283,10 @@
 		public var whitney:Number;
 		public var monk:Number;
 		public var sand:Number;
-		public var giacomo:Number;
-		public var beeProgress:Number;
-		public var itemStorage:Array;
-		public var gearStorage:Array;
+		public var giacomo:int;
+//Replaced by flag		public var beeProgress:Number;
+//Now in Inventory.as		public var itemStorage:Array;
+//Now in Inventory.as		public var gearStorage:Array;
 		public var temp:int;
 		public var args:Array;
 		public var funcs:Array;
@@ -271,7 +297,15 @@
 		public var testingBlockExiting:Boolean;
 
 		public var kFLAGS_REF:*;
-
+		
+		public function get inCombat():Boolean { return gameState == 1; }
+		
+		public function set inCombat(value:Boolean):void { gameState = (value ? 1 : 0); }
+		
+		private function gameStateDirectGet():int { return gameState; }
+		
+		private function gameStateDirectSet(value:int):void { gameState = value; }
+		
 		public function rand(max:int):int
 		{
 			return Utils.rand(max);
@@ -287,6 +321,8 @@
 		{
 			// Cheatmode.
 			kGAMECLASS = this;
+			
+			useables = new UseableLib();
 			
 			this.kFLAGS_REF = kFLAGS; 
 			// cheat for the parser to be able to find kFLAGS
@@ -337,8 +373,8 @@
 			//model.debug = debug; // TODO: Set on model?
 
 			//Version NUMBER
-			ver = "0.8.8";
-			version = ver + " (<b>Farm Corruption</b>)";
+			ver = "0.9.4";
+			version = ver + " (<b>Moar Bugfixan</b>)";
 
 			//Indicates if building for mobile?
 			mobile = false;
@@ -362,9 +398,10 @@
 			player = new Player();
 			model.player = player;
 			player2 = new Player();
+			playerEvent = new PlayerEvents();
 
 			//Used in perk selection, mainly eventParser, input and engineCore
-			tempPerk = null;
+			//tempPerk = null;
 
 			//Create monster, used all over the place
 			monster = new Monster();
@@ -377,7 +414,7 @@
 			//{ region StateVariables
 
 			//User all over the place whenever items come up
-			itemSwapping = false;
+//No longer used:			itemSwapping = false;
 
 			//The extreme flag state array. This needs to go. Holds information about everything, whether it be certain attacks for NPCs 
 			//or state information to do with the game. 
@@ -391,43 +428,44 @@
 			//1 = in combat
 			//2 = in combat in grapple
 			//3 = at start or game over screen
-			//4 = at giacomo
-			//5 = getting succubi potion
-			//6 = at alchemist choices.
-			//7 = item duuuuump
-			//8 = worked at farm
+//GameState 4 eliminated			//4 = at giacomo
+//GameState 5 eliminated			//5 = getting succubi potion
+//GameState 6 eliminated			//6 = at alchemist choices.
+//GameState 7 eliminated			//7 = item duuuuump
+//GameState 8 eliminated			//8 = worked at farm
 			gameState = 0;
 
+//Gone, last use replaced by newRound arg for combatMenu
 			//Another state variable used for menu display used everywhere
 			//menuLoc
 			//0 - normal
 			//1 - items menu - no heat statuses when leaving it in combat
 			//2 - needs to add an hour after grabbing item
 			//3 - In tease menu - no heat statuses when leaving it.
-			//8 - Find Farm Pepper - 2 hours wait
-			//9 - Armor shop
-			//10- Tailor shop
-			//11- Midsleep loot
-			//12 - lumi potions
-			//13 - lumi enhancements
-			//14 - late night receive item
-			//15 - Weapon shop in TelAdra
-			//16 - Incubus Shop
-			//17 - 4 hours wait
-			//18 - 8 hours wait
-			//19 - Bakery!
-			//20 - weapon rack stuffing
-			//21 - weapon rack taking
-			//24 - Niamh booze
-			//25 - Owca Shop
-			//26 - Benoit Shop
-			//27 - Chicken Harpy Shop
-			//28 - Items menu
-			menuLoc = 0;
+//MenuLoc 8 eliminated			//8 - Find Farm Pepper - 2 hours wait
+//MenuLoc 9 eliminated			//9 - Armor shop
+//MenuLoc 10 eliminated			//10- Tailor shop
+//MenuLoc 11 eliminated			//11- Midsleep loot
+//MenuLoc 12 eliminated			//12 - lumi potions
+//MenuLoc 13 eliminated			//13 - lumi enhancements
+//MenuLoc 14 eliminated			//14 - late night receive item
+//MenuLoc 15 eliminated			//15 - Weapon shop in TelAdra
+//MenuLoc 16 eliminated			//16 - Incubus Shop
+//MenuLoc 17 eliminated			//17 - 4 hours wait
+//MenuLoc 18 eliminated			//18 - 8 hours wait
+//MenuLoc 19 eliminated			//19 - Bakery!
+//MenuLoc 20 eliminated			//20 - weapon rack stuffing
+//MenuLoc 21 eliminated			//21 - weapon rack taking
+//MenuLoc 24 eliminated			//24 - Niamh booze
+//MenuLoc 25 eliminated			//25 - Owca Shop
+//MenuLoc 26 eliminated			//26 - Benoit Shop
+//MenuLoc 27 eliminated			//27 - Chicken Harpy Shop
+//MenuLoc 28 eliminated			//28 - Items menu
+//			menuLoc = 0;
 
 			//State variable used to indicate whether inside an item submenu
 			//The item sub menu
-			itemSubMenu = false;
+//			itemSubMenu = false;
 			//} endregion 
 
 			/**
@@ -466,10 +504,10 @@
 			monk = 0;
 			sand = 0;
 			giacomo = 0;
-			beeProgress = 0;
+//Replaced by flag			beeProgress = 0;
 
-			itemStorage = [];
-			gearStorage = [];
+//			itemStorage = [];
+//			gearStorage = [];
 			//}endregion
 
 

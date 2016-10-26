@@ -37,9 +37,9 @@ package classes.Scenes.Places.Owca
 
 		override public function teased(lustDelta:Number):void
 		{
-			if(lustDelta > 0 && lustDelta < 5) outputText("The demons lessen somewhat in the intensity of their attack, and some even eye up your assets as they strike at you. Vapula has trouble giving her orders.");
-			if(lustDelta >= 5 && lustDelta < 10) outputText("The demons are obviously avoiding damaging anything you might use to fuck and they're starting to leave their hands on you just a little longer after each blow.  Some are copping quick feels and you can smell the demonic lust on the air.  Vapula is starting to get frustrated as her minions are more and more reluctant to attack you, preferring to caress each other instead.");
-			if(lustDelta >= 10) outputText("The demons are decreasingly willing to hit you and more and more willing to just stroke their hands sensuously over you.  Vapula is uncontrollably aroused herself and shivers even as she tries to maintain some semblance of offense, but most of the demons are visibly uncomfortable and some just lie on the ground, tamed by their own lust.");
+			if(lustDelta > 0 && lustDelta < 5) outputText("  The demons lessen somewhat in the intensity of their attack, and some even eye up your assets as they strike at you. Vapula has trouble giving her orders.");
+			if(lustDelta >= 5 && lustDelta < 10) outputText("  The demons are obviously avoiding damaging anything you might use to fuck and they're starting to leave their hands on you just a little longer after each blow.  Some are copping quick feels and you can smell the demonic lust on the air.  Vapula is starting to get frustrated as her minions are more and more reluctant to attack you, preferring to caress each other instead.");
+			if(lustDelta >= 10) outputText("  The demons are decreasingly willing to hit you and more and more willing to just stroke their hands sensuously over you.  Vapula is uncontrollably aroused herself and shivers even as she tries to maintain some semblance of offense, but most of the demons are visibly uncomfortable and some just lie on the ground, tamed by their own lust.");
 			applyTease(lustDelta);
 		}
 
@@ -70,7 +70,7 @@ package classes.Scenes.Places.Owca
 			this.hairColor = "black";
 			this.hairLength = 15;
 			initStrTouSpeInte(80, 10, 10, 5);
-			initLibSensCor(50, 60, 20);
+			initLibSensCor(50, 60, 100);
 			this.weaponName = "claws";
 			this.weaponVerb="claw";
 			this.armorName = "demonic skin";
@@ -81,13 +81,12 @@ package classes.Scenes.Places.Owca
 			this.temperment = TEMPERMENT_LOVE_GRAPPLES;
 			this.level = 14;
 			this.gems = 150 + rand(100);
-			this.special1 = 5043;
-			this.special2 = 5044;
+			this.special1 = game.packAttack;
+			this.special2 = game.lustAttack;
 			this.tailType = TAIL_TYPE_DEMONIC;
 			this.hornType = HORNS_DEMON;
 			this.horns = 2;
 			this.drop = NO_DROP;
-			this.cor = 100;
 			createStatusAffect(StatusAffects.Vapula,0,0,0,0);
 			checkMonster();
 		}

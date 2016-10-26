@@ -12,7 +12,7 @@
 	public function fapAppearance(display:Boolean = true):void {
 	if(display) {
 		//[Paragraph: Bazaar description, 1st time]
-		if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00339] == 0) outputText("\n\nThere is a gigantic tent standing in the clearing, with a large crowd gathering around it.   Perhaps you could investigate and see what is going on inside.", false);
+		if(flags[kFLAGS.FAP_ARENA_RULES_EXPLAINED] == 0) outputText("\n\nThere is a gigantic tent standing in the clearing, with a large crowd gathering around it.   Perhaps you could investigate and see what is going on inside.", false);
 		//Option labeled "Tent» is available.
 		//[Paragraph: Bazaar description: after 1st time]
 		else outputText("\n\nA large crowd is gathering around the large tent, probably going for another 'session'.   Perhaps you could join them?", false);
@@ -23,10 +23,8 @@ public function fapArenaGOOOO():void {
 	outputText("", true);
 	//(set X = longest cock)
 	var x:Number = player.longestCock();
-	//Increment 'times fap-arena'ed
-	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00334]++;
 	//[1st time]
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00334] == 1) outputText("As you approach the tent, you notice these people are actually waiting in line, pleasantly chatting with each other.  All varieties of species are there, from cute little goblins and mouse-faced people with rodent-like teeth, to towering centaurs and minotaurs, the latter easily noticed with their strong scent.   You spot the occasional sharp-toothed dog-morph or shark breeder, some traditional incubi and a few tentacled mutants, victims of consuming corrupted vegetation.  There are even a few humans, nonchalantly standing in the waiting line and making conversation, as if some of the others weren't monstrosities.  What strikes you is everyone's perfect civility.  Obviously everyone is used to the place.\n\n", false);
+	if(flags[kFLAGS.FAP_ARENA_RULES_EXPLAINED] == 0) outputText("As you approach the tent, you notice these people are actually waiting in line, pleasantly chatting with each other.  All varieties of species are there, from cute little goblins and mouse-faced people with rodent-like teeth, to towering centaurs and minotaurs, the latter easily noticed with their strong scent.   You spot the occasional sharp-toothed dog-morph or shark breeder, some traditional incubi and a few tentacled mutants, victims of consuming corrupted vegetation.  There are even a few humans, nonchalantly standing in the waiting line and making conversation, as if some of the others weren't monstrosities.  What strikes you is everyone's perfect civility.  Obviously everyone is used to the place.\n\n", false);
 
 	outputText("The waiting line advances and you finally end up in front of the tent's entrance guarded by a surprisingly tall goblin.  She looks at you with assessing eyes, suddenly grabs your crotch with her left hand, rubs it for a second, and says, ", false);
 	//[if dick size < 8 inches] 
@@ -39,12 +37,12 @@ public function fapArenaGOOOO():void {
 		//, or consider buying products in our local shop.</i>\"\n\n", false);
 		//outputText("She redirects you to a small stall near the entrance with various potions stored on shelves.  A poster placed on it reads: "Your dick must qualify to the house's standards.  80 gems for a vial of Gro+, 80 for the session of your life!"
 		//Do you buy products? (Yes/No) //Yes gives you a vial of Gro+, No does nothing. In both cases, the PC is redirected to the Bazaar.
-		doNext(2855);
+		doNext(bazaar.enterTheBazaar);
 		return;
 	}
 	//[if dick size >= 8 inches: 1st time] 
-	else if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00339] == 0) {
-		flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00339]++;
+	else if(flags[kFLAGS.FAP_ARENA_RULES_EXPLAINED] == 0) {
+		flags[kFLAGS.FAP_ARENA_RULES_EXPLAINED]++;
 		outputText("\"<i>You must be new here.  Go to the backroom on the left, undress yourself and wait with the others in the main room; the session will start soon.</i>\"\n\n", false);
 		outputText("Meekly following the others into the backroom, you start removing your " + player.armorName + ".  You watch other people, fully clothed when they step in, completely naked when they go out.  The sensation of something out of place continues to bother you with all these people casually speaking and laughing with their raging erections showing, and then you finally get it: everyone in here has a dick. Even the feminine-looking ones with ample breasts and a generous ass are actually herms, as their huge boners attest.\n\n", false);
 		
@@ -62,7 +60,7 @@ public function fapArenaGOOOO():void {
 
 		outputText("The succubus carries on, \"<i>You must stand your ground.  Use your left hand to hold your left partner if you feel your dick is being pulled a little too far.  Otherwise, you are not allowed to disrupt your left neighbor's cock-stroking.  People preventing their cock from being caressed will be disqualified.</i>\"\n\n", false);
 		
-		outputText("\"<i>A cock is considered to be cumming when the first drop of semen comes out.  pre-cum doesn't count.  You will all be assigned a number.  Whenever a dick cums, you must shout your number followed by SCORING if the cumming dick is your right neighbor's or CUMMING if it's your own.  The winner is the player cumming last, and the loser is the player cumming first.  The orgasm order will be recorded for the second part of the session.  Player announcing a false positive will be disqualified.</i>\"\n\n", false);
+		outputText("\"<i>A cock is considered to be cumming when the first drop of semen comes out.  Pre-cum doesn't count.  You will all be assigned a number.  Whenever a dick cums, you must shout your number followed by SCORING if the cumming dick is your right neighbor's or CUMMING if it's your own.  The winner is the player cumming last, and the loser is the player cumming first.  The orgasm order will be recorded for the second part of the session.  Player announcing a false positive will be disqualified.</i>\"\n\n", false);
 	
 		outputText("\"<i>Once everyone has come, the loser will place himself at the center of the circle, bending over, buttocks exposed.  The player who came second will place himself right behind him in fucking position, the player who came third will place himself behind him, and so on.  The winner will place himself behind everyone else.  He will give the first thrust and everyone will follow.  The winner dictates the thrusting pace.  I strongly advise you to respect the fucking rhythm.  Do you studs understand?</i>\"\n\n", false);
 
@@ -73,7 +71,7 @@ public function fapArenaGOOOO():void {
 		else outputText("By gods, what are you doing here?", false);
 		//end of condition about PC's corr
 		outputText("\n\nDo you stay?", false);
-		doYesNo(fapArenaPageII,2855);
+		doYesNo(fapArenaPageII, bazaar.enterTheBazaar);
 	}
 	//[if dick size > 8 inches: after first time] 
 	else {
@@ -91,6 +89,8 @@ public function fapArenaGOOOO():void {
 }
 	
 private function fapArenaPageII():void {
+	//Increment 'times fap-arena'ed
+	flags[kFLAGS.FAP_ARENA_SESSIONS]++;
 	outputText("", true);
 	var x:Number = player.longestCock();
 	
@@ -254,9 +254,8 @@ private function fapResults(place:Number = 3):void {
 	outputText("You pant and relax, exhausted.  Your right arm is cramped and your " + cockDescript(x) + " is sore.  People around you look similarly tired and are slowly recovering from this rough collective dick-stroking session.  Someone gently taps your shoulder.  It is your left neighbor: \"<i>Well played. I didn't expect you would be so... resistant.  Few players last that long with me, because their rods generally don't endure my handjobs.</i>\"  He proceeds to shake hands; both you are smeared with pre-cum and various cock juices, but you don't care.  You smile and thank him for the good game and the orgasm.  It comes as something of a relief that everyone seems to show good sportsmanship.  Everyone is congratulating each other; various comments reach your ears about the game they just had and how well their opponents did.  Your right partner stands before you.  \"<i>Whoa, you sure know how to give a handjob!  That was amazing, and you know what?  I don't care if I haven't won!</i>\"  You tell him that you're glad that he enjoyed your efforts.  Everyone is now laughing and chatting casually, as if their still erect cocks weren't dripping semen and they weren't busy giving furious handjobs a few minutes ago.  ", false);
 		
 	//[if first time]
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00339] == 1) outputText("You stand here, a little lost, wondering what will happen next.", false);
-	else outputText("You join them, congratulating some on the strength of their stroke, and commenting on the various aspects of the fapping game you've just had.", false);
-	outputText("\n\n", false);
+	if(flags[kFLAGS.FAP_ARENA_RULES_EXPLAINED] == 1) outputText("You stand here, a little lost, wondering what will happen next.", false);
+	else outputText("You join them, congratulating some on the strength of their stroke, and commenting on the various aspects of the fapping game you've just had.\n\n", false);
 		
 	outputText("The referee, who had been busy cleaning herself up from all the spunk in a backroom, suddenly storms out and plants herself at the center of the circle, her nude red body trembling and shivering in arousal.  \"<i>Alright, everybody in a single line!  It's time for your butt-fuck reward.</i>\"\n\n", false);
 	
@@ -325,10 +324,9 @@ private function fapResults(place:Number = 3):void {
 			else outputText("nice", false);
 			outputText(" load of girl-cum too, as if to compete with its male counterpart.", false);
 		}
-		//end of conditions 
-		outputText("\n\n", false);
+		//end of conditions
 		
-		outputText("Wincing in pain and pleasure mixed, your " + cockDescript(x) + " lets out one ultimate spurt of goo before resting, deeply buried into your partner's ass.  You fall over, making the whole chain fall to rest by domino effect.  After this torrid anal session, the butt-fuck train has exhausted its fuel.\n\n", false);
+		outputText("\n\nWincing in pain and pleasure mixed, your " + cockDescript(x) + " lets out one ultimate spurt of goo before resting, deeply buried into your partner's ass.  You fall over, making the whole chain fall to rest by domino effect.  After this torrid anal session, the butt-fuck train has exhausted its fuel.\n\n", false);
 	}
 	//[else if you didn't win]
 	else if(place == 2) {
@@ -386,54 +384,45 @@ private function fapResults(place:Number = 3):void {
 			else outputText("nice", false);
 			outputText(" load of girl-cum too, as if to compete with its male counterpart.", false);
 		}
-		outputText("\n\n", false);
-		outputText("You fall over, still feeling the cum-tube buried inside you.", false);
+		outputText("\n\nYou fall over, still feeling the cum-tube buried inside you.", false);
 		if(player.lib > 50) outputText("  Maybe losing wasn't that bad? You feel like you could lose a few more times...", false);
 		outputText("\n\n", false);
 	}
 	//end of global condition about the PC's position in the buttfuck train, display the following
 	//[if you won]
 	if(place <= 1) {
-		outputText("You quickly stand back up and start dressing yourself.  Before you go, the cute little referee hands you a small box, her coy smile and nude body somehow awakening " + sMultiCockDesc() + " again. Ye Gods, it never ends.  \"<i>Here's a little something for being the winner of this session.  Hope you enjoy your prize.  Come and play again!</i>\"\n\n", false);
-		//You find [random item from the list: ~300 gems, gro+, succubi's dream, large blue egg]. (minus 100 lust, plus 5 lust, other stat effects as you like)
-		player.orgasm();
-		dynStats("lus", 5);
-		temp = rand(4);
-		var itype:ItemType;
-		switch(temp) {
+		outputText("You quickly stand back up and start dressing yourself.  Before you go, the cute little referee hands you a small box, her coy smile and nude body somehow awakening " + sMultiCockDesc() + " again. Ye Gods, it never ends.  \"<i>Here's a little something for being the winner of this session.  Hope you enjoy your prize.  Come and play again!</i>\"", false);
+		//You find [random item from the list: gro+, succubi's dream, large blue egg].
+		
+		var itype:ItemType= consumables.GROPLUS;
+		switch(rand(3)) {
 			case 0:
-			outputText("You gained 300 gems!", false);
-			player.gems += 300;
-			statScreenRefresh();
-			doNext(13);
-			return;
-			break;
+				itype = consumables.GROPLUS;
+				break;
 			case 1:
-			itype = consumables.GROPLUS;
-			break;
+				itype = consumables.S_DREAM;
+				break;
 			case 2:
-			itype = consumables.S_DREAM;
-			break;
-			case 3:
-			itype = consumables.L_BLUEG;
-			break;
-		}			
+				itype = consumables.L_BLUEG;
+				break;
+		}
+		flags[kFLAGS.FAP_ARENA_VICTORIES]++;
 		player.orgasm();
-		dynStats("lus", 5);
-		menuLoc = 2;
-		inventory.takeItem(itype);
-		return;		
+		inventory.takeItem(itype, camp.returnToCampUseOneHour);
 	}
 	//[if you didn't win]
 	else if(place == 2) {
 		outputText("You awkwardly remove the dick from your ass and start dressing yourself.  Before you go, the cute little referee waves at you, her coy smile and nude body somehow awakening " + sMultiCockDesc() + " again.  Ye Gods, it never ends.  \"<i>I hope you enjoyed this session. Better luck next time...</i>\"", false);
-		//(minus 100 lust, plus 5 lust, other stat effects as you like)
+		player.orgasm();
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//[if you lost]
-	else outputText("You awkwardly remove the dick from your ass, start cleaning yourself from all the dirt and cum before leaving the tent.  Before you go, the nude referee approaches you and gently squeezes your " + cockDescript(x) + "; you still wince from the pounding it took earlier.  \"<i>Awww, looks like you had a rough time, didn't you?  Well, it happens sometimes.  Hopefully you will get better at this.  See you next game!</i>\"", false);
-	player.orgasm();
-	dynStats("lus", 5);
-	doNext(13);
+	else {
+		outputText("You awkwardly remove the dick from your ass, start cleaning yourself from all the dirt and cum before leaving the tent.  Before you go, the nude referee approaches you and gently squeezes your " + cockDescript(x) + "; you still wince from the pounding it took earlier.  \"<i>Awww, looks like you had a rough time, didn't you?  Well, it happens sometimes.  Hopefully you will get better at this.  See you next game!</i>\"", false);
+		player.orgasm();
+		doNext(camp.returnToCampUseOneHour);
+	}
+	
 }
 
 //[SPECIAL: if player has an extra tentacle dick more than 40 inches long OR if the player has lost and has a unique tentacle dick, add this paragraph before the PC cums]

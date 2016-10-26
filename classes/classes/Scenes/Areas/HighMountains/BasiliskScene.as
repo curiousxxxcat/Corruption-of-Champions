@@ -75,7 +75,7 @@ package classes.Scenes.Areas.HighMountains
 			if(player.lust >= 33 && player.gender > 0) {
 				outputText("  Certain that the creature won't dare try and turn its eyes on you again, you take your time to look the tall reptile over directly for the first time.  Perhaps you could use it to satisfy your baser urges. If so, what part of it do you choose?", false);
 				//[Tongue][Ass]
-				simpleChoices("Tongue",tongueBasiliskSmex,"Ass",evil,"",0,"Lay Eggs",eggs,"Leave",cleanupAfterCombat);
+				simpleChoices("Tongue", tongueBasiliskSmex, "Ass", evil, "", null, "Lay Eggs", eggs, "Leave", cleanupAfterCombat);
 			}
 			else cleanupAfterCombat();
 		}
@@ -202,7 +202,7 @@ package classes.Scenes.Areas.HighMountains
 				return;
 			}
 			//choose between loss rapes
-			if(player.hasVagina() && (player.findStatusAffect(StatusAffects.Heat) >= 0 || player.findPerk(PerkLib.Oviposition) >= 0 || player.findPerk(PerkLib.BasiliskWomb) >= 0 || (player.pregnancyIncubation > 1 && player.pregnancyType == 5)))
+			if(player.hasVagina() && (player.inHeat || player.findPerk(PerkLib.Oviposition) >= 0 || player.findPerk(PerkLib.BasiliskWomb) >= 0 || player.pregnancyType == PregnancyStore.PREGNANCY_OVIELIXIR_EGGS))
 				basiliskHasVagEggStuff();
 			else defaultBasiliskRape();
 		}
@@ -242,12 +242,12 @@ package classes.Scenes.Areas.HighMountains
 			player.slimeFeed();
 			outputText("The basilisk is breathing heavily as it tears your " + player.armorName + " from your body, its warm exhalations rolling over your naked flesh.  It seems to be having difficulty controlling itself; from your frozen gaze you can see it constantly shifting its dreadful slit eyes back to your frame as it searches through your pockets with claws that tremble.  Eventually it throws down your attire and stares back into your eyes.  There is something else in there now; a pulsing lust, hints of red at the edges of that great, grey sea, a rapacious tide gathering.  You wish you could look away but there is more chance of you moving mountains.", false);
 			//(Heat: 
-			if(player.findStatusAffect(StatusAffects.Heat) >= 0) outputText("  You are more aware than ever of an invisible scent simmering off you, of your wet vagina clenching and wetting itself in anticipation, your body begging this male creature to fulfil its genetic objective upon you.  Your eyes have betrayed you, your body is betraying you, and whatever else you are is a tiny, ignored voice screaming in between.", false);
+			if(player.inHeat) outputText("  You are more aware than ever of an invisible scent simmering off you, of your wet vagina clenching and wetting itself in anticipation, your body begging this male creature to fulfil its genetic objective upon you.  Your eyes have betrayed you, your body is betraying you, and whatever else you are is a tiny, ignored voice screaming in between.", false);
 			outputText("  The basilisk suddenly breaks away and kneels down in front of you.  Out of sight of your petrified eyes you cannot see what it is doing; however a moment later, you can feel, as a warm, sticky sensation slavers over your abdomen.", false);
 			//(egg preg:
-			if(player.pregnancyIncubation > 1 && player.pregnancyType == 5) outputText("  The basilisk licks your bulging belly hungrily, pushing against and testing for the eggs you are carrying.  Your sensitive cargo shifts around under its hungry attention; you'd squirm, but that is, of course, impossible.", false);
+			if(player.pregnancyIncubation > 1 && player.pregnancyType == PregnancyStore.PREGNANCY_OVIELIXIR_EGGS) outputText("  The basilisk licks your bulging belly hungrily, pushing against and testing for the eggs you are carrying.  Your sensitive cargo shifts around under its hungry attention; you'd squirm, but that is, of course, impossible.", false);
 			//(heat or perk:
-			if(player.findStatusAffect(StatusAffects.Heat) >= 0 || player.findPerk(PerkLib.Oviposition) >= 0 || player.findPerk(PerkLib.BasiliskWomb) >= 0) outputText("  The basilisk licks your belly hungrily, its sticky tongue crawling like a warm tentacle across your sensitive underside.  You'd squirm, but that is impossible.  The creature is making you feel everything it is forcing upon you.", false);
+			if(player.inHeat || player.findPerk(PerkLib.Oviposition) >= 0 || player.findPerk(PerkLib.BasiliskWomb) >= 0) outputText("  The basilisk licks your belly hungrily, its sticky tongue crawling like a warm tentacle across your sensitive underside.  You'd squirm, but that is impossible.  The creature is making you feel everything it is forcing upon you.", false);
 			outputText("\n\n", false);
 			
 			outputText("The basilisk gets up and again stares back into your eyes and you feel its will press indomitably against your pliable mind.  At the very edge of your vision, underneath the creature you can see a hint of shiny purple; the creature's cock has slid out of its genital slit.  How long it is and what it looks like you cannot see, but as with another raspy moan you finally accept what is about to happen, there is no doubt you are going to get to know about it very personally.\n\n", false);
@@ -271,11 +271,11 @@ package classes.Scenes.Areas.HighMountains
 		
 			outputText("After about an hour of being forced to stand still and savor your own shameful memories, you find with great relief you can begin to move your toe again.  Hard part's over, now.  Eventually with some effort you manage to work power into each corner of your body and finally shake free of the basilisk's curse; quickly, you rub the remnants of sticky saliva off your face and redress before anything else finds you, before groggily picking your way back to camp.  The cum still oozing from your quim and the occasional twinging memory mean that you aren't going to be able to shake free of the experience as easily as you'd like.", false);
 			//(preg check, or change preg to basilisk if egg)
-			player.knockUp(14,250);
+			player.knockUp(PregnancyStore.PREGNANCY_BASILISK, PregnancyStore.INCUBATION_BASILISK);
 			//Egg change - 100% chance
-			if(player.pregnancyIncubation > 1 && player.pregnancyType == 5) {
+			if (player.pregnancyType == PregnancyStore.PREGNANCY_OVIELIXIR_EGGS) {
 				outputText("\n\nYour womb gurgles and you instinctively put a hand on your belly. It seems larger than it usually is, and you feel oddly more tender and motherly than normal.  You shake your head at the thought.  Damn hormones.", false);
-				player.knockUp(14,100,1,2);
+				player.knockUpForce(PregnancyStore.PREGNANCY_BASILISK, PregnancyStore.INCUBATION_BASILISK - 150); //Convert Ovi Elixir eggs to Basilisk eggs
 			}
 			//Eggs fertilised (Ovi Potion/Oviposition only. Eggs take a few days 
 			//longer to be laid than usual): 
@@ -328,13 +328,13 @@ package classes.Scenes.Areas.HighMountains
 					if(flags[kFLAGS.BENOIT_EGGS] + flags[kFLAGS.BENOIT_GENERIC_EGGS] == 0) {
 						outputText("\n\nHe feels around the clutter of his store room until he finds what he's looking for: A battered old basket stuffed with a soft pillow.  You raise an eyebrow at the liberal amounts of dog hair the pillow is covered with and Benoit coughs apologetically.");
 						outputText("\n\n“E isn't 'appy about me taking is bed, but to 'ell wizzim; e always gets is 'air on everysing anyway.” You spend some time arranging the eggs where they will be safe and warm.  Although you know they can't be, Benoit's blind eyes seem to be fixed upon the brood when you have finished.");
-						outputText("\n\n“And zese eggs are different?” he says hesitantly.  “Zere will be…little girls?”  You shrug and say even if they aren't female, at least he'll have some sons he can keep away from the mountain.  He sets his jaw and nods.");
+						outputText("\n\n“And zese eggs are different?” he says hesitantly.  “Zere will be...little girls?”  You shrug and say even if they aren't female, at least he'll have some sons he can keep away from the mountain.  He sets his jaw and nods.");
 					}
 					//[Not first time: 
 					else {
-						outputText("\n\nBenoit places the eggs into a blanket swaddled basket with the same painstaking care he did with the others, before turning back to you.");
-						outputText("\n\nThe blind basilisk reaches out, finds your hand, and then squeezes it.  \"<i>[name], you must be more careful in ze future,</i>\" he says.  \"<i>Please understand I am not saying zis because I am jealous or angry or anything so zilly.  You 'ave done a great sing to change your body to 'elp my people, but if you keep getting attacked by my bruzzers and zey find out... if zey work out what you are... I do not like to sink about it.</i>\"  You tell him you'll be more on guard in the future and he seems to accept this.  He gestures to the corner where he has put together a serviceable stove from scrap.");
-						outputText("\n\n“Ungry?”");
+						outputText("\n\nBenoit places the eggs into a blanket-swaddled basket with the same painstaking care he did with the others, before turning back to you.");
+						outputText("\n\nThe blind basilisk reaches out, finds your hand, and then squeezes it.  \"<i>[name], you must be more careful in ze future,</i>\" he says.  \"<i>Please understand I am not saying zis because I am jealous or angry or anysing so zilly.  You 'ave done a great sing to change your body to 'elp my people, but if you keep getting attacked by my bruzzers and zey find out... if zey work out what you are... I do not like to sink about it.</i>\"  You tell him you'll be more on guard in the future and he seems to accept this.  He gestures to the corner where he has put together a serviceable stove from scrap.");
+						outputText("\n\n“<i>'Ungry?</i>”");
 						outputText("\n\nYou linger long enough to share breakfast with him, and then return to camp.");
 					}
 				}
@@ -383,7 +383,7 @@ package classes.Scenes.Areas.HighMountains
 			outputText("A pale blue finger traces the line of your frozen chin before a leering, female face swallows up your line of vision.  \"<i>Well, well, well. Look at what we have here,</i>\" purrs the succubus into your cold, marble ear.  Other shapes prowl into view, stalking reptile shapes, as the demon runs her hands sensually over your form, testing every smooth surface, protuberance and cranny that she can reach.  You cannot feel a thing, except an overwhelming sense of dread.  \"<i>Played with the lizards a bit too much did we, friend?  I hope you learnt your lesson.  It's a real shame, when you think about it.</i>\"  The succubus actually sounds almost upset as she looks you over.  \"<i>You would have made a fine slave.  The things we would have done to you... ah well.  Que sera sera. Remove this!</i>\" she straightens up smartly and claps her hands.  \"<i>Take this statue to Lethice's castle.  I am sure it will look excellent in her front hall, and I know she will appreciate the present.</i>\"  The basilisks snake up to you and then heave you into their arms.  As they haul you into the night, the succubus's voice reaches you.  \"<i>Did you know that marble is a metamorphic rock, statue? It takes tens of thousands of years to wear down. Meta-MORPH-ic, get it? Hahahahahaha!</i>\"\n\n", false);
 		
 			outputText("You have no voice, and you must scream.", false);
-			eventParser(5035);
+			getGame().gameOver();
 		}
 		//Defeated, Taken Advantage of: nobody
 		private function basiliskAdvantageNobody():void {
@@ -609,7 +609,7 @@ package classes.Scenes.Areas.HighMountains
 			//if(player.gender != 3) outputText("s");
 			outputText(" just over his mouth.");
 			//[(if PC has eggs in vag or Oviposition)
-			if(player.findPerk(PerkLib.BasiliskWomb) >= 0 || player.findPerk(PerkLib.Oviposition) >= 0 || player.pregnancyType == 5) outputText("  You watch with idle amusement as the scent of your excitement perks up the basilisk's reptilian member, rising until it reaches its impressive full length.  <i>Maybe some other time</i>, you think to yourself, as you set about the business of unloading your overfull abdomen.");
+			if(player.findPerk(PerkLib.BasiliskWomb) >= 0 || player.findPerk(PerkLib.Oviposition) >= 0 || player.pregnancyType == PregnancyStore.PREGNANCY_OVIELIXIR_EGGS) outputText("  You watch with idle amusement as the scent of your excitement perks up the basilisk's reptilian member, rising until it reaches its impressive full length.  <i>Maybe some other time</i>, you think to yourself, as you set about the business of unloading your overfull abdomen.");
 			outputText("You can feel the eggs sliding into position, weighing down your extended ovipositor as you slide it up the bound basilisk's thigh, prodding at his taut backdoor.  The sensation of the heavy organ forcing open his tight hole sends a shiver through his body, and it isn't long before the lube-drooling appendage forces its way in; you sink down further, practically resting your body atop him as you release a happy sigh.");
 			
 			outputText("\n\nThe segmented shaft works forward, driving in up to its second ring, wiggling and thrusting in an attempt to slide even deeper into your bound slut.  The anal stimulation proves to be too much for the tied lizard, and with another hiss he blows his load beneath you, spraying his seed across your chitin undercarriage.  It's utterly unacceptable that he's enjoying this more than you, and you glare down at him before shoving your ");
@@ -677,7 +677,7 @@ package classes.Scenes.Areas.HighMountains
 				outputText("\n\nThere's nothing to distract you from the pleasure; ");
 				//[(U)
 				if(player.gender == 0) outputText("no needy cock or cunt demanding a caress - except the basilisk's, and you care not a bit about that one.");
-				else if(player.isTaur()) outputText("even if you wanted to reach your genitals, you arms resolutely refuse to bend that way, so you focus on the slippery, silky feelings travelling along your ovipositor.");
+				else if(player.isTaur()) outputText("even if you wanted to reach your genitals, your arms resolutely refuse to bend that way, so you focus on the slippery, silky feelings travelling along your ovipositor.");
 			}
 			if(player.hasCock()) {
 				outputText("\n\nYour seeping member");

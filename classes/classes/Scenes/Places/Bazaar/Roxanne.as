@@ -2,11 +2,7 @@
 	import classes.*;
 	import classes.GlobalFlags.kFLAGS;
 
-	public class Roxanne extends BazaarAbstractContent{
-
-	public function Roxanne()
-	{
-	}
+	public class Roxanne extends BazaarAbstractContent implements TimeAwareInterface {
 
 //Roxanne Poisontail
 //-no hair, 
@@ -43,6 +39,43 @@ WIN:
 //226 -Is PC losing the Roxanne's drinking contest intentionally?
 //227 -Drinking Contest Bonus Score
 
+		public function Roxanne()
+		{
+			CoC.timeAwareClassAdd(this);
+		}
+
+		//Implementation of TimeAwareInterface
+		public function timeChange():Boolean
+		{
+			//Increase Roxanne's growing dick size...
+			flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00225]++;
+			//Reset if she finds someone to take it (random at high values)
+			if (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00225] >= 300 && model.time.hours == 1 && rand(5) == 0) flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00225] = 1;
+			//hangover status stuff
+			if (player.findStatusAffect(StatusAffects.Hangover) >= 0) {
+			//Countdown
+				if (player.statusAffectv1(StatusAffects.Hangover) > 0) player.addStatusValue(StatusAffects.Hangover,1,-1);
+				else {
+					outputText("\n<b>Your head finally clears as your hangover wears off.  Drinking with the shemale lizard was definitely a bad idea.</b>\n", false);
+					//Restore stats
+					player.str += player.statusAffectv2(StatusAffects.Hangover);
+					player.spe += player.statusAffectv3(StatusAffects.Hangover);
+					player.inte += player.statusAffectv4(StatusAffects.Hangover);
+					dynStats("cor", 0);
+					//Clear status
+					player.removeStatusAffect(StatusAffects.Hangover);
+					return true;
+				}
+			}
+			if (model.time.hours > 23 && flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00227] > 0) flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00227]--; //Reduce drinking contest bonus
+			return false;
+		}
+	
+		public function timeChangeLarge():Boolean {
+			return false;
+		}
+		//End of Interface Implementation
+		
 //[Drinking Table Appearance]
 public function RoxanneAppearance():Function {
 	//When she there?
@@ -63,7 +96,7 @@ private function Roxanne1stApproach():void {
 	outputText("You hesitantly approach the drinking lizard-folk, taking note of their unusual garments and appearance.  They all wear black jackets with silver trim, tight-fitting leather pants, and tall, black boots.  Oddly, the most feminine of them appears to be the leader.  Her jacket is filled out with large, well-rounded DD-cup breasts, and her boots forgo the traditional shape for a sluttier, higher heel.  Her scales are a dark purple, glittering darkly in the light, and while her head has a lizard-like shape, a pair of dragon-like horns bulge from the back of her skull in place of hair.  The other lizans all appear to be males, but they act as if they're quite intimidated by the feminine leader.\n\n", false);
 	outputText("Suddenly, the alpha-lizan glances up and meets your eye, her expression turning into a leering sneer as she asks, \"<i>See something you like " + player.mf("buddy","girly") + "?  Come on over, tell us your story!</i>\"\n\n", false);
 	outputText("Do you approach?", false);
-	doYesNo(RoxanneChooseApproachOrRepeat,2855);
+	doYesNo(RoxanneChooseApproachOrRepeat, bazaar.enterTheBazaar);
 }
 
 //[Approach] – Flag as Met
@@ -118,10 +151,26 @@ private function RoxanneChooseApproachOrRepeat():void {
 	else outputText("If you're reading this, something broke.", false);
 	//Clear the 'are you losing the contest intionally flag'
 	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00226] = 0;
-	simpleChoices("Yes",roxanneDrinkingContest,"No",2855,"Lose",2884,"",0,"",0);
+	simpleChoices("Yes", roxanneDrinkingContest, "No", roxanneDrinkingContestNo, "Lose", roxanneDrinkingContestLoseDeliberately, "", null, "", null);
 }
 
-public function roxanneDrinkingContest():void {
+private function roxanneDrinkingContestNo():void {
+	if (model.time.hours == 19 || model.time.hours == 20) {
+		flags[kFLAGS.COUNTDOWN_TO_NIGHT_RAPE]++;
+		if (flags[kFLAGS.COUNTDOWN_TO_NIGHT_RAPE] % 4 == 0 && player.gender == 1) {
+			bazaar.nightBazaarButtfuck();
+			return;
+		}
+	}
+	bazaar.enterTheBazaarAndMenu();
+}
+
+private function roxanneDrinkingContestLoseDeliberately():void {
+	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00226] = 1;
+	roxanneDrinkingContest();
+}
+
+private function roxanneDrinkingContest():void {
 	spriteSelect(78);
 	outputText("", true);
 	outputText("Roxanne ", false);
@@ -203,7 +252,7 @@ public function roxanneDrinkingContest():void {
 		var cunnilingus:Function = null;
 		if(player.hasCock()) fellatio = roxanneGivesABlowjob;
 		if(player.hasVagina()) cunnilingus = roxanneCunnilingus;
-		simpleChoices("Cunnilingus",cunnilingus,"Fellatio",fellatio,"Rimming",roxanneRimjob,"",0,"",0);
+		simpleChoices("Cunnilingus", cunnilingus, "Fellatio", fellatio, "Rimming", roxanneRimjob, "", null, "", null);
 	}
 }
 
@@ -221,7 +270,7 @@ private function roxanneGivesABlowjob():void {
 	if(player.hasKnot(x)) outputText("knot", false);
 	else if(player.hasSheath()) outputText("sheath", false);
 	else outputText("base", false);
-	outputText(", squeezing you softly while she steadies herself on your " + cockDescript(x) + ".  She titters, letting a few inches of tongue slip through her lips to envelop your sensitive " + cockHead(x) + ", circling the engorged cock-flesh with drunken slobbers.  ", false);
+	outputText(", squeezing you softly while she steadies herself on your " + cockDescript(x) + ".  She titters, letting a few inches of tongue slip through her lips to envelop your sensitive " + player.cockHead(x) + ", circling the engorged cock-flesh with drunken slobbers.  ", false);
 	if(player.balls > 0) outputText("A set of warm, long-nailed fingers squeeze your " + ballsDescriptLight() + ", dragging sharp nail-tips along the underside of your sack to tease the poor, cum-packed orbs.  ", false);
 	outputText("The lizan glances back up at you, inebriated; her half-vacant eyes make love to you while her pink tongue worships your beer- and spit-covered member.\n\n", false);
 	
@@ -236,7 +285,7 @@ private function roxanneGivesABlowjob():void {
 	
 	outputText("A few demons start to approach, but the lizan crew interposes themselves between their captain and the interlopers, shooing them off before they can start something.  You barely notice, so focused are you on the feel of saliva running down your " + cockDescript(x) + " and the soft, pliant mouth flesh trying to wring the jism from your shaft.   The warmth of orgasm starts to build in your loins, and you begin to pump at the tongue instinctively, hips rising up off the chair in spite of the sharp fingernail's warning.\n\n", false);
 	
-	outputText("SMACK!  Roxanne's tail slaps into your " + buttDescript() + ", stinging the exposed " + player.skinDesc + ".  Her eyebrows narrow in irritation while she wraps her arms around your waistline, steadying her off-balance body while she spanks and pumps you in a drunken frenzy.  You hump her face, pressing your " + cockHead(x) + " against her lips to smear them with a glaze of leaky pre-cum.  Grabbing her horns, you cry out and pleasure and try to pull her down, but she spanks you, HARD.  You yelp in pain, dropping her horns and submitting completely to her tongue and the pleasure it brings.\n\n", false);
+	outputText("SMACK!  Roxanne's tail slaps into your " + buttDescript() + ", stinging the exposed " + player.skinDesc + ".  Her eyebrows narrow in irritation while she wraps her arms around your waistline, steadying her off-balance body while she spanks and pumps you in a drunken frenzy.  You hump her face, pressing your " + player.cockHead(x) + " against her lips to smear them with a glaze of leaky pre-cum.  Grabbing her horns, you cry out and pleasure and try to pull her down, but she spanks you, HARD.  You yelp in pain, dropping her horns and submitting completely to her tongue and the pleasure it brings.\n\n", false);
 	
 	outputText("The wiggling, flexible tongue-tip presses down on your urethra, bottling the cum up inside you.  Tiny rivulets of white goo squirt and leak around the pink blockage, rolling over the many rings of tongue while your urethra bloats wide.  The lizan looks up, her dull, glazed eyes locking on to yours as she uncovers your cum-slit, then shivering as a ", false);
 	if(player.cumQ() >= 1500) outputText("huge torrent utterly drenches her face, horns, neck, and tight top", false);
@@ -250,7 +299,7 @@ private function roxanneGivesABlowjob():void {
 	//(-100 lust, -1 int)
 	player.orgasm();
 	dynStats("int", -1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[Receive Oral – Vaginalingus]
 private function roxanneCunnilingus():void {
@@ -296,7 +345,7 @@ private function roxanneCunnilingus():void {
 	//(-100 lust, -1 int)
 	player.orgasm();
 	dynStats("int", -1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[Receive Oral – SkyrRimjoooooooob]
 private function roxanneRimjob():void {
@@ -349,7 +398,7 @@ private function roxanneRimjob():void {
 	//(-100 lust, -1 int
 	player.orgasm();
 	dynStats("int", -1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[OH SHIT YOU SO DRUNK AND GETTING REAMED BY LIZARD CAWK]
@@ -431,7 +480,7 @@ private function roxanneReamsYouNormal():void {
 	player.orgasm();
 	dynStats("int", -1);
 	applyHangover();
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 
 //[Roxanne HAS A FUCKING TORPEDO DICK BUTTFUCK]
@@ -495,7 +544,7 @@ private function roxanneFucksYourAssOHGODITSHUGE():void {
 	player.orgasm();
 	dynStats("int", -1);
 	applyHangover();
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 	
 private function applyHangover():void {
@@ -585,7 +634,7 @@ private function bigBootyRoxanneContestLoss():void {
 	player.orgasm();
 	dynStats("int", -1);
 	applyHangover();
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 }
 }

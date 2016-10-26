@@ -4,14 +4,15 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\CorruptionofChampionsFD.swf" />
+    <movie path="CoC-AIR.swf" />
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
-    <movie version="10" />
-    <movie minorVersion="1" />
-    <movie platform="Flash Player" />
+    <movie version="3" />
+    <movie minorVersion="8" />
+    <movie platform="AIR Mobile" />
     <movie background="#000000" />
+    <movie preferredSDK="Flex 4.6.0, AIR 14.0;4.6.0, 14.0;" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
@@ -44,7 +45,7 @@
     <option loadExterns="" />
     <option staticLinkRSL="True" />
     <option additional="-show-actionscript-warnings=true&#xA;-show-binding-warnings=true&#xA;-show-unused-type-selector-warnings=true" />
-    <option compilerConstants="" />
+    <option compilerConstants="CONFIG::STANDALONE,false&#xA;CONFIG::AIR,true" />
     <option minorVersion="" />
   </build>
   <!-- SWC Include Libraries -->
@@ -87,9 +88,11 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Default" />
-    <option testMovieCommand="" />
+    <option testMovie="Custom" />
+    <option testMovieCommand="$(FlexSDK)\bin\adl.exe -profile mobileDevice -screensize 800x600:800x600 $(OutputDir)\application.xml" />
   </options>
   <!-- Plugin storage -->
-  <storage />
+  <storage>
+    <entry key="air-descriptor"><![CDATA[devTools\application.xml]]></entry>
+  </storage>
 </project>

@@ -14,8 +14,18 @@ use namespace kGAMECLASS;
 	 * ...
 	 * @author Yoffy
 	 */
-	public class Player extends Character
-	{
+	public class Player extends Character {
+		
+		public function Player() {
+			//Item things
+			itemSlot1 = new ItemSlotClass();
+			itemSlot2 = new ItemSlotClass();
+			itemSlot3 = new ItemSlotClass();
+			itemSlot4 = new ItemSlotClass();
+			itemSlot5 = new ItemSlotClass();
+			itemSlots = [itemSlot1, itemSlot2, itemSlot3, itemSlot4, itemSlot5];
+		}
+		
 		protected final function outputText(text:String, clear:Boolean = false):void
 		{
 			game.outputText(text, clear);
@@ -42,6 +52,11 @@ use namespace kGAMECLASS;
 		public var exploredDesert:Number = 0;
 		public var exploredMountain:Number = 0;
 		public var exploredLake:Number = 0;
+
+		//Player pregnancy variables and functions
+		override public function pregnancyUpdate():Boolean {
+			return game.updatePregnancy(); //Returns true if we need to make sure pregnancy texts aren't hidden
+		}
 
 		// Inventory
 		public var itemSlot1:ItemSlotClass;
@@ -191,7 +206,20 @@ use namespace kGAMECLASS;
 		{
 			return _armor;
 		}
-
+		
+		public function setArmor(newArmor:Armor):Armor {
+			//Returns the old armor, allowing the caller to discard it, store it or try to place it in the player's inventory
+			//Can return null, in which case caller should discard.
+			var oldArmor:Armor = _armor.playerRemove(); //The armor is responsible for removing any bonuses, perks, etc.
+			if (newArmor == null) {
+				CoC_Settings.error(short + ".armor is set to null");
+				newArmor = ArmorLib.COMFORTABLE_UNDERCLOTHES;
+			}
+			_armor = newArmor.playerEquip(); //The armor can also choose to equip something else - useful for Ceraph's trap armor
+			return oldArmor;
+		}
+		
+		/*
 		public function set armor(value:Armor):void
 		{
 			if (value == null){
@@ -200,6 +228,7 @@ use namespace kGAMECLASS;
 			}
 			value.equip(this, false, false);
 		}
+		*/
 
 		// in case you don't want to call the value.equip
 		public function setArmorHiddenField(value:Armor):void
@@ -212,6 +241,19 @@ use namespace kGAMECLASS;
 			return _weapon;
 		}
 
+		public function setWeapon(newWeapon:Weapon):Weapon {
+			//Returns the old weapon, allowing the caller to discard it, store it or try to place it in the player's inventory
+			//Can return null, in which case caller should discard.
+			var oldWeapon:Weapon = _weapon.playerRemove(); //The weapon is responsible for removing any bonuses, perks, etc.
+			if (newWeapon == null) {
+				CoC_Settings.error(short + ".weapon is set to null");
+				newWeapon = WeaponLib.FISTS;
+			}
+			_weapon = newWeapon.playerEquip(); //The weapon can also choose to equip something else
+			return oldWeapon;
+		}
+		
+		/*
 		public function set weapon(value:Weapon):void
 		{
 			if (value == null){
@@ -220,25 +262,12 @@ use namespace kGAMECLASS;
 			}
 			value.equip(this, false, false);
 		}
+		*/
 
 		// in case you don't want to call the value.equip
 		public function setWeaponHiddenField(value:Weapon):void
 		{
 			this._weapon = value;
-		}
-
-		// Hacky workaround shit for ByteArray.readObject
-		public function Player()
-		{
-			//Item things
-			itemSlot1 = new ItemSlotClass();
-			itemSlot2 = new ItemSlotClass();
-			itemSlot3 = new ItemSlotClass();
-			itemSlot4 = new ItemSlotClass();
-			itemSlot5 = new ItemSlotClass();
-
-
-			itemSlots = [itemSlot1, itemSlot2, itemSlot3, itemSlot4, itemSlot5];
 		}
 
 		public function reduceDamage(damage:Number):Number{
@@ -275,7 +304,7 @@ use namespace kGAMECLASS;
 
 			// Uma's Accupuncture Bonuses
 			var modArmorDef:Number = 0;
-			if (findPerk(PerkLib.ChiReflowAttack) >= 0) modArmorDef = ((armorDef * UmasShop.NEEDLEWORK_DEFENSE_DEFENSE_MULTI) - armorDef);
+			if (findPerk(PerkLib.ChiReflowDefense) >= 0) modArmorDef = ((armorDef * UmasShop.NEEDLEWORK_DEFENSE_DEFENSE_MULTI) - armorDef);
 			if (findPerk(PerkLib.ChiReflowAttack) >= 0) modArmorDef = ((armorDef * UmasShop.NEEDLEWORK_ATTACK_DEFENSE_MULTI) - armorDef);
 			damage -= modArmorDef;
 			if (damage<0) damage = 0;
@@ -296,7 +325,7 @@ use namespace kGAMECLASS;
 				//Prevent negatives
 				if (HP<=0){
 					HP = 0;
-					if (game.gameState == 1 || game.gameState == 2) game.doNext(5010);
+					//This call did nothing. There is no event 5010: if (game.inCombat) game.doNext(5010);
 				}
 			}
 			return returnDamage;
@@ -675,6 +704,8 @@ use namespace kGAMECLASS;
 				counter++;
 			if (wingType == 12)
 				counter++;
+			if (findStatusAffect(StatusAffects.Uniball) >= 0)
+				counter++;
 			return counter;
 		}
 
@@ -974,6 +1005,8 @@ use namespace kGAMECLASS;
 				dragonCounter++;
 			if (skinType == 2 && dragonCounter > 0)
 				dragonCounter++;
+			if (hornType == HORNS_DRACONIC_X4_12_INCH_LONG || hornType == HORNS_DRACONIC_X2)
+				dragonCounter++;
 			return dragonCounter;
 		}
 
@@ -1203,15 +1236,20 @@ use namespace kGAMECLASS;
 			var stretched:Boolean = buttChangeNoDisplay(cArea);
 			//STRETCH SUCCESSFUL - begin flavor text if outputting it!
 			if(stretched && display) {
-				if(spacingsF) outputText("  ");
-				if(ass.analLooseness == 5) outputText("<b>Your " + Appearance.assholeDescript(this) + " is stretched even wider, capable of taking even the largest of demons and beasts.</b>");
-				if(ass.analLooseness == 4) outputText("<b>Your " + Appearance.assholeDescript(this) + " becomes so stretched that it gapes continually.</b>", false);
-				if(ass.analLooseness == 3) outputText("<b>Your " + Appearance.assholeDescript(this) + " is now very loose.</b>");
-				if(ass.analLooseness == 2) outputText("<b>Your " + Appearance.assholeDescript(this) + " is now a little loose.</b>");
-				if(ass.analLooseness == 1) outputText("<b>You have lost your anal virginity.</b>", false);
-				if(spacingsB) outputText("  ");
+				if (spacingsF) outputText("  ");
+				buttChangeDisplay();
+				if (spacingsB) outputText("  ");
 			}
 			return stretched;
+		}
+
+		public function buttChangeDisplay():void
+		{	//Allows the test for stretching and the text output to be separated
+			if (ass.analLooseness == 5) outputText("<b>Your " + Appearance.assholeDescript(this) + " is stretched even wider, capable of taking even the largest of demons and beasts.</b>");
+			if (ass.analLooseness == 4) outputText("<b>Your " + Appearance.assholeDescript(this) + " becomes so stretched that it gapes continually.</b>", false);
+			if (ass.analLooseness == 3) outputText("<b>Your " + Appearance.assholeDescript(this) + " is now very loose.</b>");
+			if (ass.analLooseness == 2) outputText("<b>Your " + Appearance.assholeDescript(this) + " is now a little loose.</b>");
+			if (ass.analLooseness == 1) outputText("<b>You have lost your anal virginity.</b>", false);
 		}
 
 		public function slimeFeed():void{
@@ -1519,25 +1557,25 @@ use namespace kGAMECLASS;
 			//Bimbo body boosts minimum lust by 40
 			if(findStatusAffect(StatusAffects.BimboChampagne) >= 0 || findPerk(PerkLib.BimboBody) >= 0 || findPerk(PerkLib.BroBody) >= 0 || findPerk(PerkLib.FutaForm) >= 0) {
 				if(min > 40) min += 10;
-				else if(min > 0) min += 20;
+				else if(min >= 20) min += 20;
 				else min += 40;
 			}
 			//Omnibus' Gift
 			if(findPerk(PerkLib.OmnibusGift) >= 0) {
 				if(min > 40) min += 10;
-				else if(min > 0) min += 20;
+				else if(min >= 20) min += 20;
 				else min += 35;
 			}
 			//Nymph perk raises to 30
 			if(findPerk(PerkLib.Nymphomania) >= 0) {
 				if(min >= 40) min += 10;
-				else if(min > 0) min += 15;
+				else if(min >= 20) min += 15;
 				else min += 30;
 			}
 			//Oh noes anemone!
 			if(findStatusAffect(StatusAffects.AnemoneArousal) >= 0) {
 				if(min >= 40) min += 10;
-				else if(min > 0) min += 20;
+				else if(min >= 20) min += 20;
 				else min += 30;
 			}
 			//Hot blooded perk raises min lust!
@@ -1678,8 +1716,10 @@ use namespace kGAMECLASS;
 			}
 			if(findStatusAffect(StatusAffects.Disarmed) >= 0) {
 				removeStatusAffect(StatusAffects.Disarmed);
-				if(weapon == WeaponLib.FISTS) {
-					weapon = ItemType.lookupItem(flags[kFLAGS.PLAYER_DISARMED_WEAPON_ID]) as Weapon;
+				if (weapon == WeaponLib.FISTS) {
+//					weapon = ItemType.lookupItem(flags[kFLAGS.PLAYER_DISARMED_WEAPON_ID]) as Weapon;
+//					(ItemType.lookupItem(flags[kFLAGS.PLAYER_DISARMED_WEAPON_ID]) as Weapon).doEffect(this, false);
+					setWeapon(ItemType.lookupItem(flags[kFLAGS.PLAYER_DISARMED_WEAPON_ID]) as Weapon);
 				}
 				else {
 					flags[kFLAGS.BONUS_ITEM_AFTER_COMBAT_ID] = flags[kFLAGS.PLAYER_DISARMED_WEAPON_ID];
@@ -1714,13 +1754,51 @@ use namespace kGAMECLASS;
 				// speDown.visible = false;
 				removeStatusAffect(StatusAffects.BasiliskSlow);
 			}
-			while(findStatusAffect(StatusAffects.IzmaBleed) >= 0) removeStatusAffect(StatusAffects.IzmaBleed);
+			while (findStatusAffect(StatusAffects.IzmaBleed) >= 0) removeStatusAffect(StatusAffects.IzmaBleed);
+			if (findStatusAffect(StatusAffects.GardenerSapSpeed) >= 0)
+			{
+				spe += statusAffectv1(StatusAffects.GardenerSapSpeed);
+				kGAMECLASS.mainView.statsView.showStatUp('spe');
+				removeStatusAffect(StatusAffects.GardenerSapSpeed);
+			}
+			if (findStatusAffect(StatusAffects.KnockedBack) >= 0) removeStatusAffect(StatusAffects.KnockedBack);
+			if (findStatusAffect(StatusAffects.RemovedArmor) >= 0) removeStatusAffect(StatusAffects.KnockedBack);
+			if (findStatusAffect(StatusAffects.JCLustLevel) >= 0) removeStatusAffect(StatusAffects.JCLustLevel);
+			if (findStatusAffect(StatusAffects.MirroredAttack) >= 0) removeStatusAffect(StatusAffects.MirroredAttack);
+			if (findStatusAffect(StatusAffects.Tentagrappled) >= 0) removeStatusAffect(StatusAffects.Tentagrappled);
+			if (findStatusAffect(StatusAffects.TentagrappleCooldown) >= 0) removeStatusAffect(StatusAffects.TentagrappleCooldown);
+			if (findStatusAffect(StatusAffects.ShowerDotEffect) >= 0) removeStatusAffect(StatusAffects.ShowerDotEffect);
+			if (findStatusAffect(StatusAffects.GardenerSapSpeed) >= 0)
+			{
+				spe += statusAffectv1(StatusAffects.GardenerSapSpeed);
+				kGAMECLASS.mainView.statsView.showStatUp( 'spe' );
+				removeStatusAffect(StatusAffects.GardenerSapSpeed);
+			}
+			if (findStatusAffect(StatusAffects.VineHealUsed) >= 0) removeStatusAffect(StatusAffects.VineHealUsed);
 		}
 
-		public function consumeItem(itype:ItemType, amount:int=1):Boolean
-		{
+		public function consumeItem(itype:ItemType, amount:int = 1):Boolean {
+			if (!hasItem(itype, amount)) {
+				CoC_Settings.error("ERROR: consumeItem attempting to find " + amount + " item" + (amount > 1 ? "s" : "") + " to remove when the player has " + itemCount(itype) + ".");
+				return false;
+			}
+			//From here we can be sure the player has enough of the item in inventory
+			var slot:ItemSlotClass;
+			while (amount > 0) {
+				slot = getLowestSlot(itype); //Always draw from the least filled slots first
+				if (slot.quantity > amount) {
+					slot.quantity -= amount;
+					amount = 0;
+				}
+				else { //If the slot holds the amount needed then amount will be zero after this
+					amount -= slot.quantity;
+					slot.emptySlot();
+				}
+			}
+			return true;
+/*			
 			var consumed:Boolean = false;
-			var slot:*;
+			var slot:ItemSlotClass;
 			while (amount > 0)
 			{
 				if(!hasItem(itype,1))
@@ -1730,7 +1808,7 @@ use namespace kGAMECLASS;
 				}
 				trace("FINDING A NEW SLOT! (ITEMS LEFT: " + amount + ")");
 				slot = getLowestSlot(itype);
-				while (slot != undefined && amount > 0 && slot.quantity > 0)
+				while (slot != null && amount > 0 && slot.quantity > 0)
 				{
 					amount--;
 					slot.quantity--;
@@ -1743,23 +1821,26 @@ use namespace kGAMECLASS;
 			}
 			if(amount == 0) consumed = true;
 			return consumed;
+*/
 		}
 
 		public function getLowestSlot(itype:ItemType):ItemSlotClass
 		{
 			var minslot:ItemSlotClass = null;
-			for each (var slot:ItemSlotClass in itemSlots){
-				if (slot.itype == itype){
-					if (minslot == null || slot.quantity<minslot.quantity){
+			for each (var slot:ItemSlotClass in itemSlots) {
+				if (slot.itype == itype) {
+					if (minslot == null || slot.quantity < minslot.quantity) {
 						minslot = slot;
 					}
 				}
 			}
 			return minslot;
 		}
-		public function hasItem(itype:ItemType, minQuantity:Number=1):Boolean {
-			return itemCount(itype)>=minQuantity;
+		
+		public function hasItem(itype:ItemType, minQuantity:int = 1):Boolean {
+			return itemCount(itype) >= minQuantity;
 		}
+		
 		public function itemCount(itype:ItemType):int {
 			var count:int = 0;
 			for each (var itemSlot:ItemSlotClass in itemSlots){
@@ -1827,14 +1908,14 @@ use namespace kGAMECLASS;
 				if(cocks.length > 1) {
 					if(ncocks == cocks.length) outputText("A very pleasurable feeling spreads from your groin as your " + multiCockDescriptLight() + " grow permanently longer - at least an inch - and leak plenty of pre-cum from the pleasure of the change.", false);
 					if(ncocks == 1) outputText("A very pleasurable feeling spreads from your groin as one of your " + multiCockDescriptLight() + " grows permanently longer, by at least an inch, and leaks plenty of pre-cum from the pleasure of the change.", false);
-					if(ncocks > 1 && ncocks < cocks.length) outputText("A very pleasurable feeling spreads from your groin as " + kGAMECLASS.num2Text(ncocks) + " of your " + multiCockDescriptLight() + " grow permanently longer, by at least an inch, and leak plenty of pre-cum from the pleasure of the change.", false);
+					if(ncocks > 1 && ncocks < cocks.length) outputText("A very pleasurable feeling spreads from your groin as " + num2Text(ncocks) + " of your " + multiCockDescriptLight() + " grow permanently longer, by at least an inch, and leak plenty of pre-cum from the pleasure of the change.", false);
 				}
 			}
 			if(temp2 >=3){
 				if(cocks.length == 1) outputText("Your " + cockDescript(0) + " feels incredibly tight as a few more inches of length seem to pour out from your crotch.", false);
 				if(cocks.length > 1) {
 					if(ncocks == 1) outputText("Your " + multiCockDescriptLight() + " feel incredibly tight as one of their number begins to grow inch after inch of length.", false);
-					if(ncocks > 1 && ncocks < cocks.length) outputText("Your " + multiCockDescriptLight() + " feel incredibly number as " + kGAMECLASS.num2Text(ncocks) + " of them begin to grow inch after inch of added length.", false);
+					if(ncocks > 1 && ncocks < cocks.length) outputText("Your " + multiCockDescriptLight() + " feel incredibly number as " + num2Text(ncocks) + " of them begin to grow inch after inch of added length.", false);
 					if(ncocks == cocks.length) outputText("Your " + multiCockDescriptLight() + " feel incredibly tight as inch after inch of length pour out from your groin.", false);
 				}
 			}
@@ -1846,16 +1927,16 @@ use namespace kGAMECLASS;
 				}
 				if(cocks[0].cockLength >= 12 && cocks[0].cockLength-temp2 < 12) {
 					if(cocks.length == 1) outputText("  <b>Your " + cockDescript(0) + " is so long it nearly swings to your knee at its full length.</b>", false);
-					if(cocks.length > 1) outputText("  <b>Your " + multiCockDescriptLight() + " are so long they nearly reach your knee when at full length.</b>", false);
+					if(cocks.length > 1) outputText("  <b>Your " + multiCockDescriptLight() + " are so long they nearly reach your knees when at full length.</b>", false);
 				}
 				if(cocks[0].cockLength >= 16 && cocks[0].cockLength-temp2 < 16) {
 					if(cocks.length == 1) outputText("  <b>Your " + cockDescript(0) + " would look more at home on a large horse than you.</b>", false);
 					if(cocks.length > 1) outputText("  <b>Your " + multiCockDescriptLight() + " would look more at home on a large horse than on your body.</b>", false);
-					if(gender == 3){
-						if(cocks.length == 1) outputText("  You could easily stuff your " + cockDescript(0) + " between your breasts and give the self-titty-fuck of a lifetime.", false);
-						if(cocks.length > 1) outputText("  They reach so far up your chest it would be easy to stuff a few cocks between your breasts and give yourself the tittyfuck of a lifetime.", false);
+					if (biggestTitSize() >= BREAST_CUP_C) {
+						if (cocks.length == 1) outputText("  You could easily stuff your " + cockDescript(0) + " between your breasts and give yourself the titty-fuck of a lifetime.", false);
+						if (cocks.length > 1) outputText("  They reach so far up your chest it would be easy to stuff a few cocks between your breasts and give yourself the titty-fuck of a lifetime.", false);
 					}
-					if(gender == 1){
+					else {
 						if(cocks.length == 1) outputText("  Your " + cockDescript(0) + " is so long it easily reaches your chest.  The possibility of autofellatio is now a foregone conclusion.", false);
 						if(cocks.length > 1) outputText("  Your " + multiCockDescriptLight() + " are so long they easily reach your chest.  Autofellatio would be about as hard as looking down.", false);
 					}
@@ -1881,16 +1962,16 @@ use namespace kGAMECLASS;
 				if(cocks.length == 1) outputText("Your " + multiCockDescriptLight() + " has shrunk to a slightly shorter length.", false);
 				if(cocks.length > 1) {
 					if(ncocks == cocks.length) outputText("Your " + multiCockDescriptLight() + " have shrunk to a slightly shorter length.", false);
-					if(ncocks > 1 && ncocks < cocks.length) outputText("You feel " + kGAMECLASS.num2Text(ncocks) + " of your " + multiCockDescriptLight() + " have shrunk to a slightly shorter length.", false);
-					if(ncocks == 1) outputText("You feel " + kGAMECLASS.num2Text(ncocks) + " of your " + multiCockDescriptLight() + " has shrunk to a slightly shorter length.", false);
+					if(ncocks > 1 && ncocks < cocks.length) outputText("You feel " + num2Text(ncocks) + " of your " + multiCockDescriptLight() + " have shrunk to a slightly shorter length.", false);
+					if(ncocks == 1) outputText("You feel " + num2Text(ncocks) + " of your " + multiCockDescriptLight() + " has shrunk to a slightly shorter length.", false);
 				}
 			}
 			if(temp2 < -1 && temp2 > -3) {
 				if(cocks.length == 1) outputText("Your " + multiCockDescriptLight() + " shrinks smaller, flesh vanishing into your groin.", false);
 				if(cocks.length > 1) {
 					if(ncocks == cocks.length) outputText("Your " + multiCockDescriptLight() + " shrink smaller, the flesh vanishing into your groin.", false);
-					if(ncocks == 1) outputText("You feel " + kGAMECLASS.num2Text(ncocks) + " of your " + multiCockDescriptLight() + " shrink smaller, the flesh vanishing into your groin.", false);
-					if(ncocks > 1 && ncocks < cocks.length) outputText("You feel " + kGAMECLASS.num2Text(ncocks) + " of your " + multiCockDescriptLight() + " shrink smaller, the flesh vanishing into your groin.", false);
+					if(ncocks == 1) outputText("You feel " + num2Text(ncocks) + " of your " + multiCockDescriptLight() + " shrink smaller, the flesh vanishing into your groin.", false);
+					if(ncocks > 1 && ncocks < cocks.length) outputText("You feel " + num2Text(ncocks) + " of your " + multiCockDescriptLight() + " shrink smaller, the flesh vanishing into your groin.", false);
 				}
 			}
 			if(temp2 <= -3) {
@@ -1898,7 +1979,7 @@ use namespace kGAMECLASS;
 				if(cocks.length > 1) {
 					if(ncocks == cocks.length) outputText("A large portion of your " + multiCockDescriptLight() + " receeds towards your groin, receding rapidly in length.", false);
 					if(ncocks == 1) outputText("A single member of your " + multiCockDescriptLight() + " vanishes into your groin, receding rapidly in length.", false);
-					if(ncocks > 1 && cocks.length > ncocks) outputText("Your " + multiCockDescriptLight() + " tingles as " + kGAMECLASS.num2Text(ncocks) + " of your members vanish into your groin, receding rapidly in length.", false);
+					if(ncocks > 1 && cocks.length > ncocks) outputText("Your " + multiCockDescriptLight() + " tingles as " + num2Text(ncocks) + " of your members vanish into your groin, receding rapidly in length.", false);
 				}
 			}
 		}
@@ -1950,10 +2031,10 @@ use namespace kGAMECLASS;
 					if (findStatusAffect(StatusAffects.Infested) >= 0) outputText("  Like rats fleeing a sinking ship, a stream of worms squirts free from your withering member, slithering away.", false);
 				}
 				if (cocks.length == 1) {
-					outputText("<b>You feel " + kGAMECLASS.num2Text(removed) + " cocks disappear into your groin, leaving you with just your " + cockDescript(0) + ".", false);
+					outputText("<b>You feel " + num2Text(removed) + " cocks disappear into your groin, leaving you with just your " + cockDescript(0) + ".", false);
 				}
 				if (cocks.length > 1) {
-					outputText("<b>You feel " + kGAMECLASS.num2Text(removed) + " cocks disappear into your groin, leaving you with " + multiCockDescriptLight() + ".", false);
+					outputText("<b>You feel " + num2Text(removed) + " cocks disappear into your groin, leaving you with " + multiCockDescriptLight() + ".", false);
 				}
 			}
 			//remove infestation if cockless
@@ -1963,6 +2044,129 @@ use namespace kGAMECLASS;
 				balls = 0;
 				ballSize = 1;
 			}
+		}
+		public function modCumMultiplier(delta:Number):Number
+		{
+			trace("modCumMultiplier called with: " + delta);
+		
+			if (delta == 0) {
+				trace( "Whoops! modCumMuliplier called with 0... aborting..." );
+				return delta;
+			}
+			else if (delta > 0) {
+				trace("and increasing");
+				if (findPerk(PerkLib.MessyOrgasms) >= 0) {
+					trace("and MessyOrgasms found");
+					delta *= 1.5
+				}
+			}
+			else if (delta < 0) {
+				trace("and decreasing");
+				if (findPerk(PerkLib.MessyOrgasms) >= 0) {
+					trace("and MessyOrgasms found");
+					delta *= 0.5
+				}
+			}
+
+			trace("and modifying by " + delta);
+			cumMultiplier += delta;
+			return delta;
+		}
+
+		public function increaseCock(cockNum:Number, lengthDelta:Number):Number
+		{
+			var bigCock:Boolean = false;
+	
+			if (findPerk(PerkLib.BigCock) >= 0)
+				bigCock = true;
+
+			return cocks[cockNum].growCock(lengthDelta, bigCock);
+		}
+		
+		public function increaseEachCock(lengthDelta:Number):Number
+		{
+			var totalGrowth:Number = 0;
+			
+			for (var i:Number = 0; i < cocks.length; i++) {
+				trace( "increaseEachCock at: " + i);
+				totalGrowth += increaseCock(i as Number, lengthDelta);
+			}
+			
+			return totalGrowth;
+		}
+		
+		// Attempts to put the player in heat (or deeper in heat).
+		// Returns true if successful, false if not.
+		// The player cannot go into heat if she is already pregnant or is a he.
+		// 
+		// First parameter: boolean indicating if function should output standard text.
+		// Second parameter: intensity, an integer multiplier that can increase the 
+		// duration and intensity. Defaults to 1.
+		public function goIntoHeat(output:Boolean, intensity:int = 1):Boolean {
+			if(!hasVagina() || pregnancyIncubation != 0) {
+				// No vagina or already pregnant, can't go into heat.
+				return false;
+			}
+			
+			//Already in heat, intensify further.
+			if (inHeat) {
+				if(output) {
+					outputText("\n\nYour mind clouds as your " + vaginaDescript(0) + " moistens.  Despite already being in heat, the desire to copulate constantly grows even larger.", false);
+				}
+				var temp:Number = findStatusAffect(StatusAffects.Heat);
+				statusAffect(temp).value1 += 5 * intensity;
+				statusAffect(temp).value2 += 5 * intensity;
+				statusAffect(temp).value3 += 48 * intensity;
+				game.dynStats("lib", 5 * intensity, "resisted", false, "noBimbo", true);
+			}
+			//Go into heat.  Heats v1 is bonus fertility, v2 is bonus libido, v3 is hours till it's gone
+			else {
+				if(output) {
+					outputText("\n\nYour mind clouds as your " + vaginaDescript(0) + " moistens.  Your hands begin stroking your body from top to bottom, your sensitive skin burning with desire.  Fantasies about bending over and presenting your needy pussy to a male overwhelm you as <b>you realize you have gone into heat!</b>", false);
+				}
+				createStatusAffect(StatusAffects.Heat, 10 * intensity, 15 * intensity, 48 * intensity, 0);
+				game.dynStats("lib", 15 * intensity, "resisted", false, "noBimbo", true);
+			}
+			return true;
+		}
+		
+		// Attempts to put the player in rut (or deeper in heat).
+		// Returns true if successful, false if not.
+		// The player cannot go into heat if he is a she.
+		// 
+		// First parameter: boolean indicating if function should output standard text.
+		// Second parameter: intensity, an integer multiplier that can increase the 
+		// duration and intensity. Defaults to 1.
+		public function goIntoRut(output:Boolean, intensity:int = 1):Boolean {
+			if (!hasCock()) {
+				// No cocks, can't go into rut.
+				return false;
+			}
+			
+			//Has rut, intensify it!
+			if (inRut) {
+				if(output) {
+					outputText("\n\nYour " + cockDescript(0) + " throbs and dribbles as your desire to mate intensifies.  You know that <b>you've sunken deeper into rut</b>, but all that really matters is unloading into a cum-hungry cunt.", false);
+				}
+				
+				addStatusValue(StatusAffects.Rut, 1, 100 * intensity);
+				addStatusValue(StatusAffects.Rut, 2, 5 * intensity);
+				addStatusValue(StatusAffects.Rut, 3, 48 * intensity);
+				game.dynStats("lib", 5 * intensity, "resisted", false, "noBimbo", true);
+			}
+			else {
+				if(output) {
+					outputText("\n\nYou stand up a bit straighter and look around, sniffing the air and searching for a mate.  Wait, what!?  It's hard to shake the thought from your head - you really could use a nice fertile hole to impregnate.  You slap your forehead and realize <b>you've gone into rut</b>!", false);
+				}
+				
+				//v1 - bonus cum production
+				//v2 - bonus libido
+				//v3 - time remaining!
+				createStatusAffect(StatusAffects.Rut, 150 * intensity, 5 * intensity, 100 * intensity, 0);
+				game.dynStats("lib", 5 * intensity, "resisted", false, "noBimbo", true);
+			}
+			
+			return true;
 		}
 	}
 }

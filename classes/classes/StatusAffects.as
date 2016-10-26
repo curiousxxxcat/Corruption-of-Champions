@@ -128,6 +128,7 @@ package classes
 		public static const NoMoreMarble:StatusAffectType = mk("No More Marble");
 		public static const Oswald:StatusAffectType = mk("Oswald");
 		public static const PlainOnaholeUsed:StatusAffectType = mk("plain onahole used");
+		public static const PhoukaWhiskeyAffect:StatusAffectType = mk("PhoukaWhiskeyAffect");
 		public static const PostAkbalSubmission:StatusAffectType = mk("Post Akbal Submission");
 		public static const PostAnemoneBeatdown:StatusAffectType = mk("Post Anemone Beatdown");
 		public static const PureCampJojo:StatusAffectType = mk("PureCampJojo");
@@ -143,8 +144,8 @@ package classes
 		public static const SuccubiNight:StatusAffectType = mk("succubiNight");
 		public static const TakenGroPlus:StatusAffectType = mk("TakenGro+");
 		public static const TakenLactaid:StatusAffectType = mk("TakenLactaid");
-		public static const Tamani:StatusAffectType = mk("Tamani");
-		public static const TamaniFemaleEncounter:StatusAffectType = mk("Tamani Female Encounter");
+		public static const Tamani:StatusAffectType = mk("Tamani");									//Used only for compatibility with old save files, otherwise no longer in use
+		public static const TamaniFemaleEncounter:StatusAffectType = mk("Tamani Female Encounter");	//Used only for compatibility with old save files, otherwise no longer in use
 		public static const TelAdre:StatusAffectType = mk("Tel'Adre");
 		public static const TentacleBadEndCounter:StatusAffectType = mk("TentacleBadEndCounter");
 		public static const TentacleJojo:StatusAffectType = mk("Tentacle Jojo");
@@ -287,6 +288,16 @@ package classes
 		public static const Web:CombatStatusAffect = mk2("Web");
 		public static const WebSilence:CombatStatusAffect = mk2("Web-Silence");
 		public static const Whispered:CombatStatusAffect = mk2("Whispered");
+		
+		public static const RemovedArmor:CombatStatusAffect = mk2("Removed Armor");
+		public static const JCLustLevel:CombatStatusAffect = mk2("JC Lust Level");
+		public static const MirroredAttack:CombatStatusAffect = mk2("Mirrored Attack");
+		public static const KnockedBack:CombatStatusAffect = mk2("Knocked Back");
+		public static const Tentagrappled:CombatStatusAffect = mk2("Tentagrappled");
+		public static const TentagrappleCooldown:CombatStatusAffect = mk2("Tentagrapple Cooldown");
+		public static const ShowerDotEffect:CombatStatusAffect = mk2("Shower Dot Effect");
+		public static const GardenerSapSpeed:CombatStatusAffect = mk2("Sap Speed");
+		public static const VineHealUsed:CombatStatusAffect = mk2("Vine Heal Used");
 
 		/**
 		 * Creates non-combat status affect

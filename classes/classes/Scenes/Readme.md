@@ -193,7 +193,7 @@ replaced with `itype == library.THATITM` where `library` is item library (see be
         * `ArmorWithPerk` is a subclass of `Armor` that adds a player perk on equip and removes in on unequip. Perk
             name and properties are set up in the constructor.
         
-        To fine-tune armor with custom `equipEffect`/`unequipEffect`/`canUse`, or situation-dependant properties,
+        To fine-tune armor with custom `equipEffect`/`unequipEffect`/`canUse`, or situation-dependent properties,
         subclass it.
 
     2. `Weapon`. Weapon has 3 more properties: `name` (displayable name, shorter than `longName`), `verb` (like _"hit"_,
@@ -203,7 +203,7 @@ replaced with `itype == library.THATITM` where `library` is item library (see be
         You can create instances of this class, specify everything you need in the constructor. That weapon will have
         no `equipEffect`/`unequipEffect` and could be equipped by anyone.
 
-        To fine-tune weapon with custom `equipEffect`/`unequipEffect`/`canUse`, or situation-dependant propertiesm
+        To fine-tune weapon with custom `equipEffect`/`unequipEffect`/`canUse`, or situation-dependent propertiesm
         subclass it.
 
 Note: `WingStick` though being a weapon, technically is a `Consumable`. Remember that when you check if item is a weapon;
@@ -317,7 +317,7 @@ A **Location** is either **Camp**, **Area**, **Place**, **Dungeon**, or **Quest*
 
 ## NPCs
 
-1. If a **NPC** can not be discovered directly by visiting **Location**, put it in _Scenes/NPCs_.
+1. If a **NPC** cannot be discovered directly by visiting **Location**, put it in _Scenes/NPCs_.
 2. If a **NPC** can be made a follower/slave/lover/etc, or contains highly detailed dialogue/scene,
    put it in _Scenes/NPCs_.
 1. If a **NPC** can be met in a specific **Place** or **Dungeon**, put it in its corresponding package.

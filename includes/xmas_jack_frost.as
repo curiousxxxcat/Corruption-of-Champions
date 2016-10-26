@@ -57,7 +57,7 @@ public function meetJackFrostInTheMountains():void {
 	
 	outputText("\n\nIt takes a while for his impressive orgasm to subside, but finally, he lets go of his hard throbbing shaft and moves his icy blue eyes to look at you.  \"<i>Oh, hey there little one, didn't see you sitting there.  Can I help you?</i>\"");
 	
-	outputText("\n\nYou apologise for interrupting him, wary of disturbing someone so huge, but you thought you had encountered snow and, well, you were curious to find where it was coming from.  It's been so dry since you came to this land; you can't recall seeing snow before.");
+	outputText("\n\nYou apologize for interrupting him, wary of disturbing someone so huge, but you thought you had encountered snow and, well, you were curious to find where it was coming from.  It's been so dry since you came to this land; you can't recall seeing snow before.");
 	
 	outputText("\n\nHe scratches his neck and nods.  \"<i>Indeed, little one, lately there has been no snow... I have no idea why... this world used to be so nice... always covered in white by this time of the year... but it doesn't matter.  If there's no snow, uncle Jack will just have to make some!  Though I didn't expect THIS would be the way I'd be making it snow.</i>\"  He chuckles, giving his shaft a few extra pumps and spraying a bit of snow on the ground.");
 	
@@ -82,7 +82,7 @@ public function noJizzingInMyCampPlease():void {
 	
 	outputText("\n\nSeeing no reason to linger, you return to your camp.");
 	flags[kFLAGS.JACK_FROST_YEAR] = date.fullYear;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Yes=]
@@ -93,7 +93,7 @@ public function jizzSnowOnMyCampPlease():void {
 	outputText("\n\nYou thank him for the surprisingly kind gesture, and start to head back down to camp.  Even as you go, you can see the first huge jet of snow arcing its way across the sky...");
 	flags[kFLAGS.JACK_FROST_YEAR] = date.fullYear;
 	flags[kFLAGS.JACK_FROST_PROGRESS] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Back in camp
@@ -116,7 +116,7 @@ public function processJackFrostEvent():void {
 		flags[kFLAGS.JACK_FROST_PROGRESS] = 0;
 		HPChange(maxHP(),false);
 		fatigue(-100);
-		doNext(16);
+		doNext(camp.returnToCampUseEightHours);
 	}
 	//Rathazul
 	else if(player.findStatusAffect(StatusAffects.CampRathazul) >= 0 && flags[kFLAGS.JACK_FROST_PROGRESS] == 2) {
@@ -183,7 +183,7 @@ public function processJackFrostEvent():void {
 		}
 		//Corrupt
 		else {
-			outputText("Out in the outskirts of of the camp you notice your pet mouse-slut Jojo, casually fucking a small mound of snow like an animal.  You laugh to yourself, now, now... doesn't he know that there are many more better things to fuck than a pitiful mound of snow on the ground...");
+			outputText("Out in the outskirts of the camp you notice your pet mouse-slut Jojo, casually fucking a small mound of snow like an animal.  You laugh to yourself, now, now... doesn't he know that there are better things to fuck than a pitiful mound of snow on the ground...");
 			outputText("\n\nYou casually approach him from behind, stripping off your [armor].  Once behind his heart-shaped ass, you pull on his tail and reach down to grope at his shaft and balls.  Silly slut, you tell him.  This is not how one fucks in the snow... if he doesn't know how to do it right, you'll be happy to demonstrate.");
 			//(How should you demonstrate?)
 			//[Pen Ass] [Ride Cock] [Spank and Finger Ass]
@@ -235,7 +235,7 @@ public function processJackFrostEvent():void {
 				
 				//(if PC has a dick)
 				if(player.hasCock()) {
-					outputText("\n\nYou strip off your lower garments, exposing your " + multiCockDescriptLight() + " to the hungry eyes of your cumslut.  You tell her you would like her to give you a \"<i>hand</i>\", with the extraction process...");
+					outputText("\n\nYou strip off your lower garments, exposing your " + player.multiCockDescriptLight() + " to the hungry eyes of your cumslut.  You tell her you would like her to give you a \"<i>hand</i>\", with the extraction process...");
 					outputText("\n\nAmily bows respectfully.  \"<i>Right away, [master].</i>\"");
 					outputText("\n\nShe promptly takes hold of your [cock] with awe-filled respect, her long, dextrous fingers quickly falling into the familiar rhythym of dancing along your cock to fill you with the most wonderous sensations.  Her spaded tail wiggles idly for several moments, then slithers through the air to brush its feather-like tip against the tip and underside of your shaft");
 					if(player.balls > 0) outputText(", even tickling your [balls]");
@@ -361,7 +361,7 @@ public function processJackFrostEvent():void {
 		}
 		//Without kids
 		else {
-			outputText("You find Marble simply staring into the sky, a look of wonder covering her face.  She lifts up her hand, then takes a step forward as you approach.  It looks like she is about to catch a flake in her hands, only to instead suddenly slip on the frozen ground under her hoofs, and fall down onto her backside with a cry of surprise.  \"<i>Oww...</i>\" she grumbles, giving her backside a rub as you come up in front of her her.  You tell her to be careful, that stuff can be slippery while extending your hand to help her up.  \"<i>Yeah, thanks sweetie, I noticed,</i>\" she sighs and accepts your hand.");
+			outputText("You find Marble simply staring into the sky, a look of wonder covering her face.  She lifts up her hand, then takes a step forward as you approach.  It looks like she is about to catch a flake in her hands, only to instead suddenly slip on the frozen ground under her hoofs, and fall down onto her backside with a cry of surprise.  \"<i>Oww...</i>\" she grumbles, giving her backside a rub as you come up in front of her.  You tell her to be careful, that stuff can be slippery while extending your hand to help her up.  \"<i>Yeah, thanks sweetie, I noticed,</i>\" she sighs and accepts your hand.");
 			outputText("\n\n\"<i>" + player.short + ", do you know what this is?</i>\" your lover asks while raising her arms in the air and looking around in amazement once more.  \"<i>How can stuff fall from the sky?</i>\"  You laugh, and say that it's snow, or frozen rain.  The cow-girl looks at you in confusion once more and asks what rain is.  Now it is your turn to be surprised, she has never seen it rain before in her life?  It has never gotten cloudy and water has fallen from the sky?  Marble shakes her head no, \"<i>Sweetie, I'm not sure what a cloud is either.  Every day of my life has always been sunny and warm.  This is something I've never experienced before....</i>\"");
 			
 			outputText("\n\nYou're left at a loss for words once more, and the two of you turn back to look at the snow once more.  You feel Marble gently take a hold of your hand as you two simply watch the flakes fall to the ground.");
@@ -417,7 +417,7 @@ public function processJackFrostEvent():void {
 		outputText("\n\nYou wipe some moisture from your brow, nodding agreement.  Yeah, that was pretty fun... you didn't think wrestling could be this fun, nor this sexy, you point out");
 		if(player.gender > 0) {
 			outputText(", as evidenced by ");
-			if(player.hasCock()) outputText("your erect " + multiCockDescriptLight());
+			if(player.hasCock()) outputText("your erect " + player.multiCockDescriptLight());
 			if(player.gender == 3) outputText(" and ");
 			else if(player.hasVagina()) outputText("your ");
 			if(player.hasVagina()) outputText("dripping [vagina]");
@@ -535,7 +535,7 @@ public function processJackFrostEvent():void {
 		HPChange(maxHP(),false);
 		fatigue(-100);
 		flags[kFLAGS.JACK_FROST_PROGRESS] = 0;
-		doNext(16);
+		doNext(camp.returnToCampUseEightHours);
 	}
 }
 
@@ -545,7 +545,7 @@ public function kihaXmasFuck():void {
 	clearOutput();
 	var x:int = player.cockThatFits(67);
 	if(x < 0) x = player.smallestCockIndex();
-	outputText("Stripping off your [armor], you tell the dragon-girl that a good workout is all she needs to get nice and warm.  She snorts in dismissal, but the way she's looking at you is a pretty good indication she's willing to try it.  \"<i>So, what do you have in mind?</i>\" she blusters.  You stroke your quickly erecting " + multiCockDescriptLight() + " and, smirking, ask her if your intentions aren't obvious?");
+	outputText("Stripping off your [armor], you tell the dragon-girl that a good workout is all she needs to get nice and warm.  She snorts in dismissal, but the way she's looking at you is a pretty good indication she's willing to try it.  \"<i>So, what do you have in mind?</i>\" she blusters.  You stroke your quickly erecting " + player.multiCockDescriptLight() + " and, smirking, ask her if your intentions aren't obvious?");
 	outputText("\n\nShe stalks over, tail swaying sensually behind her, and takes you by the shoulders.  Then, with a mischievous grin, she pushes you into the snow.  \"<i>All right, but you're on the bottom - you can have the cold back this time!</i>\" she smirks, straddling your waist.");
 	outputText("\n\nYou laugh and tell her you're fine with that, but she better hurry up, the cold is starting to catch up to you.   The mock-dragon blows a fine trickle of smoke from her nose, reaching down to stroke your shaft.  \"<i>Such a pervert, aren't you?  Here I am all freezing and wet, and all you can think about is fucking me, is that it?  You just want to shove this cock into my wet cunny and ride me until you burst, isn't that right?</i>\"  She growls lustfully, her fingers nimbly caressing and stroking your " + cockDescript(x) + " as she speaks.");
 	outputText("\n\nWith a wry smile you ask her if she's got a problem with that.  You wouldn't be thinking about her wet pussy all the time if she ever bothered to throw some clothes on... so who's the real perv now?  You or her?");
@@ -581,7 +581,7 @@ public function kihaXmasFingering():void {
 public function penetradePureMouseWaifu():void {
 	clearOutput();
 	outputText("Stripping down your [armor] and indicating Amily should do the same... you tell her that you were hoping for some good old-fashioned sex between a horny " + player.mf("man","herm") + " and " + player.mf("his","her") + " lovely mousette.  You playfully ask Amily if she has any objections?");
-	outputText("\n\n\"<i>Well, it's a little counterproductive to take your clothes off if you want to get warm,</i>\" Amily notes.  Despite her words, she's stripping off without the slightest hesitation.  You reply that just the sight of her getting nude is already making you a little warmer... thrusting your hips so she can see your erect " + multiCockDescriptLight() + ".  \"<i>Flattering flirt; you always think with your dick, don't you?</i>\" the mouse laughs.  That's rich; you can see her pussy dripping from here");
+	outputText("\n\n\"<i>Well, it's a little counterproductive to take your clothes off if you want to get warm,</i>\" Amily notes.  Despite her words, she's stripping off without the slightest hesitation.  You reply that just the sight of her getting nude is already making you a little warmer... thrusting your hips so she can see your erect " + player.multiCockDescriptLight() + ".  \"<i>Flattering flirt; you always think with your dick, don't you?</i>\" the mouse laughs.  That's rich; you can see her pussy dripping from here");
 	if(flags[kFLAGS.AMILY_WANG_LENGTH] > 0) outputText(", not to mention her dick's pretty hard, too");
 	outputText(".");
 	
@@ -688,7 +688,7 @@ public function rideCorruptJojoCock():void {
 	addButton(0,"Next",processJackFrostEvent);
 	flags[kFLAGS.JACK_FROST_PROGRESS] = 5;
 	//Preggers chance!
-	player.knockUp(4,432);
+	player.knockUp(PregnancyStore.PREGNANCY_JOJO, PregnancyStore.INCUBATION_MOUSE + 82); //Jojo's kids take longer for some reason
 }
 
 //[=Spank and Finger Ass=]

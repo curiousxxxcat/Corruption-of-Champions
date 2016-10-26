@@ -6,7 +6,7 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 	 * Character class for player and NPCs. Has subclasses Player and NonPlayer.
 	 * @author Yoffy
 	 */
-	public class Character extends Creature 
+	public class Character extends Creature
 	{
 		private var _femininity:Number = 50;
 
@@ -59,22 +59,19 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 		//Body tone i.e. Lithe, stocky, etc
 		public var tone:Number = 0;
 		
-		//Preggos
-		//TODO: Document pregancy types. Both butt and normal. Mainly butts though.
-		//1 = imp
-		//2 = minotaur
-		//3 = tentacle
-		//4 = mouse
-		//5 = EGGZ
-		//6 = hellhound
-		//7 = centaur
-		//8 = MARBLZ
-		public var pregnancyType:Number = 0;
-		public var pregnancyIncubation:Number = 0;
-		
-		//2 = bee
-		public var buttPregnancyType:Number = 0;
-		public var buttPregnancyIncubation:Number = 0;
+		private var _pregnancyType:int = 0;
+		public function get pregnancyType():int { return _pregnancyType; }
+
+		private var _pregnancyIncubation:int = 0;
+		public function get pregnancyIncubation():int { return _pregnancyIncubation; }
+
+		private var _buttPregnancyType:int = 0;
+		public function get buttPregnancyType():int { return _buttPregnancyType; }
+
+		private var _buttPregnancyIncubation:int = 0;
+		public function get buttPregnancyIncubation():int { return _buttPregnancyIncubation; }
+
+
 		
 		//Key items
 		public var keyItems:Array;
@@ -345,7 +342,7 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 			if (!noAdj)
 			{
 				//Adjectives first!
-				if (skinAdj != "")
+				if (skinAdj != "" && !noTone && skinTone != "rough gray")
 				{
 					skinzilla += skinAdj;
 					if (noTone)
@@ -442,18 +439,18 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 			return false;
 		}
 
-		public function isPregnant():Boolean {
-			return pregnancyIncubation != 0;
+		public function isPregnant():Boolean { return _pregnancyType != 0; }
 
-		}
+		public function isButtPregnant():Boolean { return _buttPregnancyType != 0; }
+	
 		//fertility must be >= random(0-beat)
+		//If arg == 1 then override any contraceptives and guarantee fertilization
 		public function knockUp(type:int = 0, incubation:int = 0, beat:int = 100, arg:int = 0):void
 		{
 			//Contraceptives cancel!
 			if (findStatusAffect(StatusAffects.Contraceptives) >= 0 && arg < 1)
 				return;
-			if (findStatusAffect(StatusAffects.GooStuffed) >= 0)
-				return;
+//			if (findStatusAffect(StatusAffects.GooStuffed) >= 0) return; //No longer needed thanks to PREGNANCY_GOO_STUFFED being used as a blocking value
 			var bonus:int = 0;
 			//If arg = 1 (always pregnant), bonus = 9000
 			if (arg >= 1)
@@ -461,14 +458,13 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 			if (arg <= -1)
 				bonus = -9000;
 			//If unpregnant and fertility wins out:
-			if ((arg == 2 || (pregnancyIncubation == 0)) && totalFertility() + bonus > Math.floor(Math.random() * beat) && hasVagina())
+			if (pregnancyIncubation == 0 && totalFertility() + bonus > Math.floor(Math.random() * beat) && hasVagina())
 			{
-				pregnancyType = type;
-				pregnancyIncubation = incubation;
+				knockUpForce(type, incubation);
 				trace("PC Knocked up with pregnancy type: " + type + " for " + incubation + " incubation.");
 			}
 			//Chance for eggs fertilization - ovi elixir and imps excluded!
-			if (type != 1 && type != 5 && type != 10)
+			if (type != PregnancyStore.PREGNANCY_IMP && type != PregnancyStore.PREGNANCY_OVIELIXIR_EGGS && type != PregnancyStore.PREGNANCY_ANEMONE)
 			{
 				if (findPerk(PerkLib.SpiderOvipositor) >= 0 || findPerk(PerkLib.BeeOvipositor) >= 0)
 				{
@@ -479,7 +475,15 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 				}
 			}
 		}
-		
+
+		//The more complex knockUp function used by the player is defined above
+		//The player doesn't need to be told of the last event triggered, so the code here is quite a bit simpler than that in PregnancyStore
+		public function knockUpForce(type:int = 0, incubation:int = 0):void
+		{
+			_pregnancyType = type;
+			_pregnancyIncubation = (type == 0 ? 0 : incubation); //Won't allow incubation time without pregnancy type
+		}
+	
 		//fertility must be >= random(0-beat)
 		public function buttKnockUp(type:int = 0, incubation:int = 0, beat:int = 100, arg:int = 0):void
 		{
@@ -493,18 +497,34 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 			if (arg <= -1)
 				bonus = -9000;
 			//If unpregnant and fertility wins out:
-			if ((arg == 2 || (buttPregnancyIncubation == 0)) && totalFertility() + bonus > Math.floor(Math.random() * beat))
+			if (buttPregnancyIncubation == 0 && totalFertility() + bonus > Math.floor(Math.random() * beat))
 			{
-				buttPregnancyType = type;
-				buttPregnancyIncubation = incubation;
-				trace("PC Knocked up with pregnancy type: " + type + " for " + incubation + " incubation.");
+				buttKnockUpForce(type, incubation);
+				trace("PC Butt Knocked up with pregnancy type: " + type + " for " + incubation + " incubation.");
 			}
 		}
+
+		//The more complex buttKnockUp function used by the player is defined in Character.as
+		public function buttKnockUpForce(type:int = 0, incubation:int = 0):void
+		{
+			_buttPregnancyType = type;
+			_buttPregnancyIncubation = (type == 0 ? 0 : incubation); //Won't allow incubation time without pregnancy type
+		}
+
+		public function pregnancyAdvance():Boolean {
+			if (_pregnancyIncubation > 0) _pregnancyIncubation--;
+			if (_pregnancyIncubation < 0) _pregnancyIncubation = 0;
+			if (_buttPregnancyIncubation > 0) _buttPregnancyIncubation--;
+			if (_buttPregnancyIncubation < 0) _buttPregnancyIncubation = 0;
+			return pregnancyUpdate();
+		}
+
+		public function pregnancyUpdate():Boolean { return false; }
 
 		//Create a keyItem
 		public function createKeyItem(keyName:String, value1:Number, value2:Number, value3:Number, value4:Number):void
 		{
-			var newKeyItem:* = new KeyItemClass();
+			var newKeyItem:KeyItemClass = new KeyItemClass();
 			//used to denote that the array has already had its new spot pushed on.
 			var arrayed:Boolean = false;
 			//used to store where the array goes
@@ -776,12 +796,6 @@ import classes.Scenes.Places.TelAdre.UmasShop;
 					return true;
 			}
 			return false;
-		}
-		
-		public function hasSheath():Boolean
-		{
-			return dogCocks() > 0 || horseCocks() > 0 || catCocks() > 0 || kangaCocks() > 0 || displacerCocks() > 0;
-
 		}
 		
 		public function hasKnot(arg:int = 0):Boolean

@@ -68,7 +68,7 @@ public function encounterKiha():void {
 		
 		outputText("What do you do?", false);
 		//[Fight] [Ask Why][Buy Passage][Leave]
-		simpleChoices("Fight",meetKihaAndFight,"Ask Why",askWhy,"Buy Passage",offerToBuyPassageFromKiha,"",0,"Leave",leaveWhenMeetingAgressiveKiha);
+		simpleChoices("Fight", meetKihaAndFight, "Ask Why", askWhy, "Buy Passage", offerToBuyPassageFromKiha, "", null, "Leave", leaveWhenMeetingAgressiveKiha);
 	}
 	//*Repeat Encounter - PC WAS VICTORIOUS LAST FIGHT 
 	else if(flags[kFLAGS.PC_WIN_LAST_KIHA_FIGHT] == 1) {
@@ -88,7 +88,7 @@ public function encounterKiha():void {
 			temp = null;
 		}
 		//[Pay] [This was my idea] [Leave] [Fight] - Leave uses standard leave text
-		simpleChoices("Fight",meetKihaAndFight,"Pay",temp,"My Idea",tellKihaTributeWasYourIdea,"",0,"Leave",leaveWhenMeetingAgressiveKiha);
+		simpleChoices("Fight", meetKihaAndFight, "Pay", temp, "My Idea", tellKihaTributeWasYourIdea, "", null, "Leave", leaveWhenMeetingAgressiveKiha);
 	}
 	//*Repeat Encounter - Tribute Wore off 
 	else if(flags[kFLAGS.KIHA_TOLL] > 1 && 
@@ -101,7 +101,7 @@ public function encounterKiha():void {
 			temp = null;
 		}
 		//[Pay Again] [This was my idea] [Leave]  [Fight] - As first time Tribute Offer encounter
-		simpleChoices("Fight",meetKihaAndFight,"Pay",temp,"My Idea",tellKihaTributeWasYourIdea,"",0,"Leave",leaveWhenMeetingAgressiveKiha);
+		simpleChoices("Fight", meetKihaAndFight, "Pay", temp, "My Idea", tellKihaTributeWasYourIdea, "", null, "Leave", leaveWhenMeetingAgressiveKiha);
 	}
 	//Generic Repeat Encounter 
 	else {
@@ -112,7 +112,7 @@ public function encounterKiha():void {
 		if(flags[kFLAGS.KIHA_TOLL] == 0) {
 			outputText("If you hurry, you might get a word in edge-wise.  What do you do?", false);
 			//[Fight] [Ask Why][Buy Passage][Leave]
-			simpleChoices("Fight",meetKihaAndFight,"Ask Why",askWhy,"Buy Passage",offerToBuyPassageFromKiha,"",0,"Leave",leaveWhenMeetingAgressiveKiha);
+			simpleChoices("Fight", meetKihaAndFight, "Ask Why", askWhy, "Buy Passage", offerToBuyPassageFromKiha, "", null, "Leave", leaveWhenMeetingAgressiveKiha);
 		}
 		else {
 			outputText("It's a fight!", false);
@@ -128,14 +128,14 @@ private function offerToBuyPassageFromKiha():void {
 	//(Unlocks toll option next encounter)
 	flags[kFLAGS.KIHA_TOLL] = 1;
 	//[Fight] [Leave] - Same results as main fight/leave.
-	simpleChoices("Fight",meetKihaAndFight,"",0,"",0,"",0,"Leave",leaveWhenMeetingAgressiveKiha);
+	simpleChoices("Fight", meetKihaAndFight, "", null, "", null, "", null, "Leave", leaveWhenMeetingAgressiveKiha);
 }
 //[Leave] 
 private function leaveWhenMeetingAgressiveKiha():void {
 	outputText("", true);
 	spriteSelect(72);
 	outputText("You nod and step back, retreating back towards camp.  You've no desire to fight such a fiery opponent.", false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[Fight]
 internal function meetKihaAndFight():void {
@@ -183,7 +183,7 @@ public function kihaExplore(clearScreen:Boolean = true):void {
 	}	
 	if(event < 5) {
 		outputText("You wander around through the swamp for a while, but you don't find anything.", false);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	//Reducto
@@ -192,8 +192,7 @@ public function kihaExplore(clearScreen:Boolean = true):void {
 	else if(event < 9) itype = consumables.COAL___;
 	else if(event < 10) itype = useables.T_SSILK;
 	outputText("While exploring, you find an item on the ground!  ", false);
-	menuLoc = 2;
-	inventory.takeItem(itype);
+	inventory.takeItem(itype, camp.returnToCampUseOneHour);
 }
 
 //[This was my idea!]
@@ -257,7 +256,8 @@ internal function kihaVictoryIntroduction():void {
 		outputText("\n\nNow that she's a captive audience, you could always talk to her.", false);
 		wordRape = rapeKihaWithWORDS;
 	}
-	choices("Masturbate ",forceMasturbate,"Use Tail",useHerTail,"FuckHerPussy",fuckHer,"FuckHerAss",buttFuck,"Talk",wordRape,"",0,"",0,"",0,"",0,"Leave",cleanupAfterCombat);
+	choices("Masturbate", forceMasturbate, "Use Tail", useHerTail, "FuckHerPussy", fuckHer, "FuckHerAss", buttFuck, "Talk", wordRape,
+		"", null, "", null, "", null, "", null, "Leave", cleanupAfterCombat);
 }
 //*Generic PC Loss Intro 
 internal function kihaLossIntro():void {
@@ -360,7 +360,7 @@ private function kihaRapesMen():void {
 	if(player.isNaga() || player.tailType == TAIL_TYPE_LIZARD) outputText("\"<i>Heh, if you had half as much dexterity as you do impudence, I'd let you do this for me.  Fat chance of that,</i>\" she remarks off-handedly.  ", false);
 	outputText("Before long, her cunny practically drools, but you're not sure what she's getting off on more, the tail teasing her clit or your dick stiffening uncontrollably at her feet.  She grins, more to show her teeth than in pleasure, and begins to feed her tail into her snatch, the girl's folds parting eagerly to the rough limb, her honeypot polishing her scales to a liquid gleam almost immediately.  As she pumps long, slow thrusts inside herself, Kiha shifts to one leg, bringing her adept foot to your " + cockDescript(x) + " once more", false);
 	if(player.balls > 0) outputText(", resting the heel of her foot against the swell of your " + ballsDescriptLight() + " and applying just enough pressure to feel the cum churning within", false);
-	outputText(".  \"<i>Ah! J- just stay ri- ri- right there!</i>\" she commands, as her tail picks up the pace.  \"<i>I'll attend to y-y-you in a m-m... Aaah! Minute,</i>\" she coos, pumping herself to the verge of climax.  Clenching her eyes and balling her hands into fists, the dragoness impales herself on the pistoning appendage, and chokes back a shuddering moan as she bottoms out and creams a crystal polish of girl cum across it, which wicks down and coats her scaled posterior with a shimmering veneer. \"<i>Ahhhaaa…</i>\" she shudders.  \"<i>Now then, at least I'll have cum once today if you prove to be as worthless at fucking as you were at fighting.</i>\"\n\n", false);
+	outputText(".  \"<i>Ah! J- just stay ri- ri- right there!</i>\" she commands, as her tail picks up the pace.  \"<i>I'll attend to y-y-you in a m-m... Aaah! Minute,</i>\" she coos, pumping herself to the verge of climax.  Clenching her eyes and balling her hands into fists, the dragoness impales herself on the pistoning appendage, and chokes back a shuddering moan as she bottoms out and creams a crystal polish of girl cum across it, which wicks down and coats her scaled posterior with a shimmering veneer. \"<i>Ahhhaaa...</i>\" she shudders.  \"<i>Now then, at least I'll have cum once today if you prove to be as worthless at fucking as you were at fighting.</i>\"\n\n", false);
 	
 	outputText("The dragon girl's little show has already brought you to full mast and the pad-like scales of her foot rubbing up and down your length has you rock hard, helplessly twitching under her heel.  She hooks her long toes around your pulsing tip and pulls your " + cockDescript(x) + " into the air, straining shaft rising in obedience to her demands.  Reluctantly withdrawing the tail from her slavering slit, Kiha crouches down until your flesh spear is parallel with her belly. She inches forward, your crown just a hair's breadth from her pussy and she makes a \"<i>tut</i>\" sound in the back of her throat.  \"<i>Considering the shitty battle you gave me, you certainly don't deserve this hole, nor any chance at fathering children.</i>\"  Despite her contempt, her lower lips splatter your " + cockDescript(x) + " with the warm, liquid bounty of the dragon girl's vigorous masturbation.  You shudder at the heat showering your groin, unsure how much more teasing you can take.  Sliding forward a bit more, the victorious woman guides her narrow pucker over your throbbing meat.  \"<i>This should be more your speed, little fairy,</i>\" she taunts, before plunging herself onto your manhood.\n\n", false);
 	
@@ -409,11 +409,11 @@ private function kihaRapesHerms():void {
 		outputText("As the two of you entwine yourselves against Kiha's honey-slick tail, she notices your belongings in a heap next to the two of you. \"<i>What kind of s-s-shitty gifts did you bring me,</i>\" she pants through a toothy grin.  Scattering your belongings with one hand, she notices the phallic shape of your incubus draft, and snatches the bottle between her thumb and forefinger.  \"<i>Demon trash, of course.  You wouldn't even know how to use this right.  Let me show you.</i>\"  She flicks the cork from the vial and upends the concoction down her gullet in one swallow.  You don't have time to protest as the hood over her clitoris slides back, the fingertip-sized bead above her engorged vulva swelling thicker by the second. With a lurching spasm, the flesh of her joy buzzer rises into the air, growing three, then six inches before finally settling at nine inches long.  The two-inch-thick shaft of her massive clit throbs, the underside bulging outward as rectangular, interlocking plates harden into a ladder from base to summit. The featureless, rounded tip of her draconic phallus swells and juts obscenely as it curves into a sloping crest, tinted with the flush of arousal as a thin slit opens at the very crown of her newly grown cock.\n\n", false);
 		player.consumeItem(consumables.INCUBID);
 		//[Incubus Draft cont.: 
-		outputText("Without breaking her stride, Kiha threads more of her tail between the gushing lips of your spurting nethers and loops the long, flexible tip around your " + cockDescript(0) + ", pulling it against her new shaft.  Completing the circle, the dexterous limb, varnished in girl-cum, tightens around the organs, sliding up and down frantically.  The feeling of her long, smooth cock-plates against the sensitive underside of your shaft is delicious and you reach a hand out to help the dragon's tail with its rapid, coiled jerking. Kiha kicks her leg up, smacking your arm back with the heel of her padded foot.  \"<i>This is for me,</i>\" she practically screams, \"<i>You're just here for the ride!  I don't even like your h-h-hot cock rubbing against mine or your gushing pussy sucking my t-ta-tail.  So just lie back like the little ssssSHIT you are and fucking… CUM!</i>\"  At that, the dragoness loses herself to the sensations, her virginal dick erupting in a shower of seething spunk that arcs backward, splattering her face and tits with her own creamy seed.\n\n", false);
+		outputText("Without breaking her stride, Kiha threads more of her tail between the gushing lips of your spurting nethers and loops the long, flexible tip around your " + cockDescript(0) + ", pulling it against her new shaft.  Completing the circle, the dexterous limb, varnished in girl-cum, tightens around the organs, sliding up and down frantically.  The feeling of her long, smooth cock-plates against the sensitive underside of your shaft is delicious and you reach a hand out to help the dragon's tail with its rapid, coiled jerking. Kiha kicks her leg up, smacking your arm back with the heel of her padded foot.  \"<i>This is for me,</i>\" she practically screams, \"<i>You're just here for the ride!  I don't even like your h-h-hot cock rubbing against mine or your gushing pussy sucking my t-ta-tail.  So just lie back like the little ssssSHIT you are and fucking... CUM!</i>\"  At that, the dragoness loses herself to the sensations, her virginal dick erupting in a shower of seething spunk that arcs backward, splattering her face and tits with her own creamy seed.\n\n", false);
 		dicked = true;
 	}
 	//Both scenes: 
-	outputText("When Kiha climaxes, a shuddering, vulnerable moan escapes her careless lips and your own resolve crumbles.  Your " + vaginaDescript(0) + " spasms in muscle-clenching ecstasy as your " + multiCockDescriptLight() + " lurches at the rush of geysering jizz cascading from you.  Pale white ropes of gushing ejaculate spray from your loins, passionate globs of alabaster rain down on the two of you, a shower of semen splashing the heat of your orgams across your wallowing bodies.  Even after the exhilaration of your release fades, the dragon girl keeps rubbing the two of you with her spunk-lacquered tail, until a second, weaker orgasm shudders through your spent flesh.  Extracting herself from your lower body, the dragoness stands, still full of spunky energy and taunting reproach.  \"<i>That's what I do to trespassers!  I don't want to see your tight ass around here again without a proper tribute,</i>\" she warns, her mouth curled into the faintest of crooked grins.", false);
+	outputText("When Kiha climaxes, a shuddering, vulnerable moan escapes her careless lips and your own resolve crumbles.  Your " + vaginaDescript(0) + " spasms in muscle-clenching ecstasy as your " + multiCockDescriptLight() + " lurches at the rush of geysering jizz cascading from you.  Pale white ropes of gushing ejaculate spray from your loins, passionate globs of alabaster rain down on the two of you, a shower of semen splashing the heat of your orgasm across your wallowing bodies.  Even after the exhilaration of your release fades, the dragon girl keeps rubbing the two of you with her spunk-lacquered tail, until a second, weaker orgasm shudders through your spent flesh.  Extracting herself from your lower body, the dragoness stands, still full of spunky energy and taunting reproach.  \"<i>That's what I do to trespassers!  I don't want to see your tight ass around here again without a proper tribute,</i>\" she warns, her mouth curled into the faintest of crooked grins.", false);
 	
  	//[Incubus Draft end: 
 	if(dicked) outputText("\n\nAs she steps back into the mire, the sound of her muttering carries back to you. \"<i>Much as I'd like to keep it, better to be done with this,</i>\" she sighs, glancing down at her turgid, draconic shaft.  \"<i>Just as well I held onto all those pink eggs after that crystal vial knocked me up.</i>\"  The rest of that story is lost to you, however, as her lean, swaying torso is swallowed back into the swamp's embrace.", false);
@@ -688,7 +688,7 @@ private function rapeKihaWithWORDS():void {
 		
 		outputText("You sigh, which surprisingly gets a response.  \"<i>I... don't remember okay?  The first thing I remember is waking up like this in Lethice's base.  There were a few of us, and the demons taught us, schooled us to be like them... I guess they planned for us to be the next level of demons.  A few of us broke out and went our separate ways.</i>\"\n\n", false);
 			
-		outputText("The dragonic woman looks very much like a young, nervous girl in that moment.  Her cheeks blush and she leaps up, flying away before you can ask her any more.", false);
+		outputText("The draconic woman looks very much like a young, nervous girl in that moment.  Her cheeks blush and she leaps up, flying away before you can ask her any more.", false);
 	}
 	//Conversation Level 4: Requires Low Corruption, Repeating for now (Zed)
 	else {

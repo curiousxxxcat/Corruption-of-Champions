@@ -1,6 +1,7 @@
-﻿
+﻿//This file is no longer used or included
 //Event No's 2000 4999 use this function
 
+/*
 public function doEvent(eventNo:Number):void
 {
 	var temp2:Number = 0;
@@ -22,7 +23,7 @@ public function doEvent(eventNo:Number):void
 	{
 		hideUpDown();
 		dynStats("lus", -30);
-		outputText("\nThe imp shakes the empty vial to emphasize his point.  You reel in shock at this revelation - you've just entered the demon realm and you've already been drugged!  You tremble with the aching need in your groin, but resist, righteous anger lending you strength.\n\nIn desperation you leap towards the imp, watching with glee as his cocky smile changes to an expression of sheer terror.  The smaller creature is no match for your brute strength as you pummel him mercilessly.  You pick up the diminutive demon and punt him into the air, frowning grimly as he spreads his wings and begins speeding into the distance.\n\n", true);
+		outputText("The imp shakes the empty vial to emphasize his point.  You reel in shock at this revelation - you've just entered the demon realm and you've already been drugged!  You tremble with the aching need in your groin, but resist, righteous anger lending you strength.\n\nIn desperation you leap towards the imp, watching with glee as his cocky smile changes to an expression of sheer terror.  The smaller creature is no match for your brute strength as you pummel him mercilessly.  You pick up the diminutive demon and punt him into the air, frowning grimly as he spreads his wings and begins speeding into the distance.\n\n", true);
 		speech("FOOL!  You could have had pleasure unending...but should we ever cross paths again you will regret humiliating me!  Remember the name Zetaz, as you'll soon face the wrath of my master!", "The Imp");
 		outputText("\nYour pleasure at defeating the demon ebbs as you consider how you've already been defiled.  You swear to yourself you will find the demon responsible for doing this to you and the other Champions, and destroy him AND his pet imp.", false);
 		doNext(2002);
@@ -30,30 +31,27 @@ public function doEvent(eventNo:Number):void
 	else if (eventNo == 2002)
 	{
 		hideUpDown();
-		outputText("\nYou look around, surveying the hellish landscape as you plot your next move.  The portal is a few yards away, nestled between a formation of rocks.  It does not seem to exude the arousing influence it had on the other side.  The ground and sky are both tinted different shades of red, though the earth beneath your feet feels as normal as any other lifeless patch of dirt.   You settle on the idea of making a camp here and fortifying this side of the portal.  No demons will ravage your beloved hometown on your watch.\n\nIt does not take long to set up your tent and a few simple traps.  You'll need to explore and gather more supplies to fortify it any further.  Perhaps you will even manage to track down the demons who have been abducting the other champions!", true);
+		outputText("You look around, surveying the hellish landscape as you plot your next move.  The portal is a few yards away, nestled between a formation of rocks.  It does not seem to exude the arousing influence it had on the other side.  The ground and sky are both tinted different shades of red, though the earth beneath your feet feels as normal as any other lifeless patch of dirt.   You settle on the idea of making a camp here and fortifying this side of the portal.  No demons will ravage your beloved hometown on your watch.\n\nIt does not take long to set up your tent and a few simple traps.  You'll need to explore and gather more supplies to fortify it any further.  Perhaps you will even manage to track down the demons who have been abducting the other champions!", true);
 		doNext(1);
 	}
-	//Meditate w/Jojo
+	//Meditate w/Jojo in Forest
 	else if (eventNo == 2003)
 	{
 		jojoScene.jojoSprite();
 		outputText("Jojo smiles and leads you off the path to a small peaceful clearing.  There is a stump in the center, polished smooth and curved in a way to be comfortable.  He gestures for you to sit, and instructs you to meditate.\n\nAn indeterminate amount of time passes, but you feel more in control of yourself.  Jojo congratulates you, but offers a warning as well.  \"<i>Be ever mindful of your current state, and seek me out before you lose yourself to the taints of this world.  Perhaps someday this tainted world can be made right again.</i>\"", true);
 		
-		// Workaround to avoid meditation resetting hours since cum, because BLIND FIND REPLACING ON THE ENTIRE CODEBASE IS A LEGITIMATELY FANTASTIC FUCKING IDEA.
-		var hscT:int = player.hoursSinceCum;
-		dynStats("str", .5, "tou", .5, "int", .5, "lib", -1, "lus", -5, "cor", -1);
-		player.hoursSinceCum = hscT;
+		dynStats("str", .5, "tou", .5, "int", .5, "lib", -1, "lus", -5, "cor", (-1 - player.countCockSocks("alabaster")));
 		
 		if (player.findStatusAffect(StatusAffects.JojoMeditationCount) < 0)
 			player.createStatusAffect(StatusAffects.JojoMeditationCount, 1, 0, 0, 0);
 		else
 			player.addStatusValue(StatusAffects.JojoMeditationCount, 1, 1);
-		temp = player.statusAffectv1(StatusAffects.JojoMeditationCount);
-		if (temp >= 5)
+			
+		if (player.statusAffectv1(StatusAffects.JojoMeditationCount) >= 5)
 		{
 			outputText("\n\nJojo nods respectfully at you when the meditation session is over and smiles.  ");
 			//Forest Jojo Eligible for Invite After Meditation but There's Trash in Camp -Z
-			if (flags[kFLAGS.FUCK_FLOWER_LEVEL] >= 4 && flags[kFLAGS.FUCK_FLOWER_KILLED] == 0 && temp % 5 == 0)
+			if (flags[kFLAGS.FUCK_FLOWER_LEVEL] >= 4 && flags[kFLAGS.FUCK_FLOWER_KILLED] == 0 && player.statusAffectv1(StatusAffects.JojoMeditationCount) % 5 == 0)
 			{
 				//replaces 'Jojo nods respectfully at you [...] "It seems you have quite a talent for this. [...]"' invite paragraphs while Treefingers is getting slut all over your campsite
 				//gives Small Talisman if PC never had follower Jojo or used it and ran from the fight
@@ -68,10 +66,9 @@ public function doEvent(eventNo:Number):void
 				{
 					outputText("Jojo nods at you respectfully.  \"<i>Well done today; your dedication is impressive.  We could meditate together more often.</i>\"");
 					outputText("\n\nAs much as you'd like to, you can't stay in the forest, and you can't invite him back with you right now.  Reluctantly, you mention the stubborn, demonic godseed's presence on the borders of your camp.  Jojo's eyebrows furrow in concentration.");
-					outputText("\n\n\"<i>Yes, that's a problem.  Oh, that we did not have to resist the very spirit of the land!  [name], take this.  Use it to call me if the demon gives you trouble; I will come and render what aid I can.</i>\"  The monk fishes in his robe and places a small talisman into your hand.");
+					outputText("\n\n\"<i>Yes, that's a problem.  Oh, that we did not have to resist the very spirit of the land!  [name], take this.  Use it to call me if the demon gives you trouble; I will come and render what aid I can.</i>\"  The monk fishes in his robe and places a small talisman into your hand.\n\n(Gained Key Item: Jojo's Talisman)");
 					//get a small talisman if not have one
 					player.createKeyItem("Jojo's Talisman", 0, 0, 0, 0);
-					outputText("\n\n(Gained Key Item: Jojo's Talisman)");
 				}
 				doNext(14);
 				return;
@@ -79,10 +76,10 @@ public function doEvent(eventNo:Number):void
 			else
 				outputText("\"<i>It seems you have quite a talent for this.  We should meditate together more often.</i>\"", false);
 		}
-		if (temp % 5 == 0)
+		if (player.statusAffectv1(StatusAffects.JojoMeditationCount) % 5 == 0)
 		{
 			outputText("\n\nYou ponder and get an idea - the mouse could stay at your camp.  There's safety in numbers, and it would be easier for the two of you to get together for meditation sessions.  Do you want Jojo's company at camp?", false);
-			doYesNo(2149, 14);
+			doYesNo(jojoScene.acceptJojoIntoYourCamp, 14);
 			return;
 		}
 		else
@@ -106,7 +103,7 @@ public function doEvent(eventNo:Number):void
 			startCombat(new SandWitch());
 		}
 		else
-			doYesNo(2006, 2007);
+			doYesNo(allowSandWitchMagic, refuseSandWitchMagic);
 	}
 	//SANDVICH MAGICK
 	else if (eventNo == 2006)
@@ -203,6 +200,7 @@ public function doEvent(eventNo:Number):void
 		trace("Tentacle event here");
 		outputText("", true);
 		spriteSelect(100);
+*/
 		//Tentacle Encounter - beware legalese!
 		/*
 		   LICENSE
@@ -245,6 +243,7 @@ public function doEvent(eventNo:Number):void
 		
 		   This license supercedes all previous licenses and remains in force.
 		 */
+/*
 		//Gender hilarity chance.
 		if (player.gender == 0 && rand(3) == 0 && !player.isNaga() && !player.isTaur() && !player.isGoo())
 		{
@@ -284,7 +283,7 @@ public function doEvent(eventNo:Number):void
 		if (player.cor > 50)
 		{
 			outputText("Do you joyfully submit or fight back?\n\n", false);
-			simpleChoices("Fight", 2080, "Submit", forest.tentacleBeastScene.tentacleLossRape, "", 0, "", 0, "", 0);
+			simpleChoices("Fight", forest.tentacleBeastScene.startTentacleBeastCombat, "Submit", forest.tentacleBeastScene.tentacleLossRape, "", null, "", null, "", null);
 			return;
 		}
 		startCombat(new TentacleBeast());
@@ -334,7 +333,7 @@ public function doEvent(eventNo:Number):void
 			if (player.vaginas.length > 1)
 				outputText("s", false);
 			outputText(" and your mouth. You are being inseminated by the abomination, but you do not care. The fucking is too good. The hot, musky fluids pour into your mouth. The taste crushes your last bit of resistance and you NEED MORE, not just to swallow, but to devour with your womb. You manage to free one hand, only to grasp the tentacle in your mouth to coax more semen inside you. You feel your stomach distend from the amount of cum you greedily swallow. The beast floods you with more cum than you can handle and proceeds to soak you from head to toe in its fluids as it runs from your overwhelmed orifices.", false);
-			doNext(2011);
+			doNext(tentacleRapeContinuationForFemales);
 			player.slimeFeed();
 			//lactate more from the encounter.
 			player.boostLactation(.3);
@@ -366,7 +365,7 @@ public function doEvent(eventNo:Number):void
 			//lactate more from the encounter.
 			player.boostLactation(.3);
 		}
-		if (gameState > 0)
+		if (inCombat)
 			cleanupAfterCombat();
 		else
 			doNext(13);
@@ -422,7 +421,7 @@ public function doEvent(eventNo:Number):void
 		if (player.vaginas[0].vaginalLooseness == VAGINA_LOOSENESS_TIGHT)
 			player.vaginas[0].vaginalLooseness = VAGINA_LOOSENESS_NORMAL;
 		player.slimeFeed();
-		if (gameState > 0)
+		if (inCombat)
 			cleanupAfterCombat();
 		else
 			doNext(13);
@@ -708,7 +707,6 @@ public function doEvent(eventNo:Number):void
 			doNext(13);
 		}
 	}
-	
 	//A WILD GIACOMO APPEARS
 	else if (eventNo == 2015)
 	{
@@ -786,7 +784,7 @@ public function doEvent(eventNo:Number):void
 	{
 		spriteSelect(23);
 		outputText("Which book are you interested in perusing?", true);
-		if (flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00244] > 0)
+		if (flags[kFLAGS.COTTON_UNUSUAL_YOGA_BOOK_TRACKER] > 0)
 			simpleChoices("Dangerous Plants", 2029, "Traveler's Guide", 2031, "Hentai Comic", 2033, "Yoga Guide", 2940, "Back", 2015);
 		else
 			simpleChoices("Dangerous Plants", 2029, "Traveler's Guide", 2031, "Hentai Comic", 2033, "", 0, "Back", 2015);
@@ -797,12 +795,16 @@ public function doEvent(eventNo:Number):void
 	{
 		spriteSelect(23);
 		outputText("Giacomo's grin is nothing short of creepy as he offers his wares to you. What are you interested in?", true);
+		
+		var dualBeltNumber:int = 0;
+		if (player.hasKeyItem("Dual Belt") < 0) dualBeltNumber = 2142;
+		
 		if (player.gender == 1)
 			simpleChoices("Dildo", 2035, "Onahole", 2041, "D Onahole", 2044, "", 0, "Back", 2015);
 		if (player.gender == 2)
 			simpleChoices("Dildo", 2035, "Stim-Belt", 2037, "AN Stim-Belt", 2039, "", 0, "Back", 2015);
 		if (player.gender == 3)
-			choices("Onahole", 2041, "D Onahole", 2044, "AN Onahole", 2048, "Stim-Belt", 2037, "AN Stim-Belt", 2039, "Dual Belt", 2142, "", 0, "", 0, "Dildo", 2035, "Back", 2015);
+			choices("Onahole", 2041, "D Onahole", 2044, "AN Onahole", 2048, "Stim-Belt", 2037, "AN Stim-Belt", 2039, "Dual Belt", dualBeltNumber, "", 0, "", 0, "Dildo", 2035, "Back", 2015);
 		if (player.gender == 0)
 			simpleChoices("Dildo", 2035, "Onahole", 2041, "Stim-Belt", 2037, "", 0, "Back", 2015);
 		statScreenRefresh();
@@ -1373,6 +1375,8 @@ public function doEvent(eventNo:Number):void
 		}
 		doNext(1);
 	}
+*/
+/*
 	//You fight the bee!
 	else if (eventNo == 2060)
 	{
@@ -1380,9 +1384,10 @@ public function doEvent(eventNo:Number):void
 		spriteSelect(6);
 		startCombat(new BeeGirl());
 	}
+*/
 	//Do you help the wanderer?
 	
-	//Encounter Rathazul
+/*	//Encounter Rathazul - replaced by returnToRathazulMenu in Rathazul.as
 	else if (eventNo == 2070)
 	{
 		if (player.findStatusAffect(StatusAffects.CampRathazul) >= 0)
@@ -1390,13 +1395,15 @@ public function doEvent(eventNo:Number):void
 		else
 			rathazul.encounterRathazul();
 	}
+*/
+/* Moved to rathazul.as
 	//Purify Incubi Draft
 	else if (eventNo == 2071)
 	{
 		if (player.gems < 20)
 		{
 			outputText("Rathazul says, \"<i>You do not have enough gems for that service.</i>\"", true);
-			doNext(2070);
+			doNext(rathazul.returnToRathazulMenu);
 			return;
 		}
 		outputText("", true);
@@ -1413,7 +1420,7 @@ public function doEvent(eventNo:Number):void
 		if (player.gems < 20)
 		{
 			outputText("Rathazul says, \"<i>You do not have enough gems for that service.</i>\"", true);
-			doNext(2070);
+			doNext(rathazul.returnToRathazulMenu);
 			return;
 		}
 		outputText("", true);
@@ -1430,7 +1437,7 @@ public function doEvent(eventNo:Number):void
 		if (player.gems < 20)
 		{
 			outputText("Rathazul says, \"<i>You do not have enough gems for that service.</i>\"", true);
-			doNext(2070);
+			doNext(rathazul.returnToRathazulMenu);
 			return;
 		}
 		outputText("", true);
@@ -1441,7 +1448,6 @@ public function doEvent(eventNo:Number):void
 		statScreenRefresh();
 		player.addStatusValue(StatusAffects.MetRathazul, 2, 1);
 	}
-	
 	//Grab marae's boob!
 	else if (eventNo == 2075)
 	{
@@ -1583,6 +1589,8 @@ public function doEvent(eventNo:Number):void
 		marbleScene.marbleSex2Continued(2);
 		doNext(13);
 	}
+*/
+/* Moved to rathazul.as
 	else if (eventNo == 2124)
 	{
 		outputText("Rathazul smiles happily back at you and begins packing up his equipment.  He mutters over his shoulder, \"<i>It will take me a while to get my equipment moved over, but you head on back and I'll see you within the hour.  Oh my, yes.</i>\"\n\nHe has the look of someone experiencing hope for the first time in a long time.", true);
@@ -1594,6 +1602,8 @@ public function doEvent(eventNo:Number):void
 		outputText("Rathazul wheezes out a sigh, and nods.\n\n\"<i>Perhaps I'll still be of some use out here after all,</i>\" he mutters as he packs up his camp and prepares to head to another spot along the lake.", true);
 		doNext(13);
 	}
+*/
+/*
 	else if (eventNo == 2128)
 	{
 		var ttemp2:Function = null;
@@ -1697,7 +1707,7 @@ public function doEvent(eventNo:Number):void
 		outputText("The belt whirs to life, shaking on your waist, sending jolts of pleasure through your clit as the small inside nub hits it. \"<i>Ohh...</i>\" Suddenly, the ring around your cock vibrates and then tightens hard around your cock, the belt sinking onto your body and locking in place. Worry sets in instantly as you try to wiggle and take it off, but it is no use. You see something black bubble from the edges of the metal, worried even more that it might be some sort of acid. It begins to creep across your skin at a disturbing rate, going down your " + player.legs() + " and encasing them in the blackness, wrapping your cock, ", false);
 		if (player.tailType > TAIL_TYPE_NONE)
 			outputText("covering up your tail, ", false);
-		outputText("and then going up your body, covering your " + allBreastsDescript() + " and neck. The only part of your body unclad by the suit is your head. The blackness feels slick and smooth, almost coldl a strange type of feeling washes over you until you realize that it is a rubber suit.\n\n", false);
+		outputText("and then going up your body, covering your " + allBreastsDescript() + " and neck. The only part of your body unclad by the suit is your head. The blackness feels slick and smooth, almost cold, a strange type of feeling washes over you until you realize that it is a rubber suit.\n\n", false);
 		outputText("Before you can do anything else, the belt activates again and the latex covering of your " + cockDescript(0) + " begins to tighten and pulse around the meat, warming up to feel like a virgin cunt. A moan is dragged from your lips as it begins to ripple and pulse, simulating the feeling of fucking a tight hole as the entire suit molds itself to your body. Before you can get too used to the feeling of the suit milking your cock, the nub that had been teasing your clit suddenly expands and pushes out, the slick feeling of the latex pushing into your pussy.  The hardened black latex splits your tunnel and spreads you wide as it goes in deep. Your eyes widen for a moment as both stop, and then your world explodes in a flash of pleasure. The hardened lump begins to piston in and out of your " + vaginaDescript(0) + ", vibrating wildly as a lump grows in on top in precisely the right spot to rub back and forth on your g-spot.\n\n", false);
 		outputText("Meanwhile the latex around your " + cockDescript(0) + " begins to pulse and ripple faster than ever before. You quake and quiver, " + player.legs() + " giving out as it teases and pulses around your " + allBreastsDescript() + ". Your hands go down your body helplessly and start stroking at your encased cock, rubbing up and down your length. Unfortunately, all things must come to an end as the pleasure gets to be way too much and you feel yourself cum. Your hips buck wildly as you feel cum spurt into the latex, the end swelling up and filling like a ", false);
 		if (player.cumQ() > 200)
@@ -1733,13 +1743,15 @@ public function doEvent(eventNo:Number):void
 		if (player.tou > 75)
 			dynStats("tou", -1);
 	}
+*/
+/* Moved to rathazul.as
 	//Purify LaBova Draft
 	else if (eventNo == 2145)
 	{
 		if (player.gems < 20)
 		{
 			outputText("Rathazul says, \"<i>You do not have enough gems for that service.</i>\"", true);
-			doNext(2070);
+			doNext(rathazul.returnToRathazulMenu);
 			return;
 		}
 		outputText("", true);
@@ -1750,7 +1762,8 @@ public function doEvent(eventNo:Number):void
 		statScreenRefresh();
 		player.addStatusValue(StatusAffects.MetRathazul, 2, 1);
 	}
-	
+*/	
+/*
 	//Move Jojo into camp
 	else if (eventNo == 2149)
 	{
@@ -1797,7 +1810,7 @@ public function doEvent(eventNo:Number):void
 		
 		if (player.lust >= 33 && player.gender > 0)
 		{
-			jojoRapeFuncNum = 2153;
+			jojoRapeFuncNum = jojoScene.jojoAtCampRape;
 		}
 		
 		// Worms overrides everything else
@@ -1807,7 +1820,7 @@ public function doEvent(eventNo:Number):void
 			outputText("\"<i>It seems that the agents of corruption have taken residence within the temple that is your body,</i>\" Jojo says flatly, \"<i>This is a most unfortunate development. There is no reason to despair as there are always ways to fight the corruption. However, great effort will be needed to combat this form of corruption and may have a lasting impact upon you. If you are ready, we can purge your being of the rogue creatures of lust.</i>\"\n\n", false);
 			
 			if (player.findStatusAffect(StatusAffects.JojoNightWatch) >= 0) outputText("(Jojo is currently watching for enemies at night.)\n\n", false);
-			simpleChoices("Meditate", 2151, jojoDefense, 2152, "Purge", 2083, "Rape", jojoRapeFuncNum, "Leave", 74);
+			simpleChoices("Meditate", jojoScene.jojoFollowerMeditate, jojoDefense, jojoScene.jojoDefenseToggle, "Purge", 2083, "Rape", jojoRapeFuncNum, "Leave", 74);
 		}
 		// Normal shit
 		else
@@ -1855,13 +1868,13 @@ public function doEvent(eventNo:Number):void
 				addButton(0, "Appearance", jojoScene.jojoAppearance);
 				addButton(1, "Talk", jojoScene.talkMenu);
 				if (flags[kFLAGS.UNLOCKED_JOJO_TRAINING] == 1) addButton(2, "Train", jojoScene.apparantlyJojoDOESlift);
-				addButton(3, "Meditate", eventParser, 2151);
-				addButton(4, jojoDefense, eventParser, 2152);
+				addButton(3, "Meditate", jojoScene.jojoFollowerMeditate);
+				addButton(4, jojoDefense, jojoScene.jojoDefenseToggle);
 				addButton(9, "Leave", eventParser, 74);
 			}
 		}
 	}
-	//New meditate
+	//Meditate w/ JoJo as follower
 	else if (eventNo == 2151)
 	{
 		jojoScene.jojoSprite();
@@ -1873,45 +1886,48 @@ public function doEvent(eventNo:Number):void
 			outputText("Jojo smiles and meditates with you.  The experience is calming, but it's so soon after your last session that you don't get much benefit from it.", doClear);
 			if (player.lust > 40)
 			{	
-				var hst:Number = player.hoursSinceCum;
 				dynStats("lus", -10);
-				player.hoursSinceCum = hst;
 			}
-			doNext(13);
-			return;
 		}
-		outputText("The mouse monk leads you to a quiet spot away from the portal and the two of you sit down, him cross-legged and you mimicking to the best of your ability, back to back.  You close your eyes and meditate for half-an hour, centering your body and mind.  Afterwards, he guides you through stretches and exercises to help keep your bodies fit and healthy.\n\nWhen you are done, Jojo nods to you, and climbs back onto his rock, still thinking.", doClear);
-		//OLD STAT LINE - dynStats("str", .25,"tou", .25, "spe", .25, "int", .25, "lib", -1, "lus", -10, "cor", -2);
-		//Reduces lust
-		var leSigh:Number = player.hoursSinceCum;
-		dynStats("lus", -30);
-		player.hoursSinceCum = leSigh;
-		
-		//Corruption reduction - faster at high corruption
-		if (player.cor > 80)
-			dynStats("cor", -1);
-		if (player.cor > 60)
-			dynStats("cor", -1);
-		if (player.cor > 40)
-			dynStats("cor", -1);
-		dynStats("cor", -2);
-		//Str boost to 45
-		if (player.str < 45)
-			dynStats("str", 1);
-		//Tou boost to 45
-		if (player.tou < 45)
-			dynStats("tou", 1);
-		//Speed boost to 75
-		if (player.spe < 75)
-			dynStats("spe", 1);
-		//Int boost to 80
-		if (player.inte < 80)
-			dynStats("int", 1);
-		//Libido lower to 15
-		if (player.lib > 15)
-			dynStats("lib", -1);
+		else {
+			outputText("The mouse monk leads you to a quiet spot away from the portal and the two of you sit down, him cross-legged and you mimicking to the best of your ability, back to back.  You close your eyes and meditate for half-an hour, centering your body and mind.  Afterwards, he guides you through stretches and exercises to help keep your bodies fit and healthy.\n\nWhen you are done, Jojo nods to you, and climbs back onto his rock, still thinking.", doClear);
+			//OLD STAT LINE - dynStats("str", .25,"tou", .25, "spe", .25, "int", .25, "lib", -1, "lus", -10, "cor", -2);
+			//Reduces lust
+			dynStats("lus", -30);
+			
+			//Corruption reduction - faster at high corruption
+
+			var cleanse:int = -2;
+			
+			if (player.cor > 80)
+				cleanse -= 3;
+			else if (player.cor > 60)
+				cleanse -= 2;
+			else if (player.cor > 40)
+				cleanse -= 1;
+			
+			dynStats("cor", cleanse - player.countCockSocks("alabaster"));
+			
+			//Str boost to 45
+			if (player.str < 45)
+				dynStats("str", 1);
+			//Tou boost to 45
+			if (player.tou < 45)
+				dynStats("tou", 1);
+			//Speed boost to 75
+			if (player.spe < 75)
+				dynStats("spe", 1);
+			//Int boost to 80
+			if (player.inte < 80)
+				dynStats("int", 1);
+			//Libido lower to 15
+			if (player.lib > 15)
+				dynStats("lib", -1);
+				
+			player.createStatusAffect(StatusAffects.Meditated, 1, 0, 0, 0);
+				
+		}
 		doNext(13);
-		player.createStatusAffect(StatusAffects.Meditated, 1, 0, 0, 0);
 	}
 	//Jojo defense toggle
 	else if (eventNo == 2152)
@@ -1939,13 +1955,14 @@ public function doEvent(eventNo:Number):void
 		outputText("You ask Jojo if he'd like to go on a hunt through the woods to clear out some of the corrupted creatures, and the mouse readily agrees.  He asks if you've been getting a bit stir-crazy from having your camp in one place as the two of you walk into the woods...", true);
 		doNext(jojoScene.jojoRape);
 	}
+*/
+/* Moved to rathazul.as
 	//Rathazul Armor Crafting
 	else if (eventNo == 2180)
 	{
 		doNext(13);
 		rathazul.craftCarapace();
 	}
-	
 	//Buy breast-milker from whitney
 	else if (eventNo == 2182)
 	{
@@ -2080,6 +2097,8 @@ public function doEvent(eventNo:Number):void
 	{
 		amilyScene.giveAmilySomePants();
 	}
+*/
+/* Moved to Rathazul.as
 	else if (eventNo == 2486)
 	{
 		player.gems += 50;
@@ -2089,6 +2108,8 @@ public function doEvent(eventNo:Number):void
 		else
 			rathazul.encounterRathazul();
 	}
+*/
+/*
 	else if (eventNo == 2487)
 	{
 		catAutoLick();
@@ -2097,11 +2118,6 @@ public function doEvent(eventNo:Number):void
 	{
 		telAdre.edryn.arousedByPregdryn();
 	}
-	else if (eventNo == 2495)
-	{
-		telAdre.edryn.fuckPregEdryn();
-	}
-	
 	else if (eventNo == 2498)
 	{
 		jojoScene.jojoSprite();
@@ -2187,7 +2203,6 @@ public function doEvent(eventNo:Number):void
 	{
 		cleansedValaRepeatBrainFucking();
 	}
-	
 	else if (eventNo == 2633)
 	{
 		endZetaz();
@@ -2202,9 +2217,9 @@ public function doEvent(eventNo:Number):void
 	}
 	else if (eventNo == 2638)
 	{
-		outputText("", true);
+		clearOutput();
 		flags[kFLAGS.ZETAZ_LAIR_TOOK_BONDAGE_STRAPS]++;
-		inventory.takeItem(armors.BONSTRP);
+		inventory.takeItem(armors.BONSTRP, );
 	}
 	else if (eventNo == 2639)
 	{
@@ -2278,7 +2293,6 @@ public function doEvent(eventNo:Number):void
 	{
 		telAdre.heckel.greetHeckel();
 	}
-	
 	else if (eventNo == 2855)
 	{
 		if (model.time.hours == 19 || model.time.hours == 20)
@@ -2600,7 +2614,6 @@ public function doEvent(eventNo:Number):void
 	{
 		telAdre.rubi.releaseRubi();
 	}
-	
 	else if (eventNo == 3904)
 	{
 		telAdre.rubi.dontCareAboutNoCheatingRubis();
@@ -2669,4 +2682,5 @@ public function doEvent(eventNo:Number):void
 	}
 
 }
+*/
 

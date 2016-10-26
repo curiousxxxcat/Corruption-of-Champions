@@ -48,13 +48,13 @@ public function greetHeckel():void {
 	else {
 		outputText("Heckel is checking her pulse between laps when you approach her.  She grins as she catches sight of you, her teeth flashing in the light.  \"<i>Back again, fresh meat?  I thought I might have scared you off last time.</i>\"  She puts her hands on her hips and very blatantly looks your body up and down.  After a moment she nods to herself, as if making up her mind.  \"<i>I guess you can keep up after all.  What do you say to a workout, partner?</i>\"\n\n", false);
 	}
-	simpleChoices("Training",heckelTraining,"",0,"",0,"",0,"Leave",telAdre.gymDesc);
+	simpleChoices("Training", heckelTraining, "", null, "", null, "", null, "Leave", telAdre.gymDesc);
 }
 
 //First time Sex
 private function heckelTraining():void {
-	outputText("", true);
-	var dom:int = 0;
+	clearOutput();
+	var dom:Function = null;
 	//Rejection
 	//Tone not high enough or fat too high
 	if(player.tone < 60) {
@@ -75,7 +75,7 @@ private function heckelTraining():void {
 	if(flags[kFLAGS.TIMES_FUCKED_HECKEL_BLOWJOB] + flags[kFLAGS.TIMES_FUCKED_HECKEL_ANAL] == 0) {
 		outputText("You tell Heckel that you're looking for a training partner, and she makes no attempt to hide her gaze as she looks you up and down.  When she's finished, her unsettling grin returns.  \"<i>Excellent!  Let me just get cleaned up and we'll start with some stretches.</i>\"\n\n", false);
 		
-		if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00167] == 0) {
+		if(flags[kFLAGS.LIFETIME_GYM_MEMBER] == 0) {
 			outputText("The centauress working the door walks up to collect her fee, and you drop 10 gems for an hour workout into her hand.\n\n", false);
 			player.gems -= 10;
 			statScreenRefresh();
@@ -91,14 +91,14 @@ private function heckelTraining():void {
 		outputText("\"<i>Like what you see?</i>\" she asks, looking you up and down.  \"<i>'Cause I like what I see.  It's not every day I get someone as fit as you brave enough to partner up with me.  Come on then fresh meat, every newbie has to start at the bottom.</i>\"  She tilts her head towards her hardening member and raises an eyebrow.", false);
 		if(player.str > 50 && player.hasCock()) {
 			outputText("\n\nYou feel pretty strong yourself, and you realize you could probably arm wrestle this hyena-bitch down to size.");
-			dom = 3966;
+			dom = dominateHeckel;
 		}
 		//ORAL or LEAVE
-		simpleChoices("Oral",heckelOrallyFixated,"Anal",0,"Be Top Dog",dom,"",0,"Leave",13);
+		simpleChoices("Oral", heckelOrallyFixated, "Anal", null, "Be Top Dog", dom, "", null, "Leave", camp.returnToCampUseOneHour);
 	}
 	//FOLLOWUP SECKZ
 	else {
-		if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00167] == 0) {
+		if(flags[kFLAGS.LIFETIME_GYM_MEMBER] == 0) {
 			outputText("The centauress working the door walks up to collect her fee, and you drop 10 gems for an hour workout into her hand.\n\n", false);
 			player.gems -= 10;
 			statScreenRefresh();
@@ -110,10 +110,10 @@ private function heckelTraining():void {
 		outputText("\"<i>I'm not gonna mince words,</i>\" she says with a snicker. \"<i>I need a good fuck and I need it right now. I promise, this is going to be as much of a workout as hitting the track.</i>\" As you sit down next to her, she runs a paw up your back and along your neck, eventually draping it over your shoulders. \"<i>Now then partner, how are you gonna take this?</i>\"\n\n", false);
 		if(player.str > 50 && player.hasCock()) {
 			outputText("You feel pretty strong yourself, and you realize you could probably arm wrestle this hyena-bitch down to size.");
-			dom = 3966;
+			dom = dominateHeckel;
 		}
 		//ORAL or LEAVE
-		simpleChoices("Oral",heckelOrallyFixated,"Anal",heckelLovesDaAnal,"Be Top Dog",dom,"",0,"Leave",13);
+		simpleChoices("Oral", heckelOrallyFixated, "Anal", heckelLovesDaAnal, "Be Top Dog", dom, "", null, "Leave", camp.returnToCampUseOneHour);
 	}
 }
 
@@ -136,7 +136,7 @@ private function heckelOrallyFixated():void {
 	}
 	//Repeat
 	else {
-		outputText("You lick your lips as you eye her swelling member. It pulses softly with her heartbeat, each jump leaving it slightly bigger than it was before. As you watch, it slowly stands to attention at around ten inches in length, Heckel's heavy balls drawing up beneath it. Her canine dick almost looks shiny with the skin taught like this, though it might also be the moisture from her shower. You make up your mind when you see a dribble of pre form at the tip, and you bend over to lick it up before it can drip down and escape.\n\n", false);
+		outputText("You lick your lips as you eye her swelling member. It pulses softly with her heartbeat, each jump leaving it slightly bigger than it was before. As you watch, it slowly stands to attention at around ten inches in length, Heckel's heavy balls drawing up beneath it. Her canine dick almost looks shiny with the skin taut like this, though it might also be the moisture from her shower. You make up your mind when you see a dribble of pre form at the tip, and you bend over to lick it up before it can drip down and escape.\n\n", false);
 
 		outputText("Heckel leans back to give you more room, and you wrap your hand around her hardening member. Even with her shower you still catch her light musk coming from her groin.  Whether this is from her workout or her arousal you can't tell, but it's a scent you are quickly coming to recognize as hers. You inhale deeply through your nose as you lick her cock from base to tip, pausing over her crown before letting your head fall down.\n\n", false);
 	
@@ -153,7 +153,7 @@ private function heckelOrallyFixated():void {
 		//[<PC IS FEMALE>
 		else if(player.hasVagina()) outputText("You use one hand to fondle her balls, letting them roll over your fingers and pinching the skin lightly. Your other hand finds its way to your crotch, where you roll your " + clitDescript() + " between your first two fingers. You let two fingers sink into your " + vaginaDescript(0) + ", curling them upwards and moaning around the giant dog dick in your mouth.  Your fingers bring you to the edge of orgasm, but you lack the stimulation to send yourself over just yet.\n\n", false);
 	
-		outputText("As your bobbing head works over her dick, you feel her knot begin to form at its base. At first it's just a small bump that you make sure to rub your tongue over, but over the course of a minute it becomes the size of a plum. Before long it becomes too large for you to take into your mouth, but this also gives you some breathing space between Heckel's cock head and your stomach. The more the knot inflates however, the more your jaw and cheeks are stretched to just hold her member in your mouth. If you didn't know better, it would feel like her dick is slowly growing larger! Your fears are confirmed when, even with several inches outside of you, her cock fully extends down your gullet. And it is definitely getting thicker.\n\n", false);
+		outputText("As your bobbing head works over her dick, you feel her knot begin to form at its base. At first it's just a small bump that you make sure to rub your tongue over, but over the course of a minute it becomes the size of a plum. Before long it becomes too large for you to take into your mouth, but this also gives you some breathing space between Heckel's cock head and your stomach. The more the knot inflates however, the more your jaw and cheeks are stretched to just hold her member in your mouth. If you didn't know better, it would feel like her dick is slowly growing larger! Your fears are confirmed when, even with several inches outside of you, her cock fully extends down your gullet. It is definitely getting thicker.\n\n", false);
 	
 		outputText("You look up in growing alarm at Heckel, but her eyes are glazed over again. Despite her vacant stare, her hand is still forcing your head back and forth at the pace of a slow rut.  Deciding that the best way to avoid suffocation is to get her off quickly, you redouble your efforts and twist your head around her cock with each thrust, letting your tongue move in all the space it can to stimulate her as much as possible.\n\n", false);
 		
@@ -169,7 +169,7 @@ private function heckelOrallyFixated():void {
 		outputText("\"<i>By Marae, " + player.short + ", you've got quite the mouth. I'm impressed, and that doesn't happen often.</i>\" She brings a paw to her chin as if thinking, before finally reaching it out and ruffling your hair. \"<i>You know, you aren't half bad to be around, and not just for the sex. Don't be a stranger around here, alright?</i>\" With that she stands and heads back into the showers, giving you time to clean up and head back to camp.", false);
 		player.orgasm();
 		dynStats("sen", 4);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//Increment BJ count
 	flags[kFLAGS.TIMES_FUCKED_HECKEL_BLOWJOB]++;
@@ -185,7 +185,7 @@ private function heckelOralFixationII():void {
 
 	outputText("When she's finally emptied herself on your face, she falls down onto the bench in front of you. Before you can say anything, she extends a paw and ruffles your semen-streaked hair. \"<i>Heh, not bad fresh meat. If you can learn your place on the food chain here, we might have a beautiful partnership ahead of us. If you still think you can keep up, that is.</i>\" She winks at you as she stands again, tossing you her towel from earlier as she heads towards the showers.\n\n", false);
 	dynStats("lib", 1, "sen", 4, "lus", (10+player.lib/10+player.sens/10));
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //anal
@@ -194,7 +194,7 @@ private function heckelLovesDaAnal(loss:Boolean = false):void {
 	//rejection - ass not loose enough
 	if(player.analCapacity() <= 20 && !loss) {
 		outputText("Heckel lets out a barking laugh when you suggest using your " + assDescript() + ", ruffling your hair playfully. \"<i>Know your limits, " + player.short + ", I'd tear you apart down there. I'm sure there are plenty of others in this realm who can help you out with that.</i>\"\n\n", false);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	//success - requires ass to be 'a little loose'
@@ -282,7 +282,7 @@ private function heckelLovesAnal2():void {
 	outputText("She laughs as she stands and heads for the shower, letting you clean yourself up and head back to camp.", false);
 	player.orgasm();
 	dynStats("sen", 4);
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 
 
@@ -401,7 +401,7 @@ private function dominateHeckelConclusion():void {
 	}
 	player.orgasm();
 	dynStats("sen", -2);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 }
 }

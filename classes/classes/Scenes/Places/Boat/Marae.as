@@ -2,12 +2,33 @@
 	import classes.*;
 	import classes.GlobalFlags.kFLAGS;
 
-	public class Marae extends AbstractBoatContent{
+	public class Marae extends AbstractBoatContent implements TimeAwareInterface {
 
-	public function Marae()
-	{
-	}
+		public function Marae() {
+			CoC.timeAwareClassAdd(this);
+		}
 
+		//Implementation of TimeAwareInterface
+		public function timeChange():Boolean
+		{
+			if (model.time.hours > 23) {
+				if (flags[kFLAGS.CORRUPT_MARAE_FOLLOWUP_ENCOUNTER_STATE] > 0) { //Marae met 2nd time?
+					if (flags[kFLAGS.FUCK_FLOWER_KILLED] == 0) { //If flower hasn't been burned down yet
+						if (flags[kFLAGS.FUCK_FLOWER_LEVEL] < 4 && flags[kFLAGS.FUCK_FLOWER_GROWTH_COUNTER] < 1000) { //Grow flower if it isn't fully grown.
+							flags[kFLAGS.FUCK_FLOWER_GROWTH_COUNTER]++;
+						}
+					}
+				}
+				if (flags[kFLAGS.HOLLI_FUCKED_TODAY] == 1) flags[kFLAGS.HOLLI_FUCKED_TODAY] = 0; //Holli Fuck Tracking
+			}
+			return false;
+		}
+		
+		public function timeChangeLarge():Boolean {
+			return false;
+		}
+		//End of Interface Implementation
+		
 public function encounterMarae():void {
 	spriteSelect(40);
 	outputText(images.showImage("marae-first-encounter"));
@@ -30,31 +51,31 @@ public function encounterMarae():void {
 				outputText("You suggest, \"<i>The demons?</i>\"\n\n", false);
 				outputText("She nods and continues, \"<i>The demons were once a tribe of magic-blessed humans, living in the mountains.  They had everything they could ever want:  peace, love, and the power to change reality.  But they grew dissatisfied, as men often do, and craved more.  They began using their magics to alter their bodies, seeking greater pleasure than ever before.  In time they became obsessed with it.  I let them be, believing their folly to be limited to their own village.   I was wrong.  While I focused on preventing famines and ensuring peace between the other villages, the humans twisted themselves into something else, something demonic.  They gave up their souls, crystallizing it into a magical energy source.    Of course they could not be satisfied with consuming the power of their own souls.  They wanted more.  They always want more.</i>\"\n\n", false);
 				outputText("You nod in understanding, paying close attention to the tree-goddess as she explains just how this realm has fallen so far, \"<i>They came pouring out of the mountains in a wave, picking off villages left and right.  I lent many villages my power, but none had the strength to stand alone, and none would band together, resentful of their racial differences as they were.   All were consumed, enslaved, or filled with corruption.   My people were cut off from me, either by their new tainted outlook or by the demons' own machinations.  I was able to hide a few places from the enemy's sight, but I do not know how long it will last.</i>\"\n\n", false);
-				outputText("She sighs heavily, and you notice the bark of her nipples stiffening.  Her brow creases with something approximating worry as she continues, \"<i>They know of me.  My power originally kept them far from the shores of the lake, but they seek to corrupt me – to make me like them.   They've used magic and industry to trap the pure rains in the clouds around their mountain, starving me, and in its place they spill their tainted sexual fluids.   For...years now, my furthest reaches have been bathed in their vile cum.   While my power is great, I... I cannot resist forever.  My reach has dwindled to little more than this lake.  Parts of me have already fallen, taking the surrounding life with them.  I do not know how much longer I can endure... even now, the desire to mate with you rises within me.</i>\"\n\n", false);
+				outputText("She sighs heavily, and you notice the bark of her nipples stiffening.  Her brow creases with something approximating worry as she continues, \"<i>They know of me.  My power originally kept them far from the shores of the lake, but they seek to corrupt me – to make me like them.   They've used magic and industry to trap the pure rains in the clouds around their mountain, starving me, and in its place they spill their tainted sexual fluids.   For... years now, my furthest reaches have been bathed in their vile cum.   While my power is great, I... I cannot resist forever.  My reach has dwindled to little more than this lake.  Parts of me have already fallen, taking the surrounding life with them.  I do not know how much longer I can endure... even now, the desire to mate with you rises within me.</i>\"\n\n", false);
 				outputText("She practically begs, \"<i>Please champion, you must help me.  The demons have a factory at the foot of the mountains.  It produces much of the fluid they use to taint me.  If you could find a way to shut it down, I... all of Mareth, might stand a chance.</i>\"\n\n", false);
 				outputText("You nod, understanding.  She commands, \"<i>Now go, there is nothing to be gained by your presence here.  Return if you manage to close that vile place.</i>\"\n\n", false);
-				if(player.lib + player.cor > 80) {
+				if (player.lib + player.cor > 80) {
 					outputText("You could leave, but the desire to feel her breast will not go away.  What do you do?", false);
-					simpleChoices("Boob",2075,"",0,"",0,"",0,"Leave",13);
+					simpleChoices("Boob", grabHerBoob, "", null, "", null, "", null, "Leave", camp.returnToCampUseOneHour);
 				}
-				else doNext(13);
+				else doNext(camp.returnToCampUseOneHour);
 				return;
 			}
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 		//Second meeting
 		else {
 			outputText("You approach Marae's tree, watching the goddess flow out of the tree's bark as if it was made of liquid.   Just as before, she appears as the top half of a woman, naked from the waist up, with her back merging into the tree's trunk.\n\n", false);
 			if(player.cor > 66) {
 				outputText("She bellows in rage, \"<i>I told you, begone!</i>\"\n\nYou turn tail and head back to your boat, knowing you cannot compete with her power directly.", false);
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 			}
 			else
 			{
 				//If youve taken her quest already
 				if(player.findStatusAffect(StatusAffects.MaraesQuestStart) >= 0) {
-					outputText("Marae reminds you, \"<i>You need to disable the demon's factory!  It's located in the foothills of the mountain.  Please, I do not know how long I can resist.</i>\"", false);
-					doNext(13);
+					outputText("Marae reminds you, \"<i>You need to disable the demonic factory!  It's located in the foothills of the mountain.  Please, I do not know how long I can resist.</i>\"", false);
+					doNext(camp.returnToCampUseOneHour);
 				}
 				//If not
 				else {
@@ -67,14 +88,14 @@ public function encounterMarae():void {
 					outputText("You suggest, \"<i>The demons?</i>\"\n\n", false);
 					outputText("She nods and continues, \"<i>The demons were once a tribe of magic-blessed humans, living in the mountains.  They had everything they could ever want:  peace, love, and the power to change reality.  But they grew dissatisfied, as men often do, and craved more.  They began using their magics to alter the bodies, seeking greater pleasure than ever before.  In time they became obsessed with it.  I let them be, believing their folly to be limited to their own village.   I was wrong.  While I focused on preventing famines and ensuring peace between the other villages, the humans twisted themselves into something else, something demonic.  They gave up their souls, crystallizing it into a magical energy source.    Of course they could not be satisfied with consuming the power of their own souls.  They wanted more.  They always want more.</i>\"\n\n", false);
 					outputText("You nod in understanding, paying close attention to the tree-god as she explains just how this realm has fallen so far, \"<i>They came pouring out of the mountains in a wave, picking off villages left and right.  I lent many villages my power, but none had the strength to stand alone, and none would band together, resentful of their racial differences as they were.   All were consumed, enslaved, or filled with corruption.   My people were cut off from me, either by their new tainted outlook, or by the demon's own machinations.  I was able to hide a few places from the enemy's sight, but I do not know how long it will last.</i>\"\n\n", false);
-					outputText("She sighs heavily, and you notice the bark of her nipples stiffening.  Her brow creases with something approximating worry as she continues, \"<i>They know of me.  My power originally kept them far from the shores of the lake, but they seek to corrupt me – to make me like them.   They've used magic and industry to trap the pure rains in the clouds around their mountain, starving me, and in it's place they spill their tainted sexual fluids.   For...years now, my furthest reaches have been bathed in their vile cum.   While my power is great, I... I cannot resist forever.  My reach has dwindled to little more than this lake.  Parts of me have already fallen, taking the surrounding life with them.  I do not know how much longer I can endure... even now, the desire to mate you rises within me.</i>\"\n\n", false);
+					outputText("She sighs heavily, and you notice the bark of her nipples stiffening.  Her brow creases with something approximating worry as she continues, \"<i>They know of me.  My power originally kept them far from the shores of the lake, but they seek to corrupt me – to make me like them.   They've used magic and industry to trap the pure rains in the clouds around their mountain, starving me, and in it's place they spill their tainted sexual fluids.   For... years now, my furthest reaches have been bathed in their vile cum.   While my power is great, I... I cannot resist forever.  My reach has dwindled to little more than this lake.  Parts of me have already fallen, taking the surrounding life with them.  I do not know how much longer I can endure... even now, the desire to mate you rises within me.</i>\"\n\n", false);
 					outputText("She practically begs, \"<i>Please champion, you must help me.  The demons have a factory at the foot of the mountains.  It produces much of the fluids they use to taint me.  If you could find a way to shut it down, I... all of Mareth, might stand a chance.</i>\"\n\n", false);
 					outputText("You nod, understanding.  She commands, \"<i>Now go, there is nothing to be gained by your presence here.  Return if you manage to close that vile place.</i>\"\n\n", false);
-					if(player.lib + player.cor > 80) {
+					if (player.lib + player.cor > 80) {
 						outputText("You could leave, but the desire to feel her breast will not go away.  What do you do?", false);
-						simpleChoices("Boob",2075,"",0,"",0,"",0,"Leave",13);
+						simpleChoices("Boob", grabHerBoob, "", null, "", null, "", null, "Leave", camp.returnToCampUseOneHour);
 					}
-					else doNext(13);
+					else doNext(camp.returnToCampUseOneHour);
 				}
 			}
 		}
@@ -88,7 +109,7 @@ public function encounterMarae():void {
 			outputText("\"<i>Thank you,</i>\" she says, breaking the hug and turning back to her tree, \"<i>The onslaught has lessened, and I feel more myself already.  Let me thank you for your heroic deeds.</i>\"\n\n", false);
 			outputText("She plunges a hand inside the tree and pulls out a small pearl.  \"<i>This is a pearl from the very depths of the lake, infused with my purity.  If you eat it, it will grant you my aid in resisting the lust and corruption of this land.</i>\"\n\n", false);
 			outputText("Marae pushes the pearl into your hand, and closes your fingers over it gently.  \"<i>Go now, there is still much to be done.  With luck we will not need each other again,</i>\" commands the goddess as she slips back into her tree.  ", false);
-			inventory.takeItem(consumables.P_PEARL);
+			inventory.takeItem(consumables.P_PEARL, camp.returnToCampUseOneHour);
 			player.createStatusAffect(StatusAffects.MaraeComplete,0,0,0,0);
 		}
 		//Corrupt!
@@ -103,16 +124,29 @@ public function encounterMarae():void {
 				outputText("Spellbound, you watch as she forces more and more fingers into her hungry flower-hole, \"<i>Ever since then, I've just been drinking in more and corruption, and waiting for someone to come here and help fill my hole.  I've played with my flower for what has felt like days on end.  Every time I come harder and harder.  The more I let go the better it is.  Do you know what I did this morning?  I let my branches grow tentacles to fuck my mouth and pussy at the same time.  I came over and over and over, and then I had my roots pull in all the cum they could find to fill my womb with.</i>\"\n\n", false);
 				outputText("You gasp at the change she has gone through, getting more than a little turned on yourself.  Thinking that a once chaste goddess has been reduced to a horny slut makes you wonder how you stand any chance of victory.  Marae keeps up her show, \"<i>It's so good.  Come join me in it.  I gave in to the pleasure already.  If you look behind me, you can see what's left of my soul.  I could feel it dripping out through my cunny a little bit each time I came.  After a while it flowed together and started to crystalize.  I think the demons call it lethicite, but I just wish I still had a soul so I could do it all over again.  Come fuck me, I want to watch you go mad while you cum out your soul.</i>\"\n\n", false);
 				outputText("It sounds like a very pleasant offer, but it would mean the total abandonment of your reasons for coming here.   You could probably get away if you were to run, she doesn't seem to be nearly as powerful.  Or you could risk trying to steal the lethicite before making your getaway, but it wouldn't be hard for her to catch you that close.", false);
-				simpleChoices("Run",2078,"Lethicite",maraeStealLethicite,"Accept",maraeBadEnd,"",0,"",0);
+				simpleChoices("Run", runFromPervertedGoddess, "Lethicite", maraeStealLethicite, "Accept", maraeBadEnd, "", null, "", null);
 			}
 			//Repeat corrupt meeting
 			else {
 				outputText("Marae smiles and leans forwards, cupping her breasts in her hands.  Amazingly, she flows out from the tree, standing as a free woman before you.  She massages her G-sized breasts, winking lewdly and pinching her shining purplish nipples, squeezing out droplets of honey-colored sap.  She blows you a kiss while the flower at her groin opens welcomingly.  She moans, \"<i>Reconsider my offer yet, " + player.short + "?  I won't force you, but don't you want to spend eternity in heaven with a living goddess?</i>\"", false);
 				//Yes - accept, No- run
-				doYesNo(maraeBadEnd,2078);
+				doYesNo(maraeBadEnd, runFromPervertedGoddess);
 			}
 		}
 	}
+}
+
+private function grabHerBoob():void {
+	clearOutput();
+	outputText("You reach forward to cop a feel.  The goddess' eyes go wide with fury as a massive branch swings down, catching you in the sternum.  It hits you hard enough that you land in your boat and float back a few feet into the water.  Nothing to do but leave and hope for another chance at her breasts...");
+	player.takeDamage(player.HP - 1);
+	doNext(camp.returnToCampUseOneHour);
+}
+
+private function runFromPervertedGoddess():void {
+	clearOutput();
+	outputText("You turn and run for the boat, leaving the corrupt goddess behind.  High pitched laugher seems to chase you as you row away from the island.");
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function maraeBadEnd():void {
@@ -129,14 +163,14 @@ private function maraeBadEnd():void {
 	outputText("Foggy euphoria seems to float into your mind, making it difficult to think of anything but emptying the nipple in front of you.   You feel the last few drops splash on your tongue before unnatural strength breaks the seal, yanking you away and forcing a fresh dripping tit into your lips.\n\n", false);
 
 	if(player.cocks.length == 0) {
-		outputText("A building sense of pressure grows in your groin, bulging the flesh of your crotch out.  You ignore it, focusing on suckling more of the sweet fluids from your goddess' breasts.   The warmth in your middle feels like it's dripping down into that new bulge, making it tingle with sensitivity.  You ignore it, and lash your tongue across the slippery nipple in your mouth, being rewarded with another warm blast syrupy sap.   Your mind fills with an impenetrable haze of lust, overcoming any logic with thoughts of raw sex intermingled with animal desire. You're pulled back again by that unholy strength, fighting to get one last lick on that nipple.  Your " + player.legs() + " and " + hipDescript() + " shake with lust, driven mad by sweet desire.  Marae reaches down to cup your groin, and blinds you with intense sensation.  She guides your gaze down to a new appendage that's sprouted from your needy groin – <b>a tentacle dick</b>!  It wavers to and fro, coiling on itself and tasting the air like a snake.\n\n", false);
+		outputText("A building sense of pressure grows in your groin, bulging the flesh of your crotch out.  You ignore it, focusing on suckling more of the sweet fluids from your goddess' breasts.   The warmth in your middle feels like it's dripping down into that new bulge, making it tingle with sensitivity.  You ignore it, and lash your tongue across the slippery nipple in your mouth, being rewarded with another warm blast of syrupy sap.   Your mind fills with an impenetrable haze of lust, overcoming any logic with thoughts of raw sex intermingled with animal desire. You're pulled back again by that unholy strength, fighting to get one last lick on that nipple.  Your " + player.legs() + " and " + hipDescript() + " shake with lust, driven mad by sweet desire.  Marae reaches down to cup your groin, and blinds you with intense sensation.  She guides your gaze down to a new appendage that's sprouted from your needy groin – <b>a tentacle dick</b>!  It wavers to and fro, coiling on itself and tasting the air like a snake.\n\n", false);
 		player.createCock();
 		player.cocks[0].cockLength = 36;
 		player.cocks[0].cockThickness = 2;
 		player.cocks[0].cockType = CockTypesEnum.TENTACLE;
 	}
 	else {
-		outputText("You drink deeply, suckling her thick syrupy milk with strength born of an instantaneous addiction.  The desire to attain more of her 'milk' overrides any other thoughts, clouding over them like a dense morning fog.  The slick nipples feel like they tense and squirm in your mouth as you draw every last bit of their delicious cargo into your greedy gullet.  You " + hipDescript() + " twitch and squirm, throbbing and hard, making your " + multiCockDescriptLight() + " bob in the air.   Heedless of your groin's incessant begging, you work the nipple in your mouth as if it was your whole world, trying to pleasure as much as suckle.  You can feel your " + multiCockDescriptLight() + " squirming in the air  as if reaching for her.  Wait squirming!?  You're pulled back from her nipple and given the chance to look down, where ", false);
+		outputText("You drink deeply, suckling her thick syrupy milk with strength born of an instantaneous addiction.  The desire to attain more of her 'milk' overrides any other thoughts, clouding over them like a dense morning fog.  The slick nipples feel like they tense and squirm in your mouth as you draw every last bit of their delicious cargo into your greedy gullet.  You " + hipDescript() + " twitch and squirm, throbbing and hard, making your " + multiCockDescriptLight() + " bob in the air.   Heedless of your groin's incessant begging, you work the nipple in your mouth as if it was your whole world, trying to pleasure as much as suckle.  You can feel your " + multiCockDescriptLight() + " squirming in the air  as if reaching for her.  Wait, squirming!?  You're pulled back from her nipple and given the chance to look down, where ", false);
 		if(player.tentacleCocks() < player.cockTotal()) {
 			//Single cawks
 			if(player.cocks.length == 1) {
@@ -156,13 +190,13 @@ private function maraeBadEnd():void {
 		outputText("<b>you see your " + multiCockDescriptLight() + " waving around, seeking a nearby orifice to fuck!</b>\n\n", false);
 	}
 
-	outputText("\"<i>Yum,</i>\" whispers Marae, throwing you against her tree and advancing confidently, \"<i>nothing feels quite as good as burying a squirming tentacle into some hot wet cunt's pussy and asshole.</i>\" She beckons you closer and begins advancing on you.  Your body edges closer of it's own volition, as if she has a hook buried in your groin and pulling you away from the tree, towards her needy flower.   When she closes within a few feet, your " + multiCockDescript() + " splits into a dozen different appendages, each waving in the air with licentious intent.  Before you can react, they lash forwards, wrapping her arms and legs tightly, hauling her onto two central tendrils.  In seconds, your primary tentacle-dick buries itself up to her cervix, pressing roughly against her internal opening while it squirms like a trapped snake inside her cunt.  The secondary cock-vine manages to penetrate her bum with ease, tingling as lubricant splatters around the rough penetration.\n\n", false);
+	outputText("\"<i>Yum,</i>\" whispers Marae, throwing you against her tree and advancing confidently, \"<i>nothing feels quite as good as burying a squirming tentacle into some hot wet cunt's pussy and asshole.</i>\" She beckons you closer and begins advancing on you.  Your body edges closer of its own volition, as if she has a hook buried in your groin and pulling you away from the tree, towards her needy flower.   When she closes within a few feet, your " + multiCockDescript() + " splits into a dozen different appendages, each waving in the air with licentious intent.  Before you can react, they lash forwards, wrapping her arms and legs tightly, hauling her onto two central tendrils.  In seconds, your primary tentacle-dick buries itself up to her cervix, pressing roughly against her internal opening while it squirms like a trapped snake inside her cunt.  The secondary cock-vine manages to penetrate her bum with ease, tingling as lubricant splatters around the rough penetration.\n\n", false);
 
-	outputText("You don't really know what's going on anymore.  You're leaning against a tree while your crotch is forcefully double-teaming both of a goddess' holes.  You're too full of warmth and arousal to do anything about it, so you slump down and enjoy it.  Marae cries and moans like a bitch in heat, clearly enjoying the two wriggling tendrils working her over.  Sap leaks from her nipples, and a few spare tentacles immediately latch on, their tips forming into twisted lips.  You can <b>taste</b> the flavor...with your tentacles.  The fog in your mind thickens, and you squeeze another tentacle into her ass without thinking about it.   One more erupts from the bundle at your crotch, and latches onto the goddess' clit, locking her in a state of near-constant orgasm.   Her orgasms milk your cocks with violent muscle contracts, actually managing to pull the member buried inside her through her cervix and into her womb.  It's too much and you start to cum, blacking out from the intensity of it.\n\n", false);
-	outputText("<b>Some time passes....</b>\n\n", false);
-	outputText("You're still on the island with Marae impaled on two of the wriggling monstrosities you call your cocks.    You haven't pulled free in days, but why would you.  Your bodies are made for each other, a pile of wriggling fuckmeat with holes that drink your cum like the desert drinks water, and a once-hero who lives to sate his mass of seething tentacles.   The two of you are two halves of the same puzzle, locked together in an endless orgy.  You fondly remember watching the shining liquid that was once your soul drip from the wet folds of her flower-petals, crystallizing into a tiny rock much smaller than Marae's own.", false);
+	outputText("You don't really know what's going on anymore.  You're leaning against a tree while your crotch is forcefully double-teaming both of a goddess' holes.  You're too full of warmth and arousal to do anything about it, so you slump down and enjoy it.  Marae cries and moans like a bitch in heat, clearly enjoying the two wriggling tendrils working her over.  Sap leaks from her nipples, and a few spare tentacles immediately latch on, their tips forming into twisted lips.  You can <b>taste</b> the flavor... with your tentacles.  The fog in your mind thickens, and you squeeze another tentacle into her ass without thinking about it.   One more erupts from the bundle at your crotch, and latches onto the goddess' clit, locking her in a state of near-constant orgasm.   Her orgasms milk your cocks with violent muscle contracts, actually managing to pull the member buried inside her through her cervix and into her womb.  It's too much and you start to cum, blacking out from the intensity of it.\n\n", false);
+	outputText("<b>Some time passes...</b>\n\n", false);
+	outputText("You're still on the island with Marae impaled on two of the wriggling monstrosities you call your cocks.    You haven't pulled free in days, but why would you?  Your bodies are made for each other, a pile of wriggling fuckmeat with holes that drink your cum like the desert drinks water, and a once-hero who lives to sate his mass of seething tentacles.   The two of you are two halves of the same puzzle, locked together in an endless orgy.  You fondly remember watching the shining liquid that was once your soul drip from the wet folds of her flower-petals, crystallizing into a tiny rock much smaller than Marae's own.", false);
 	if(player.findStatusAffect(StatusAffects.CampMarble) >= 0) outputText("\n\nOn the shore, Marble looks out on the lake, wondering what happened to the one whom she loved.", false);
-	eventParser(5035);
+	getGame().gameOver();
 }
 
 private function maraeStealLethicite():void {
@@ -173,7 +207,7 @@ private function maraeStealLethicite():void {
 	{
 		outputText("You dart to the side, diving into a roll that brings you up behind the tree.  You evade the gauntlet of grabbing tentacles that hang from the branches, snatch the large gem in both arms and run for the beach.  You do not hear the sounds of pursuit, only a disappointed sigh.", false);
 		player.createKeyItem("Marae's Lethicite",0,0,0,0);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//(FAIL)
 	else {
@@ -183,16 +217,16 @@ private function maraeStealLethicite():void {
 		if(player.gender <= 1) outputText("boy ", false);
 		else outputText("girl ", false);
 		outputText("you are.  You turn me into a steaming hot sex-pot, then have the nerve to come here and try to walk off with my lethicite, all WITHOUT fucking me?  Tsk tsk tsk,</i>\" she scolds, \"<i>I appreciate your ambition, but I can't just let a mortal walk all over me like that.  I'll be taking that,</i>\" she says as she grabs the crystal, and lugs it to the tree underneath you.  She strokes the wood surface lovingly, and a knot dilates until it forms a hole large enough to contain the lethicite.  Marae shoves it inside, and strokes the wood like a pet creature, humming while the bark flows closed, totally concealing the crystal.\n\n", false);
-		outputText("\"<i>Now, that should keep it safe from swift little play-toys like yourself.  What you tried was a bold move, and I respect that, initiative is to be rewarded.   So I'll let you go, just like that,</i>\" she says, snapping her fingers for emphasis.\n\n", false);
+		outputText("\"<i>Now, that should keep it safe from swift little play-toys like yourself.  What you tried was a bold move, and I respect that; initiative is to be rewarded.   So I'll let you go, just like that,</i>\" she says, snapping her fingers for emphasis.\n\n", false);
 		outputText("The tentacles lower you to the ground, but do not release you from their tight embrace.\n\n", false);
-		outputText("Marae steps closer, playing her fingers softly up your thigh, \"<i>BUT, you'll leave with a little something extra.  A gift from the new goddess of fertile unions…</i>\"\n\n", false);
+		outputText("Marae steps closer, playing her fingers softly up your thigh, \"<i>BUT, you'll leave with a little something extra.  A gift from the new goddess of fertile unions...</i>\"\n\n", false);
 		//DICK
 		if(player.gender == 1 || (player.gender == 3 && rand(2) == 1))
 		{
-			outputText("She extends a hand expectantly, watching with detached concentration while a tentacle lowers from the tree into her palm.   Hips swaying sexually, she advances, peeling back the tentacles outer layer.  It opens up to reveal a wet, gummy mouth.  She giggles and bumps the opening against your ", false);
+			outputText("She extends a hand expectantly, watching with detached concentration while a tentacle lowers from the tree into her palm.   Hips swaying sexually, she advances, peeling back the tentacle's outer layer.  It opens up to reveal a wet, gummy mouth.  She giggles and bumps the opening against your ", false);
 			if(player.cocks.length > 1) outputText("largest ", false);
 			outputText(cockDescript(0), false);
-			outputText("'s tip.  Immediately a powerful suction draws your " + cockDescript(0) + " inside the tentacle-maw, burying you up to the base in squirming pleasure.   Marae watches the plant go to work, teasing squeezing until you orgasm.  It takes mere moments for the gifted tentacle to achieve its goal.  Your cum makes a tasty treat for the plant-beast, and it sucks and sucks until your body feels empty and drained.\n\n", false);
+			outputText("'s tip.  Immediately a powerful suction draws your " + cockDescript(0) + " inside the tentacle-maw, burying you up to the base in squirming pleasure.   Marae watches the plant go to work, squeezing teasingly until you orgasm.  It takes mere moments for the gifted tentacle to achieve its goal.  Your cum makes a tasty treat for the plant-beast, and it sucks and sucks until your body feels empty and drained.\n\n", false);
 			outputText("\"<i>Oh that simply won't do,</i>\" Marae whispers, cupping your ", false);
 			if(player.balls > 0) outputText(ballsDescriptLight(), false);
 			else {
@@ -200,11 +234,11 @@ private function maraeStealLethicite():void {
 				else outputText("crotch", false);
 			}
 			outputText(", \"<i>You'll be my prized breeder.</i>\"  The sharp point of a fingernail presses against your taint, scratching the skin.  \"<i>Just one tiny change to make,</i>\" exhales the goddess.  Pain explodes at the base of your crotch as it feels like her fingernail impales you, penetrating inches into your flesh.  You thrash in agony as it reaches something sensitive inside you.  You black out from pain and the shock of watching your blood flow down her arm.\n\n", false);
-			outputText("You feel warm, enclosed in comfort and pleasure.  Is this heaven?  No, your head is throbbing and your eyes are closed…you open them and discover you're still lying at the base of the tree.  That greedy tentacle is still locked around your " + cockDescript(0) + " pinning it in the throes of orgasm.  You watch thick bulges of cum pump up the tentacle, evidence of a truly garguantuan fluid output.  It goes on and on, and you realize the pleasure ought to drive you mad.\n\n", false);
+			outputText("You feel warm, enclosed in comfort and pleasure.  Is this heaven?  No, your head is throbbing and your eyes are closed... you open them and discover you're still lying at the base of the tree.  That greedy tentacle is still locked around your " + cockDescript(0) + " pinning it in the throes of orgasm.  You watch thick bulges of cum pump up the tentacle, evidence of a truly garguantuan fluid output.  It goes on and on, and you realize the pleasure ought to drive you mad.\n\n", false);
 			outputText("Marae steps into your field of view, and pulls the tentacle free.  Your " + cockDescript(0) + " twitches pitifully, blasting a few massive loads onto your belly as your orgasm withers and dies from lack of stimulation.\n\n", false);
 			outputText("\"<i>Sorry about the pain, I had to tweak your body to make you a true breeder.  You can go now stud.  I expect the monsters ought to worry about you now, or they'll all have dripping twats and swollen bellies,</i>\" apologizes Marae.  She turns away from you, returning to the embrace of her tree's tentacles, sinking into debauchery.  You stagger into your boat and row away, oblivious to the stream to pre-cum dripping from your "+multiCockDescript()+".", false);
 			player.createPerk(PerkLib.MaraesGiftStud,0,0,0,0);
-			doNext(14);
+			doNext(camp.returnToCampUseTwoHours);
 		}
 		//FEM)
 		else {
@@ -219,10 +253,10 @@ private function maraeStealLethicite():void {
 			player.cuntChange(20,true,true,false);
 			outputText("\n\n", false);
 			outputText("Marae winks, \"<i>Sorry about making you look so pregnant my dear, it's a necessary part of the process.  All that sloshing seed is going to flow right into your tender little mortal ovaries, and remake them.  You'll be so fertile just looking at a hard cock could knock you up!</i>\"\n\n", false);
-			outputText("She giggles at your expression of horror, \"<i>No, not literally, but it won't take much to make you a mommy, and you'll find the gestation to be quite a bit...shorter.  Now get out of here before I change my mind and lock in an orgasm for the rest of your life.</i>\"\n\n", false);
+			outputText("She giggles at your expression of horror, \"<i>No, not literally, but it won't take much to make you a mommy, and you'll find the gestation to be quite a bit... shorter.  Now get out of here before I change my mind and lock in an orgasm for the rest of your life.</i>\"\n\n", false);
 			outputText("You are dropped from the tree, and with little choice, you waddle to your boat, doing your best to cover up your violated " + vaginaDescript(0) + ".", false);
 			player.createPerk(PerkLib.MaraesGiftFertility,0,0,0,0);
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 	}
 }
@@ -267,7 +301,7 @@ public function level2MaraeEncounter():void {
 	if(player.findPerk(PerkLib.MaraesGiftFertility) >= 0 || player.findPerk(PerkLib.MaraesGiftStud) >= 0) outputText("second ", false);
 	outputText("dose of Marae's tender affections.</i>\"\n\n", false);
 	//Incase something breaks
-	doNext(1);
+	doNext(playerMenu);
 	//Cant fly?  Stuck for sex!
 	if(!player.canFly()) {
 		outputText("You don't see any escape!", false);
@@ -276,7 +310,7 @@ public function level2MaraeEncounter():void {
 	//Can fly?  Choice to run
 	else {
 		outputText("You don't think she's counted on your wings.  If you tried to fly you could probably get out of the reach of her tentacles in short order.", false);
-		simpleChoices("Stay",MaraeIIStageII,"",0,"",0,"",0,"Fly Away",MaraeIIFlyAway);
+		simpleChoices("Stay", MaraeIIStageII, "", null, "", null, "", null, "Fly Away", MaraeIIFlyAway);
 	}
 }
 
@@ -316,15 +350,16 @@ private function MaraeIIStageII():void {
 		if(player.cor < 33) outputText("struggle to ", false);
 		else if(player.cor < 66) outputText("work to ", false);
 		else outputText("easily ", false);
-		outputText("suppress your gag reflex as her cock grows thick in your mouth and begins to dump its cream down your wanton gullet.  The slippery tentacle goes into overdrive while Marae cums, pumping away at your " + vaginaDescript(0) + " with incredibly violent fervor.   Your belly bubbles as its stuffed full of goddess-cum, and your pussy clamps down hard on its invader while it spurts out its own syrupy load into your womb.   Swooning with lust, you orgasm from the twin violations, squirming on Marae's rod while she packs you with nectar.  	The goddess pulls back with a satisfied sigh, dragging her length out of your throat and shivering from the sensations of your hot, oral vice on her twitching member.  You look up at her with eyes full of adoration, feeling your gut churn from the quantity of her deposit.  Marae ruffles your hair and pulls the tentacle back with a suddenness that makes you feel empty and void.   You feel a little drowsy and close your eyes while your goddess watches over you.  Everything is perfect...", false);
+		outputText("suppress your gag reflex as her cock grows thick in your mouth and begins to dump its cream down your wanton gullet.  The slippery tentacle goes into overdrive while Marae cums, pumping away at your " + vaginaDescript(0) + " with incredibly violent fervor.   Your belly bubbles as it's stuffed full of goddess-cum, and your pussy clamps down hard on its invader while it spurts out its own syrupy load into your womb.   Swooning with lust, you orgasm from the twin violations, squirming on Marae's rod while she packs you with nectar.");
+		outputText("\n\nThe goddess pulls back with a satisfied sigh, dragging her length out of your throat and shivering from the sensations of your hot, oral vice on her twitching member.  You look up at her with eyes full of adoration, feeling your gut churn from the quantity of her deposit.  Marae ruffles your hair and pulls the tentacle back with a suddenness that makes you feel empty and void.   You feel a little drowsy and close your eyes while your goddess watches over you.  Everything is perfect...", false);
 	}
 	//[Dudezillaz]
 	//Marae uses a tree-tentacle to 'milk' male PC's.  Oral or Vajayjay? Not sure.
 	else if(player.gender == 1) {
 		outputText("Marae coos with pleasure and allows a nectar-slicked tentacle to slip free of her flower.   Her sweet, corrupted smell filters through the air, like pollen carried on a spring breeze.  You watch, awestruck while the curvy goddess approaches you, cradling a squirming tree-tentacle in each of her hands.  The one in her right twitches and spurts, dribbling seed over her hand in a surprisingly weak display that seems to invigorate the lusty, tainted deity.\n\n", false);
 
-		outputText("You watch, standing stock-still and paralyzed ", false);
-		if(player.lust > 80) outputText("by lust", false);
+		outputText("You watch, standing stock-still and paralyzed with ", false);
+		if(player.lust > 80) outputText("lust", false);
 		else if(player.cor > 50) outputText("indecision", false);
 		else outputText("worry", false);
 		outputText(".  Marae's advance seems like an inexorable march to your eyes, and before you have a chance to react, she's crushed against you in a full-body hug.  Her tongue digs into your mouth, rooting out your tongue and melting your resistance in an overwhelming, lust-powered assault.  You vision swims for a moment when she releases you and pulls back.  It's hard to focus with the busty, nude image of fertility beckoning you.  It makes " + sMultiCockDesc() + " strain to reach her, but she dances back with a knowing smile and says, \"<i>Not yet my eager little subject.  Let me undress you, THEN you can worship me.</i>\"\n\n", false);
@@ -400,7 +435,7 @@ private function MaraeIIStageII():void {
 		outputText("Cum boils out of your ", false);
 		if(player.balls > 0) outputText("rapidly contracting balls", false);
 		else outputText("tentacle-squeezed prostate", false);
-		outputText(" and erupts into Marae's womb.  Your hips rock forward, grazing her cervix with your " + cockHead(0) + " to better fill her uterus.  ", false);
+		outputText(" and erupts into Marae's womb.  Your hips rock forward, grazing her cervix with your " + player.cockHead() + " to better fill her uterus.  ", false);
 		if(player.cockTotal() > 1) outputText("The " + cockDescript(1) + " in her ass spasms and explodes with its brother, glazing her slippery colon with a coating of syrupy spunk.  ", false);
 		if(player.cockTotal() > 2) {
 			outputText("Neglected but orgasming, ", false);
@@ -430,13 +465,13 @@ private function MaraePt2RoundIIIPrizes():void {
 		outputText("You awaken in the midst of a powerful orgasm.  Jism boils out of " + sMultiCockDesc() + ", pumping into the tight, sucking tentacle-hole.  Your eyes open wider, and your head clears while you rock your hips in bliss.  You're hanging upside down, suspended in the tentacle tree!  Marae isn't far from you, and she's busy deep-throating the fattest tentacle you've seen while another pair are working her openings.  She turns to you, aware of your wakefulness, and removes the oral intruder, though it manages to squirt a layer of spunk into her face in defiance.   The goddess smirks and slaps it, scolding it before she speaks, \"<i>", false);
 		//(FORK STUD vs NO STUD)
 		//(STUD)
-		if(player.findPerk(PerkLib.MaraesGiftStud) >= 0) outputText("Well I see my gift is working out quite well for you, isn't it?  That's excellent.  It was an incomplete gift given by an incomplete goddess, but now that I've gotten my hands on you again, I was able to fix it.  You'll build up cum three times as fast as before, no more waiting for days just to build up a huge load for all the horny girls out there!</i>\"  ", false);
+		if(player.findPerk(PerkLib.MaraesGiftStud) >= 0) outputText("Well, I see my gift is working out quite well for you, isn't it?  That's excellent.  It was an incomplete gift given by an incomplete goddess, but now that I've gotten my hands on you again, I was able to fix it.  You'll build up cum three times as fast as before, no more waiting for days just to build up a huge load for all the horny girls out there!</i>\"  ", false);
 		//(NON STUD)
 		else outputText("You might be a little sore.  I did some work to make sure you'll be a perfect breeding stud for me.  No tiny cum-shots for you!  You'll squirt out enough to knock up anyone, and I even touched up your seed so it'll get through most contraceptives.  Aren't I the nicest?</i>\"  ", false);
 		//(CONTINUED)
 		outputText("Her speech is broken by pauses for her to lick up the goo and swallow it, but still perfectly intelligible.  The entire time she was speaking, you were trapped in orgasm, milked by her tree with unthinking intensity.\n\n", false);
 
-		outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention anymore.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to knock up all the prettiest girls!</i>\"\n\n", false);
+		outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention any more.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to knock up all the prettiest girls!</i>\"\n\n", false);
 		if(player.findPerk(PerkLib.MaraesGiftStud) >= 0) {
 			outputText("<b>(New Perk Gained: Marae's Gift – Profractory)</b>", false);
 			player.createPerk(PerkLib.MaraesGiftProfractory,0,0,0,0);
@@ -455,7 +490,7 @@ private function MaraePt2RoundIIIPrizes():void {
 
 			outputText("Your eyes widen in shock.  You gasp, \"<i>You did WHAT!?</i>\"\n\n", false);
 
-			outputText("\"<i>I just made your butt-hole a little more welcoming for all the boys that are going to be fucking you.  I mean, once your cunt is full they need somewhere else to stick it right?  If anything the bee-girls should appreciate this.  I know they're kinky and like to use that side,</i>\" confirms the Marae.  ", false);
+			outputText("\"<i>I just made your butt-hole a little more welcoming for all the boys that are going to be fucking you.  I mean, once your cunt is full they need somewhere else to stick it right?  If anything the bee-girls should appreciate this.  I know they're kinky and like to use that side,</i>\" Marae confirms.  ", false);
 		}
 		//(NOT BREEDER)
 		else {
@@ -463,7 +498,7 @@ private function MaraePt2RoundIIIPrizes():void {
 		}
 		outputText("The entire time she was speaking, you were trapped in orgasm, fucked by her tree with unthinking intensity.\n\n", false);
 
-		outputText("Breathless and panting, you give Marae a confused nod as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention anymore.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<I>Thanks for visiting and letting my little friend try out your pussy!  Once I get it to flower I might swing by and plant one for you at your camp!  Bye now, and don't forget to have lots of babies!</i>\"\n\n", false);
+		outputText("Breathless and panting, you give Marae a confused nod as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention any more.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<I>Thanks for visiting and letting my little friend try out your pussy!  Once I get it to flower I might swing by and plant one for you at your camp!  Bye now, and don't forget to have lots of babies!</i>\"\n\n", false);
 
 		if(player.findPerk(PerkLib.MaraesGiftFertility) >= 0) {
 			outputText("<b>(New Perk Gained: Marae's Gift – Buttslut)</b>", false);
@@ -494,7 +529,7 @@ private function MaraePt2RoundIIIPrizes():void {
 			}
 			outputText("The entire time she was speaking, you were trapped in orgasm, milked by her tree with unthinking intensity.\n\n", false);
 
-			outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention anymore.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to have lots of sex!</i>\"\n\n", false);
+			outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention any more.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to have lots of sex!</i>\"\n\n", false);
 			if(player.findPerk(PerkLib.MaraesGiftFertility) >= 0) outputText("<b>(New Perk Gained: Marae's Gift - Fertility)</b>", false);
 			else outputText("<b>New Perk Gained: Marae's Gift - Stud)</b>", false);
 		}
@@ -504,7 +539,7 @@ private function MaraePt2RoundIIIPrizes():void {
 
 			outputText("The entire time she was speaking, you were trapped in orgasm, milked by her tree with unthinking intensity.\n\n", false);
 
-			outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention anymore.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to have lots of sex!</i>\"\n\n", false);
+			outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae nor the tree are paying you any attention any more.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to have lots of sex!</i>\"\n\n", false);
 			player.createPerk(PerkLib.MaraesGiftStud,0,0,0,0);
 			outputText("<b>(New Perk Gained: Marae's Gift - Stud)</b>", false);
 		}
@@ -514,19 +549,19 @@ private function MaraePt2RoundIIIPrizes():void {
 
 			outputText("The entire time she was speaking, you were trapped in orgasm, milked by her tree with unthinking intensity.\n\n", false);
 
-			outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae or the tree are paying you any attention anymore.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to have lots of sex!</i>\"\n\n", false);
+			outputText("Breathless and panting, you give Marae a nod of thanks as her tentacles lower you back towards your equipment.  They plant you on shaky " + player.feet() + " and uncoil slowly, stroking your body as they depart.  They must like you.  You get dressed in a hurry, but neither Marae or the tree are paying you any attention any more.   The boat isn't far, and as you're climbing into it the goddess calls out her goodbyes, \"<i>Thanks for visiting and giving my tree so much of your sperm!  Once its fruit is ready I might come plant one at your camp!  Bye now, and don't forget to have lots of sex!</i>\"\n\n", false);
 			player.createPerk(PerkLib.MaraesGiftFertility,0,0,0,0);
 			outputText("<b>(New Perk Gained: Marae's Gift - Fertility)</b>", false);
 		}
 	}
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 private function MaraeIIFlyAway():void {
 	spriteSelect(40);
 	outputText("", true);
 	outputText("You launch into the air and beat your wings, taking to the skies.  The tentacle-tree lashes at you, but comes up short.  You've escaped!  Something large whooshes by, and you glance up to see your boat sailing past you.  She must have hurled it at you!  It lands with a splash near the mooring, somehow surviving the impact.  You dive down and drag it back to the dock before you return to camp.  That was close!", false);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 }
 }

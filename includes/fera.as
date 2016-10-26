@@ -12,26 +12,26 @@ public function pumpkinFuckEncounter():void {
 	if(flags[kFLAGS.PUMPKIN_FUCK_YEAR_DONE] > 0) outputText("  An old, haunting memory surfaces, and you realizes this seems... familiar.  Did you find this last year?  Yes... it could have been this very same pumpkin...");
 	outputText("\n\nWhile startled by the vegetation's placement, it seems harmless enough.");
 	outputText("\n\nYou advance cautiously, extremely familiar with the traps and pitfalls that all-too-often prevail in this world.  The pumpkin's rind is bright orange, ripe and seemingly ready to bulge out.  The vines are thick, dark green, and reflective, partly thanks to the oozing moisture that drips from them to the floor.  After closing, it becomes clear that it isn't a coating of dew on the pumpkin but thick, viscous slime instead.  The clear, syrupy ooze begins to drip from the vines even as it rolls down the pumpkin, seeping out of the plant's skin in fat, heavy rivulets.");
-	var fuck:int = 0;
-	var mount:int = 0;
-	if(player.hasCock()) {
+	var fuck:Function = null;
+	var mount:Function = null;
+	if (player.hasCock()) {
 		outputText("\n\nOne of the many indentations that mar the sphere's circumference seems deeper, darker than the others.  You lean a little closer, for a better look, and the shadowed fold ripples, then undulates, yawning wider and wider to reveal whole new shades of inky blackness.  It squelches, and a wide streamer of slime oozes out to slide down the side of the rind.  The puddle below the obviously tainted gord deepens with this new addition even as the wide-open rent widens.  A sweet, fruity smell rises from the opening, splattering out with a fresh wave of goop. This time, the passed slime leaves something different behind.\n\nWhere once the pumpkin had a midnight-black crevasse, it now has a fleshy, purplish gash.  The slime it exudes is more a fragrant nectar.  The rind around the opening appears cushy, and soft.  Best of all, the interior is as pink as any pussy you've ever seen, and as wet as a succubus's snatch.  You take a deep breath of the fruit's female musk and find yourself wondering: should you fuck it?");
-		fuck = 3688;
+		fuck = pumpkinFuck;
 	}
 	/* UNUSED DUE TO FEN LAZINESS {PC has tits}{NIPNUMBER} of the corrupted growth's vines rise up, slowly waving, snake-like in the air.  As if hypnotized, they lazily bob back and forth, drawing a few inches closer at the culmination of each movement.  You ready your [weapon], reading to defend yourself, but the slimy green tentacles pause at the new development, their tips opening to reveal plush green lips and slobbery purple tongues.  They lick at their lips, hungrily watching your {allChest] and waiting, biding their time.  They seem hungry for tits, and at the sight you feel your burgeoning milk readying to let down.  You could feed the plant, if you want to.  The idea is oddly compelling.  Do you?*/
 	//Chick sauce
-	if(player.hasVagina()) {
+	if (player.hasVagina()) {
 		outputText("\n\nThe stem of the pumpkin is long and proud, as well as knotted, barbed, ribbed, and flared like someone crafted the world's most perverted dildo to simultaneously resemble every type of cock in existence.  The tip bubbles constantly with slime like pre-cum oozing out of an erect phallus.");
 		outputText("\n\nAs you gaze upon the stem, you can see it twitching like an actual penis and the aroma that comes from it is as enticing as what any incubus could produce.  You take a deep breath of the fruit's musk and find yourself wondering: should you mount it?");
-		mount = 3727;
+		mount = mountPumpkin;
 	}
-	if(player.gender == 3) outputText("\n\nSo many choices, so little time.");
+	if (player.gender == 3) outputText("\n\nSo many choices, so little time.");
 	//If PC has neither
-	if(player.gender == 0) {
+	if (player.gender == 0) {
 		outputText("\n\nOdd as it is, it doesn't seem to react as you look it over.  You avoid it, for now.");
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
-	simpleChoices("Fuck It",fuck,"Mount It",mount,"",0,"",0,"No Way",13);
+	else simpleChoices("Fuck It", fuck, "Mount It", mount, "", null, "", null, "No Way", camp.returnToCampUseOneHour);
 }
 
 //[HOLY SHIT YOU BE FUCKING A PUMPKIN]
@@ -61,7 +61,7 @@ public function pumpkinFuck():void {
 		outputText("\n\nAll too soon, you finish and step away, satisfied.  The pumpkin's pussy seals closed slowly, cutting off the worst of the slime-flow.  You get dressed, but the plant's tendrils no longer bother you.  They lie still and flat, and even the perverse sweating comes to an end.  Whatever fel magic was behind this, it seems to have settled after the salty snack you gave it.  You get dressed and walk back to camp with a spring in your step.");
 		player.orgasm();
 		dynStats("cor", 2);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	else {
 		outputText("\n\nOver and over you empty your [balls] into the growing gourd, inflating it larger and larger, passionately giving up every drop of sperm to fuel its unnatural growth.  Even once you feel empty, your [cock biggest] continues to clench and pump, firing blanks in an effort to feed EVERYTHING to the semen-hungry plant.  Still, even your prodigious virility can only take so much, and once your dick starts to go soft inside the massive cunt, it releases you, allowing you to ride out the rest of your orgasm, below, on the ground.  Your descent is graceless, a lazy slide down the orange rind.  Were it not for the gentle slope, it would be a dangerous six-foot fall.");
@@ -99,9 +99,9 @@ public function pumpkinFuckPartII():void {
 	outputText("\n\nWait... what?  You start to pull back, but her grip tightens, forcing you rigid with involuntary pain.  Prickly vines boil out of the ground around your [legs] and entwine into a twisted web with the strength of iron.  In seconds, you're firmly bound up to your [chest], the only part left mobile being your poor, depleted dick.  It swings freely, controlled as effortlessly by the tainted goddess as your veridian prison.");
 	outputText("\n\nFera rambles, \"<i>My sister is not so strong anymore... the planet itself has been turned to my way of thinking, just like you.</i>\"  She leans forward to kiss you, those ruby lips as smooth as glass and soft as the finest velvet.  You lose yourself in her lips, immediately kissing her back, devoting all your muscle control to passionately twisting your tongue about hers, tasting her cinnamon-sweet mouth, moist organs lapping against one another while bubbles of saliva roll between your hungry lips.  It's enough to blind you to the rising wall of verdant tentacles, at least until they touch your ears.");
 	outputText("\n\nYou cry out when they slide into your ears, the slimy slickness worming into your cranium as they dribble warm lubricants everywhere.  Inch after inch of ropy green vine disappears inside you, and your first thought, aside from the panic coursing through your veins, is, \"<i>How is this even possible?</i>\"  The next one isn't nearly as cogent, as your entire body seems to light up with sensation, every inch of skin bathed in wet kisses, fragrant cunts, pillowy tits, and the occasional slippery dong.  It's an electric cacophony of pleasure like no other.  All of these sensual caresses move together, a perfectly orchestrated ballet of erotic movement timed to the rhythm of the gently thrusting ear-tentacles.");
-	outputText("\n\nDimly, you feel rivulets of something sticky running down the sides of your neck, but the phantom tits smearing you with breastmilk and caressing your sensitive-as-genetalia skin are a more pressing, and arousing concern.  Fera somehow pushes through the phantom female forms to re-engage the liplock, and you happily return to frenching her, an obedient slave to her skillful techniques and mind-moulding roots.  This cavalcade of sexual hallucinations is impossible to withstand, and though silent aside from the gentle squishes of your perpetual ear-fuck, you have to admit that you enjoy it as much anything you've ever done.");
+	outputText("\n\nDimly, you feel rivulets of something sticky running down the sides of your neck, but the phantom tits smearing you with breastmilk and caressing your sensitive-as-genetalia skin are a more pressing, and arousing concern.  Fera somehow pushes through the phantom female forms to re-engage the liplock, and you happily return to frenching her, an obedient slave to her skillful techniques and mind-molding roots.  This cavalcade of sexual hallucinations is impossible to withstand, and though silent aside from the gentle squishes of your perpetual ear-fuck, you have to admit that you enjoy it as much anything you've ever done.");
 	outputText("\n\nThe pleasant numbness from the intrusion - like the blissful crest of rolling waves - sweeps everything but pleasure from your mind.  You sag into your bindings, ecstatic, melted putty awaiting its sculptor's touch.  Fera hums and breaks the kiss to look into your empty, dazed eyes, two red stars of fire that utterly fill your view.  You drool and begin to lick at an imaginary pussy, your fevered attentions wasted on empty air, though to you it as real as a wet succubus's snatch.");
-	outputText("\n\nMeanwhile, you feel a pussy sliding over your [cock].  Just as it hilts you, a second set of lips, slippery internal vulva, slide down your shaft, trailing the first until they nestle up against them, leaking their drool out the first's entrance.  Stranger still, a third vagina crests your [cockHead], slithering down your turgid mast to join its sisters, and that's only the beginning.  A seemingly endless array of vaginas wraps around your cock and squeezes it with twenty different textures, all of them as soft and wet as liquid butter.  Your [cock] may as well have died and gone to heaven, for it joins the rest of you in bliss.");
+	outputText("\n\nMeanwhile, you feel a pussy sliding over your [cock].  Just as it hilts you, a second set of lips, slippery internal vulva, slide down your shaft, trailing the first until they nestle up against them, leaking their drool out the first's entrance.  Stranger still, a third vagina crests your [cockHead], slithering down your turgid mast to join its sisters, and that's only the beginning.  A seemingly endless array of vaginas wraps around your cock and squeeze it with twenty different textures, all of them as soft and wet as liquid butter.  Your [cock] may as well have died and gone to heaven, for it joins the rest of you in bliss.");
 	outputText("\n\nFera giggles at your expression and puts her finger in your mouth, laughing uproariously when you immediately suck it, flicking your tongue about its circumference.  Those slow, pumping tendrils have utterly fucked your mind, and there's nothing you could have done about it.  It's hellishly good, a torture of sinful, unadulterated pleasure potent enough to keep your [cock] throbbing and aching to release, even though it just did.  You would mind, if it wasn't like every single other part of you was orgasming on its own, ecstatically twitching in the firm bindings as you give yourself wholly to Fera's minions.");
 	outputText("\n\nHow long it goes on you can't say.  Somewhere along the lines your memory went dark, repurposed by your coiled masters to allow you to feel even greater heights of bliss.  There's faint flashes of you thrashing, but giant-sized labia keep you pinned in place, your limbs devoured in vaginal restraint.  With a triumphant surge, bulges stretch your abused noise-holes and work deep into your skull.  Your world goes white, an orgasmic soup of delight that washes any vestiges of thought from you and leaves behind only dripping obedience to pleasure.  Your cock fires weakly, offering tribute Fera in sympathy, yet the real thing is in your cum-bathed brain.  Runny tentacle-spooge drips from your nose as you gurgle in bliss, then black out.");
 	hideUpDown();
@@ -122,7 +122,7 @@ public function pumpkinFuckPartIII():void {
 	outputText("\n\n(<b>Perk Gained: Fera's Boon - Alpha</b>)");
 	player.createPerk(PerkLib.FerasBoonAlpha,0,0,0,0);
 	dynStats("cor", 30);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 public function mountPumpkin():void {
@@ -135,11 +135,11 @@ public function mountPumpkin():void {
 		outputText("\n\nTentatively, you raise a juice-soaked fingertip to your lips and taste it.  The flavor is exactly what you would expect from a pumpkin, though it has a sweet, cinnamony aftertaste, just like the pies your village would make around harvest!  Shuddering at the memories of your distant past and budding lust, you shift position to line your [vagina] up with the hard green phallus.  Smiling at the absurdity of it all, you push downward, anticipating the slimy thickness of your pumpkin's pie goo.\n\n");
 		(player as Player).cuntChange(50, true, false, false);
 		outputText("\n\nThe gourd's oozing stem does not disappoint.  Though it lacks the warmth or heartbeat of frantic copulation with a male, the slick plant-cock is both hard and pliant.  However, the shaft seems to be pulsating against every square inch of pussy that you lower onto it, and that gentle pulsing slowly draws you down, whether you planned on going to the hilt or not.  Not that you mind - the pulsing plant seems to be doing an adequate job of stimulating your walls as it passes through your glossy gates.");
-		outputText("\n\nYour [hips] slap into the orange 'skin' wetly, the omnipresent ooze immediately soaking your " + player.skin() + " with corrupted lubricant.  You hardly mind, finding your body already setting into motion as you steady your hands to either side of the heavy fruit.  The lascivious fruit doesn't show any signs of minding the fast fuck you're giving it.  Indeed, the once weakly-moving vines have stilled, their restless tremors silenced by the firm smacks of your groin against vibrant rinds and swollen lips.  You hump away at your immobile lover, spellbound by it's fecund fruit-cock, too drunk on lust and pleasure to question the strangeness of it all.");
+		outputText("\n\nYour [hips] slap into the orange 'skin' wetly, the omnipresent ooze immediately soaking your " + player.skin() + " with corrupted lubricant.  You hardly mind, finding your body already setting into motion as you steady your hands to either side of the heavy fruit.  The lascivious fruit doesn't show any signs of minding the fast fuck you're giving it.  Indeed, the once weakly-moving vines have stilled, their restless tremors silenced by the firm smacks of your groin against vibrant rinds and swollen lips.  You hump away at your immobile lover, spellbound by its fecund fruit-cock, too drunk on lust and pleasure to question the strangeness of it all.");
 		outputText("\n\nWet slapping noises ring out as you piston faster and faster, violently plowing the plant-cock into your [vagina] in a rutting, mating frenzy.  Your eyes are repeatedly drawn downward to the slimy shaft each time you pull up, the ooze keeping your [vagina] well lubricated.  The green shaft seems even larger than before, the phallus stretching you wider and longer each time you slam down on it as you ride the pumpkin into orgasm.  You feel a strange compulsion to let it cum inside, to flood your womb with pie goop until you appear immensely pregnant and the overflow is spraying out around your legs.");
 		outputText("\n\nWith a triumphant roar, you climax and mash yourself against the pumpkin, slamming your [hips] hard enough onto the hard green shaft, that you could almost swear your cervix was penetrated.  You don't care, your vagina is clenching, the stem is flexing, and the pumpkin's ooze is gushing out, flooding your innards with pumpkin seed as you flood the pumpkin's surface with your female juices in turn.  Clenching tightly, your muscles lock, working in perfect concert with one goal; filling you up with fruity cum.  The pumpkin's thick load floods your inner folds, a deluge of sweet-smelling goop squirting deep into your [vagina], inflating you and then squirting back out mixed with your own juices.  The mixed juices are absorbed into the plant's rind almost as fast as they exit your body, though you can see a bit of glistening moisture around the base of the stem.");
 		outputText("\n\nAll too soon, you finish and step away, satisfied.  The pumpkin's stem slowly stops pulsing, cutting off the worst of the slime-flow.  You get dressed, but the plant's tendrils no longer bother you.  They lie still and flat, and even the perverse sweating comes to an end.  Whatever fell magic was behind this, it seems to have settled after the pressure you relieved it of.  You get dressed and walk back to camp with a spring in your step.");
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}	
 	//Female characters don't have an easy analogue to cum production unless we count milk production, and female gender doesn't require either breasts or lactation to play.  So I just went for high vaginal wetness, not pregnant, and likely to become pregnant if she had sex with a male creature.  I hope that works out OK.
 	else {
@@ -152,7 +152,7 @@ public function mountPumpkin():void {
 		
 		outputText("\n\nThe gourd's oozing stem does not disappoint.  Though it lacks the warmth or heartbeat of frantic copulation with a male, the slick plant-cock is both hard and pliant.  However, the shaft seems to be pulsating against every square inch of pussy that you lower onto it, and that gentle pulsing slowly draws you down, whether you planned on going to the hilt or not.  Not that you mind - the pulsing plant seems to be doing an adequate job of stimulating your walls as it passes through your glossy gates.");
 		
-		outputText("\n\nYour [hips] slap into the orange 'skin' wetly, the omnipresent ooze immediately soak your " + player.skin() + " with corrupted lubricant.  You hardly mind, finding your body already setting into motion as you steady your hands to either side of the heavy fruit.  The lascivious fruit doesn't show any signs of minding the fast fuck you're giving it.  Indeed, the once weakly-moving vines have stilled, their restless tremors silenced by the firm smacks of your groin against vibrant rinds and swollen lips.  You hump away at your immobile lover, spellbound by it's fecund fruit-cock, too drunk on lust and pleasure to question the strangeness of it all.");
+		outputText("\n\nYour [hips] slap into the orange 'skin' wetly, the omnipresent ooze immediately soak your " + player.skin() + " with corrupted lubricant.  You hardly mind, finding your body already setting into motion as you steady your hands to either side of the heavy fruit.  The lascivious fruit doesn't show any signs of minding the fast fuck you're giving it.  Indeed, the once weakly-moving vines have stilled, their restless tremors silenced by the firm smacks of your groin against vibrant rinds and swollen lips.  You hump away at your immobile lover, spellbound by its fecund fruit-cock, too drunk on lust and pleasure to question the strangeness of it all.");
 		
 		outputText("\n\nWet slapping noises ring out as you piston faster and faster, violently plowing the plant-cock into your [vagina] in a rutting, mating frenzy.  Your eyes are repeatedly drawn downward to the slimy shaft each time you pull up, the ooze keeping your [vagina] well lubricated.  The green shaft seems even larger than before, the phallus stretching you wider and longer each time you slam down on it as you ride the pumpkin into orgasm.  You feel a strange compulsion to let it cum inside, to flood your womb with pie goop until you appear immensely pregnant and the overflow is spraying out around your legs.");
 		
@@ -217,7 +217,7 @@ public function mountPumpkinsIII():void {
 	outputText("\n\n(<b>Perk Gained: Fera's Boon - Breeding Bitch</b>)");
 	player.createPerk(PerkLib.FerasBoonBreedingBitch,0,0,0,0);
 	dynStats("cor", 30);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Perk name: Fera's Boon - Breeding Bitch
@@ -245,7 +245,7 @@ public function leaveFerasWonderland():void {
 	clearOutput();
 	outputText("Nah, that whole place is probably some kind of giant venus fly trap. Fuck that.");
 	flags[kFLAGS.FERAS_GLADE_EXPLORED_YEAR] = date.fullYear;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Explore Das Trees
@@ -260,13 +260,13 @@ public function exploreFerasWonderland():void {
 	outputText("\n\nThe petals themselves are scarlet red near the center and a dusky, iridescent purple near their edges.  While you look, the colors seem to shift and change, slowly washing in towards the middle in an almost hypnotic pattern.  New hues scroll in from the tips of the bloom, turning it a psychedelic yellow-orange briefly before it too is pulled into the core, briefly staining the lips and stamen with its tawny hue before the next color in line washes it away.  You watch it for a few minutes, losing yourself in the flashing, changing colors, letting your eyes be guided to the unmistakably sexual accoutrements at the flower's core, watching and appreciating its unnatural beauty until you are roused by your [legs] starting to feel a little sore.");
 	outputText("\n\nYou gather some of the nectar without thinking, compelled to lift it to your nose and take a sniff, heedlessly sampling its delicate bouquet, letting it tickle the back of your sinuses with its pheromonal payload while you enjoy the ambrosial levels of sweetness that come with it.  Your head swims a little... at least, until you lick your fingers clean and steady yourself against a nearby stalk.");
 	if(player.gender > 0) outputText("  Your heart is hammering");
-	if(player.hasCock() && !player.hasVagina()) outputText(", and there's a telltale tightness building in your groin, expanding and pressing oh-so-hard on your [armor]. You look up at those sweet lips and ponder what they would feel like wrapped around your " + multiCockDescriptLight() + ", a thought that only makes your gear that much harder to bear as it constrains you.");
+	if(player.hasCock() && !player.hasVagina()) outputText(", and there's a telltale tightness building in your groin, expanding and pressing oh-so-hard on your [armor]. You look up at those sweet lips and ponder what they would feel like wrapped around your " + player.multiCockDescriptLight() + ", a thought that only makes your gear that much harder to bear as it constrains you.");
 	else if(player.hasVagina() && !player.hasCock()) outputText(", and there's a telltale heat building in your groin, practically dripping out to stain your [armor] with your leaking girl-honey. You look up at those leaky stamen and idly wonder what it would feel like to let one or two inside you, stirring your insides with their sticky-sweet lovejuices.");
-	else if(player.hasVagina() && player.hasCock()) outputText(", and there's a telltale sticky tightness in your [armor], keeping your " + multiCockDescriptLight() + " tightly compressed while your [vagina] practically juices itself all over everything, so hot, wet, and unmistakably eager to feel something inside of it. You look up at those leaky stamen and the plump lips between them and wonder what it would feel like to stick yourself in between the lips and let the stamen go to town on your exposed holes.");
+	else if(player.hasVagina() && player.hasCock()) outputText(", and there's a telltale sticky tightness in your [armor], keeping your " + player.multiCockDescriptLight() + " tightly compressed while your [vagina] practically juices itself all over everything, so hot, wet, and unmistakably eager to feel something inside of it. You look up at those leaky stamen and the plump lips between them and wonder what it would feel like to stick yourself in between the lips and let the stamen go to town on your exposed holes.");
 	else {
 		outputText("\n\nWell, that was nice, but you don't see much reason to stick around.  You head back to camp with a wistful look over your shoulder.");
 		dynStats("lib", 1, "lus", 20, "cor", 1);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	
@@ -297,7 +297,7 @@ public function exploreFerasWonderland():void {
 public function leaveAfterFlowerHuffing():void {
 	clearOutput();
 	outputText("The farther you get from that glade, the more your head clears and the more you realize how close you came to disaster.  You resolve to avoid it in the future, lest you fall prey to that entrancing pollen and the hypnotic petals once more.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //Fuck the Lips
 public function fuckDemCorruptFlowerLips():void {
@@ -340,9 +340,9 @@ public function fuckDemCorruptFlowerLips():void {
 	
 	outputText("\n\nThe bindings aren't tight enough to prevent you from flexing your [legs] and sawing yourself back and forth, thrusting in and out of the tight, slobbery hole, and you go at it like an animal in rut, savagely humping against the lurid lips, bound to them by dangling streamers of glittering nectar with each pull back. The petals slam closed with such force that it pops your ears, rousing you from your stupor. When you open your eyes, you're treated to the briefest moment of darkness before the petals light up with bioluminescent energy. Neither occurrence stops the frantic pounding your [hips] are doling out, but you do look up in a daze.");
 	outputText("\n\nIt is at this point the colors begin to slide and change, twisting and shifting in a calming rhythm that seems perfectly synced to your sloppy, piston-like thrusts. A trickle of drool escapes the corner of your mouth as you moan, in ecstasy, right up until a free stamen arcs around to slam into your slack-jawed opening. It slides right into the back of your throat, throwing great big blobs of sweet, heavenly nectar so deep inside you that you have no choice but to swallow and sigh. Everywhere the juice touches practically sizzles with sexual energy, and after a few frenetic gulps you begin to eagerly gulp and swallow, drinking deeply of the goo until your belly begins to feel too full to drink any more.");
-	outputText("\n\nYour motions slow as the ambrosial syrup is wicked into your body, frying your synapses with ecstasy until only lust, pleasure, and perfect heat are occupying your few remaining thoughts. By the time the tendril pulls free, glazing your face in sappy goo, your [hips] have stopped their thrusts entirely, leaving your " + multiCockDescriptLight() + " to pulsate and ache with need despite their owner's inability to remember how to hump. Best of all, the few times that you do manage to summon up a coherent thought, the flashing, undulating colors unravel it, letting you revel in unthinking arousal.");
+	outputText("\n\nYour motions slow as the ambrosial syrup is wicked into your body, frying your synapses with ecstasy until only lust, pleasure, and perfect heat are occupying your few remaining thoughts. By the time the tendril pulls free, glazing your face in sappy goo, your [hips] have stopped their thrusts entirely, leaving your " + player.multiCockDescriptLight() + " to pulsate and ache with need despite their owner's inability to remember how to hump. Best of all, the few times that you do manage to summon up a coherent thought, the flashing, undulating colors unravel it, letting you revel in unthinking arousal.");
 	
-	outputText("\n\nThe deluge of drugs, arousal, sexual stimulation, and mind-scattering visual patterns has made your mind as pliant and vulnerable as the lips your " + multiCockDescriptLight() + " ");
+	outputText("\n\nThe deluge of drugs, arousal, sexual stimulation, and mind-scattering visual patterns has made your mind as pliant and vulnerable as the lips your " + player.multiCockDescriptLight() + " ");
 	if(player.cockTotal() > 1) outputText("are");
 	else outputText("is");
 	outputText(" buried in, so hot, wet, and soft. With each passing moment, you become more relaxed, more open and exposed, and more aroused than before. You would probably be afraid if you were capable of any kind of reason.");
@@ -416,7 +416,7 @@ public function postSeederUpgrade():void {
 	//Add ten more corruption.
 	//Add 50 lust.
 	dynStats("lus", 25, "cor", 10, "resisted", false);
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 
 //Stick a Stamen in It!
@@ -513,7 +513,7 @@ public function gapeByFeraEpilogue():void {
 	outputText("\n\nAs you head back to camp to prepare for your next adventure, you realize that you had some really, really fucked up dreams.  You hope you have more tomorrow night.");
 	//Add ten more corruption.
 	dynStats("lus", 20, "cor", 10, "resisted", false);
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 
 //Tight
@@ -565,7 +565,7 @@ public function tightnessEpilogue():void {
 	outputText("You awaken fully dressed with a familiar ache between your legs.  Damn, that was a good nap.  You rise, stretching as you rub your back, sore from lying against a tree for so long.  You suppose you could find yourself something to fight and fuck, but you ought to head back to camp first.  You idly reach into your [armor] and slip a finger into your [vagina], feeling your tight walls instinctively clamp down and squeeze it.  It's nice, but it's just so much better when you can do that to a captive cock until it has no choice but to impregnate you with its hot seed.  What better way to save the world than by making sure that the strongest get to breed as often as possible?");
 	outputText("\n\nAs you head back to camp to prepare for your next adventure, you realize that you had some really, really fucked up dreams.  You hope you have more tomorrow night.");
 	dynStats("lus", 20, "cor", 10, "resisted", false);
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 	//Add ten more corruption.
 }
 
@@ -602,5 +602,5 @@ public function afterFeraGivesYouACawk():void {
 	//Add ten more corruption.
 	//Add 50 lust.
 	dynStats("lus", 20, "cor", 10);
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }

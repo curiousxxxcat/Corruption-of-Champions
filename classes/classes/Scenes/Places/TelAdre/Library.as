@@ -1,6 +1,7 @@
 ﻿package classes.Scenes.Places.TelAdre{
 	import classes.*;
 	import classes.GlobalFlags.kFLAGS;
+	import classes.Items.WeaponLib;
 
 	public class Library extends TelAdreAbstractContent{
 
@@ -36,7 +37,50 @@ private function firstTowerVisit():void {
 	
 	outputText("\n\nThe front entryway appears to be fairly heavily guarded, and the two elites at the entryway turn you aside, directing you towards a different entrance - a public library.  Following the directions, you quickly come upon a different face of the tower.  You might have expected some epic pair of double doors, ten times your height, barely opening with a dramatic creak as you push them out of your way.  Instead you see a polite little entryway with hinges so well maintained they shine.  No frowning gargoyle door knockers, simply a small knob and a keyhole, as though it was someone's apartment.");
 	
-	outputText("\n\nA single room takes up the entirety of the space on the first floor.  Staircases up and down can be seen on opposing ends, but the majority of the room is furnished with simple seats and tables.  Scrolls and books litter the surfaces, likely pulled from a series of shelves set under the curving staircase.  There does not seem to be a connection between this library and the actual core of the tower.  A single man carefully turns through the pages of one book, though he does not seem to be reading it.  Stacks of books sit next to him.  As you close the door, he glances up at you.");
+	outputText("\n\nA single room takes up the entirety of the space on the first floor.  Staircases up and down can be seen on opposing ends, but the majority of the room is furnished with simple seats and tables.  Scrolls and books litter the surfaces, likely pulled from a series of shelves set under the curving staircase.  There does not seem to be a connection between this library and the actual core of the tower.");
+	
+	if (model.time.hours <= 17) { //Don't want to meet Quinn if he's not supposed to be there
+		outputText("  A single man carefully turns through the pages of one book");
+		commonQuinnTroduction();
+	}
+	else {
+		outputText("\n\nThere doesn't appear to be anyone here, so there's nothing stopping you from reading some of the books and scrolls left out on the tables.  Looking up and down the staircases reveals two locked doors, so it's unlikely you could do anything else here.");
+		flags[kFLAGS.TIMES_BEEN_TO_LIBRARY] = -2; //This will be incremented to -1 by the visitZeMagesTower function after we return
+	}
+}
+
+private function towerFollowUpVisits():void {
+	clearOutput();
+	if (flags[kFLAGS.TIMES_BEEN_TO_LIBRARY] == -1) { //Return visits before you meet Quinn. Either you meet him or you continue to go to the library at night like some bibliophile vampire
+		if(model.time.hours <= 17) {
+			outputText("You return to the mage's tower.  Entering the main room, you're surprised to see a man carefully turning the pages of one of the tomes");
+			commonQuinnTroduction();
+		}
+		else {
+			outputText("As before, there's no one here.  At least there's no lack of reading material.  Looking up and down the staircases reveals two locked doors, so it's unlikely you could do anything but study here.");
+			flags[kFLAGS.TIMES_BEEN_TO_LIBRARY] = -2; //This will be incremented to -1 by the visitZeMagesTower function after we return
+		}
+		return;
+	}
+	
+	//(follow-up visits, 6:00 – 17:00)
+	if(model.time.hours <= 17) {
+		outputText("You return to the mage's tower.  Entering the main room, Quinn is carefully inspecting the pages of a book.  The room looks slightly more organized from when you last saw it, but it looks as though Quinn will be working on it for some time.");
+		outputText("\n\nHe notices you've arrived and quirks an eyebrow.  \"<i>Yes?</i>\" he asks wearily, \"<i>Is there something I can assist you with?</i>\"");
+		//If the player has encountered Asa Mali they may ask for Mali.  Otherwise they can either leave, ask to study, or ask Quinn if he is okay.
+		//[Mali] [You OK?][Study]
+	}
+	//(follow-up visits, 18:00-20:00)
+	else {
+		outputText("You return to the mage's tower.  Entering the main room, Quinn is nowhere to be seen.  The room looks slightly cleaner from when you saw it last, but at the rate he's going it seems like it will be some time before it's finished.");
+		
+		outputText("\n\nYou could probably read some of the books here if you wanted to, without Quinn around to tell you no.  Looking up and down the staircases reveals two locked doors, so it's unlikely you could do anything else here.");
+		//The player can Study now, but due to the rest of the building being locked there are no other options. This is intended to serve as an alternative to Dominika's magic training, for players such as centaurs and naga, or players that hate blowjobs.
+	}
+}
+
+private function commonQuinnTroduction():void {
+	outputText(", though he does not seem to be reading it.  Stacks of books sit next to him.  As you close the door, he glances up at you.");
 	
 	outputText("\n\n\"<i>I'm sorry,</i>\" he says with a voice so weary you're surprised he doesn't fall over face-first upon exerting himself by speaking, \"<i>The library is not presently open to visitors, due to defacement and...</i>\"  He pauses, looking at a book next to him covered in an off-white crust.  \"<i>Vandalism.</i>\"  His eyes look twice as tired as his voice sounds, darkened to the point they almost seem bruised.  Pale – no, pallid - and lean to the point where you think you can see his cheekbones.  You're not convinced that this man has all of his health.  \"<i>I'm afraid there is no present estimate as to when we will re-open, as unfortunately no other members of the Covenant are presently able to devote the time to inspect and record the extent of the damages.</i>\"");
 	
@@ -50,24 +94,6 @@ private function firstTowerVisit():void {
 	//Met Asa Mali? flag 175
 }
 
-
-private function towerFollowUpVisits():void {
-	clearOutput();
-	//(follow-up visits, 6:00 – 17:00)
-	if(model.time.hours <= 17) {
-		outputText("You return to the mage's tower.  Entering the main room, Quinn is carefully inspecting the pages of a book.  The room looks slightly more organized from when you last saw it, but it looks as though Quinn will be working on it for some time.");
-		outputText("\n\nHe notices you've arrived and quirks an eyebrow.  \"<i>Yes?</i>\" he asks wearily, \"<i>Is there something I can assist you with?</i>\"");
-		//If the player has encountered Asa Mali they may ask for Mali.  Otherwise they can either leave, ask to study, or ask Quinn if he is okay.
-		//[Mali] [You OK?][Study]
-	}
-	//(follow-up visits, 18:00-20:00)
-	else {
-		outputText("You return to the mage's tower.  Entering the main room, Quinn is nowhere to be seen.  The room looks slightly cleaner from when you saw it last, but at the rate he's going it seems like it will be some time before it's finished.");
-		
-		outputText("\n\nYou could probably read some of the books here if you wanted to, with Quinn not around to tell you no.  Looking up and down the staircases reveals two locked doors, so it's unlikely you could do anything else here.");
-		//The player can Study now, but due to the rest of the building being locked there are no other options. This is intended to serve as an alternative to Dominika's magic training, for players such as centaurs and naga, or players that hate blowjobs.
-	}
-}
 //[Study]
 private function studyInTA():void {
 	clearOutput();
@@ -81,7 +107,13 @@ private function studyInTA():void {
 	}
 	//[Study, 18:00-20:00]
 	else {
-		outputText("Without Quinn to hassle you and request your absence from the presences, you have some time to read through some of the literature collected by the Covenant.");
+		if (flags[kFLAGS.TIMES_BEEN_TO_LIBRARY] == -1) {
+			outputText("Looking around you decide to spend some time reading");
+		}
+		else {
+			outputText("Without Quinn to hassle you and request your absence from the presences, you have some time to read");
+		}
+		outputText(" through some of the literature collected by the Covenant.");
 		if(rand(3) == 0) {
 			//magic)
 			outputText("\n\nSelecting a book at chance from the mess across the tables, you are delighted to find that it is a tome about magic.  Though the language used is archaic at first you slowly find yourself getting the grasp of it and understanding more of the theory put down in the text.  You find yourself thinking about how to apply the things you're reading about to your own abilities, and figuring out how to better utilize magic yourself.  In short, you experience the condition known as \"learning\", and feel smarter for it.");
@@ -123,7 +155,7 @@ private function studyInTA():void {
 		//OR (history) 
 		else outputText("\n\nSelecting a book randomly from the scattered tomes, you find a historical text documenting life in Mareth.  It's dreadfully dull, and though you do your best to learn what you can the dry work is putting you to sleep.  Eventually you close the book and accept that you're not going to be learning anything tonight.");
 		menu();
-		addButton(0,"Next",eventParser,13);
+		addButton(0,"Next",camp.returnToCampUseOneHour);
 	}
 }
 
@@ -139,7 +171,7 @@ private function youOkayBuddy():void {
 	outputText("\n\nQuinn scoffs in return, running a hand up through his hair (and only further disorganizing it).  \"<i>As a member of the Covenant it is my duty – nay, privilege – to look over this city and protect it from the harm the outside world will do.  However, unlike many of my colleagues, I have chosen to take actual responsibilities in the management of this town – and this library.  This makes holing up in one of the tower's rooms and spending my days meditating to maintain the town's defences... untenable.</i>\"  The weary man dusts off the front of his waistcoat with no small amount of pride.  \"<i>Thus, I have taken into my possession a small item which will allow my fellow magisters to siphon from my magical ability and direct it to such a noble purpose.  Should I need to call upon my full capabilities I shall simply remove this object from my person, and the vim and vigor that I am proud to maintain shall spring back and rejuvenate me.</i>\"  He chuckles lightly, rubbing his cheekbones.  \"<i>Until then, I am proud to wear the so-called scars of my station.  Would that everyone had such selflessness.</i>\"");
 
 	outputText("\n\nFinally getting the exposition you were looking for (and then some) you thank him for the information and resolve to talk to him as little as possible in the future.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[Mali]
@@ -167,7 +199,7 @@ private function talkToMali():void {
 		
 		outputText("\n\nMali does not talk business for the rest of the visit, instead sharing tea with you and making small talk about life in Tel'adre.  It is polite and pleasant, and quite relaxing.  Eventually you excuse yourself, needing to return to the camp.  Descending back down the long staircase you scare off a crow resting on one of the tower's windowsills.");
 		//[Mali] is added permanently to the tower's menu during the day.
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}	
 	//[[Mali], player has spellblade]
 	else if((player.weaponName == "inscribed spellblade" || player.hasItem(weapons.S_BLADE)) && flags[kFLAGS.MALI_TAKEN_BLADE] == 0) {
@@ -179,15 +211,16 @@ private function talkToMali():void {
 		outputText("\n\n\"<i>I'm going to use this to track her,</i>\" she explains, \"<i>Then gather up some guards and find out just what she's up to.  You should rest up, prepare for lethal danger, then come back.</i>\"  The grin on her face doesn't seem to be going anywhere.  \"<i>I can't imagine doing this without your help now.</i>\"");
 		outputText("\n\n\"<i>Please, come back soon.</i>\"");
 		outputText("\n\n(<b>Conclusion not yet complete...</b>)");
-		if(player.weapon == weapons.S_BLADE) {
-			player.weapon.unequip(player,false,true);
-			player.removePerk(PerkLib.WizardsFocus);
+		if (player.weapon == weapons.S_BLADE) {
+			player.setWeapon(WeaponLib.FISTS);
+//			player.weapon.unequip(player, false, true);
+//			player.removePerk(PerkLib.WizardsFocus);
 		}
 		else {
 			player.consumeItem(weapons.S_BLADE);
 		}
 		flags[kFLAGS.MALI_TAKEN_BLADE] = 1;
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//[[Mali], player does not have spellblade]
 	else {
@@ -196,7 +229,7 @@ private function talkToMali():void {
 		outputText("\n\n\"<i>Ah, how are you?</i>\" Mali smiles at your visit, putting a tome aside.  You don't yet have anything that can help her locate Dominika, but the company is nice.  She puts on some tea and the two of you make small talk.  Mali's laugh is bright, tinkling lightly when you bring it out.  Eventually the time comes to leave.  She thanks you for the visit.");
 		
 		outputText("\n\n\"<i>Remember,</i>\" she says on the way out, \"<i>Anything you can get from Dominika that holds some aspect of her power will help.</i>\"");
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	flags[kFLAGS.TIMES_VISITED_MALI]++;
 }

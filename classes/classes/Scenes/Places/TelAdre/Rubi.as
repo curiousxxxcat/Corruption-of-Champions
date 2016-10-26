@@ -69,7 +69,7 @@ public function Rubi(){
 
 private function rubiSprite():void {
 	if(flags[kFLAGS.RUBI_HORNTYPE] > 0) spriteSelect(102);
-	spriteSelect(101);
+	else spriteSelect(101);
 }
 
 private function initializeRubi():void {
@@ -107,9 +107,17 @@ public function rubiAffection(delt:Number = 0):Number {
 	return flags[kFLAGS.RUBI_AFFECTION];
 }
 
-public function rubiCock():String {
-	return kGAMECLASS.NPCCockDescript(flags[kFLAGS.RUBI_COCK_TYPE], flags[kFLAGS.RUBI_COCK_SIZE], 50);
+public function rubiCock(lust:int = 50):String {
+	var cumQ:int = 300;
+	if (flags[kFLAGS.RUBI_BLU_BALLS] < 4) {
+		cumQ = 10;
+	}
+	else if (flags[kFLAGS.RUBI_BLU_BALLS] <= 6) {
+		cumQ = 150;
+	}
+	return Appearance.cockDescription(rubiGetCockType(), flags[kFLAGS.RUBI_COCK_SIZE], flags[kFLAGS.RUBI_COCK_SIZE] / 6, lust, cumQ);
 }
+
 public function rubiGetCockType():CockTypesEnum {
 	return CockTypesEnum.ParseConstantByIndex(flags[kFLAGS.RUBI_COCK_TYPE]);
 }
@@ -121,9 +129,9 @@ public function rubiBreasts():String {
 		ret = "chest";
 	else
 	{
-		ret += breastCup(flags[kFLAGS.RUBI_BREAST_SIZE]);
+		ret += Appearance.breastCup(flags[kFLAGS.RUBI_BREAST_SIZE]);
 		ret += " ";
-		ret += kGAMECLASS.npcBreastDescript(flags[kFLAGS.RUBI_BREAST_SIZE]);
+		ret += BreastStore.breastDescript(flags[kFLAGS.RUBI_BREAST_SIZE]);
 	}
 
 	return ret;
@@ -174,7 +182,7 @@ private function specialRelationship20scene():void {
 	outputText("\n\nYou're a little surprised, but it does make sense.  She... he is pretty flat-chested, and you'd often wondered if you'd seen a bulge of some sort in her skirt from time to time...");
 	flags[kFLAGS.RUBI_ADMITTED_GENDER] = 1;
 	//(Accept) or (Reject)
-	simpleChoices("Accept",acceptRubi,"Reject",rejectRubi,"",0,"",0,"",0);
+	simpleChoices("Accept", acceptRubi, "Reject", rejectRubi, "", null, "", null, "", null);
 }
 //[If Accept]
 private function acceptRubi():void {
@@ -190,7 +198,7 @@ private function acceptRubi():void {
 
 	outputText("\n\nRubi gives you one last hug and walks back towards the bakery, his devilish tail swishing happily behind him.  \"<i>See you soon... babe,</i>\" he says, trying the name on for size.  You smile, and continue your journey back to camp.");
 	rubiAffection(3);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[If Reject]
@@ -202,33 +210,32 @@ private function rejectRubi():void {
 	outputText("\n\nSniffing slightly, Rubi turns away and returns to the bakery, his devilish tail sullenly drooping behind him.");
 	//(Will no longer encounter Rubi at the bakery.)
 	flags[kFLAGS.RUBI_DISABLED] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 
 //Bakery Intro scenes
-internal function rubiIntros():Number {
-
-	if(flags[kFLAGS.RUBI_SETUP] == 0) {
+internal function rubiIntros():Function {
+	if (flags[kFLAGS.RUBI_SETUP] == 0) {
 		initializeRubi();
 	}
-	if(flags[kFLAGS.RUBI_DISABLED] > 0 || flags[kFLAGS.RUBI_PROSTITUTION] == -2) return 0;
+	if (flags[kFLAGS.RUBI_DISABLED] > 0 || flags[kFLAGS.RUBI_PROSTITUTION] == -2) return null;
 	outputText("\n");
 	//(Haven't met yet)
 	if(flags[kFLAGS.RUBI_INTRODUCED] == 0) outputText("A cute human girl moves from table to table, bussing the empty ones and serving drinks to the occupied.  She's pretty flat-chested, and wears a pink and white frilly waitress uniform with an apron.  When she turns her back to you, you can tell she's not <i>entirely</i> human, what with the long red spaded tail coming out from under her dress.");
 	//(Have met, relationship 0-19)
-	else if(rubiAffection() < 30) outputText("Rubi is here, moving from table to table efficiently clearing the empty ones and serving new customers.  Her long red tail swishes back and forth, sometimes lifting her dress enough to get a peek at her panties.");
+	else if (rubiAffection() < 30) outputText("Rubi is here, moving from table to table efficiently clearing the empty ones and serving new customers.  Her long red tail swishes back and forth, sometimes lifting her dress enough to get a peek at her panties.");
 	//(Have met, relationship 40, Bimbo Rubi; cheating scene)
-	else if(rubiBimbo() && flags[kFLAGS.RUBI_PROSTITUTION] == 0 && rand(9) == 0) {
+	else if (rubiBimbo() && flags[kFLAGS.RUBI_PROSTITUTION] == 0 && rand(9) == 0) {
 		outputText("Strangely, even though you know it's time for Rubi's shift, she's not here.\n");
 		//(Rubi button still active, goes to \"<i>Cheating Rubi</i>\" scene)
 		//(Have met, relationship 40, Bimbo Rubi)
-		return 3893;
+		return cheatingRubi;
 	}
-	else if(rubiBimbo() && flags[kFLAGS.RUBI_DEBIMBO] == 0) outputText("Rubi is here, moving from table to table, not quite as efficiently as [rubi ey] used to, but with a lot more exuberance.  [rubi Eir] long red tail swishes around, seemingly drawn towards the crotch of patrons and co-workers alike.");
+	else if (rubiBimbo() && flags[kFLAGS.RUBI_DEBIMBO] == 0) outputText("Rubi is here, moving from table to table, not quite as efficiently as [rubi ey] used to, but with a lot more exuberance.  [rubi Eir] long red tail swishes around, seemingly drawn towards the crotch of patrons and co-workers alike.");
 	else outputText("Rubi is here, moving from table to table efficiently clearing the empty ones and serving new customers.  [rubi Eir] long red tail swishes back and forth excitedly.");
 	outputText("\n");
-	return 3894;
+	return approachRubiScenes;
 }
 
 //Approach Rubi scenes
@@ -253,7 +260,8 @@ public function approachRubiScenes():void {
 		if(flags[kFLAGS.RUBI_FETISH_CLOTHES] == 1) choices[choices.length] = 3;
 		//(Green Adventurer's Clothing (Normal)
 		// There's NO content covering this outfit here, so I'm commenting it out.
-		//if(flags[kFLAGS.RUBI_GREEN_ADVENTURER] == 1) choices[choices.length] = 4;
+		//There is content, but it is under Adventurer's Outfit.
+		if(flags[kFLAGS.RUBI_GREEN_ADVENTURER] == 1) choices[choices.length] = 4;
 		//(Tube Top (Normal))
 		if(flags[kFLAGS.RUBI_TUBE_TOP] == 1) choices[choices.length] = 5;
 		//(Bodysuit (Normal))
@@ -364,7 +372,7 @@ public function approachRubiScenes():void {
 		//(Risque Waitress Uniform)
 		else if(select == 14) {
 			outputText("[rubi Ey]'s dressed differently today, having foregone the normal waitress uniform for an extremely modified version.  The skirt wrapped around [rubi eir] waist could be confused for a belt, and the apron (the only other thing covering [rubi eir] torso) doesn't extend much further.  Any time Rubi takes a step or bends in any direction, anyone within sight is sure to get a good look at [rubi eir] ");
-			if(flags[kFLAGS.RUBI_COCK_SIZE] > 0) outputText(NPCCockDescript(flags[kFLAGS.RUBI_COCK_TYPE],flags[kFLAGS.RUBI_COCK_SIZE], 33) + ", clad in a cute little frilly pink cocksock");
+			if(flags[kFLAGS.RUBI_COCK_SIZE] > 0) outputText(rubiCock(33) + ", clad in a cute little frilly pink cocksock");
 			if(flags[kFLAGS.RUBI_NO_CUNT] == 0 && flags[kFLAGS.RUBI_COCK_SIZE] > 0) outputText(" and ");
 			if(flags[kFLAGS.RUBI_NO_CUNT] == 0) {
 				outputText("feminine mound trapped beneath a pair of pink panties");
@@ -382,7 +390,7 @@ public function approachRubiScenes():void {
 		outputText("ere's the menu, babe.  Think about what you want and let me know when you're ready.</i>\"  [rubi Ey] stands and moves to clean off a nearby table, [rubi eir] red spaded tail swishing behind [rubi em] sensually.");
 
 		//(Adventurer's Outfit)
-		if(select == 15) {
+		if(select == 4) {
 			 outputText("[rubi Ey]'s dressed differently today, having foregone the normal waitress uniform for a large green tunic which looks more like a dress on [rubi em], along with brown tights and a pointed green hat.  At [rubi eir] waist is a wooden sword alongside [rubi eir] normal notepad.  Were Rubi more masculine, you might think [rubi ey] looks like an adventurer of some kind, but in reality [rubi ey] looks like a normal girl in a strange hat.");
 			if(flags[kFLAGS.RUBI_BREAST_SIZE] >= 4) outputText("  In an odd sort of way, [rubi ey] looks like an adventurer who met the wrong end of a witch's curse.");
 		}
@@ -493,16 +501,16 @@ public function approachRubiScenes():void {
 	}
 	//(add to the bottom of all:)
 	outputText("\n\nYou look over the menu... what do you want?\n-----------------------\nMilk: 3 gems\nTea: 6 gems");
-	var place:int = 0;
-	var tea:int = 0;
-	var milk:int = 0;
-	if(player.gems >= 6) tea = 3896;
+	var place:Function = null;
+	var tea:Function = null;
+	var milk:Function = null;
+	if(player.gems >= 6) tea = getTeaFromRubi;
 	else outputText("\n<b>You cannot afford tea.</b>");
-	if(player.gems >= 3) milk = 3895;
+	if(player.gems >= 3) milk = buyRubiMilk;
 	else outputText("\n<b>You cannot afford milk.</b>");
-	if(flags[kFLAGS.RUBI_ADMITTED_GENDER] >= 1) place = 3898;
+	if(flags[kFLAGS.RUBI_ADMITTED_GENDER] >= 1) place = rubisFuckingHouseYouPervert;
 	//[Milk] [Tea] [Chat] [Rubi's Place (Relationship 20+)] [Leave]
-	simpleChoices("Milk",milk,"Tea",tea,"Chat",3897,"Rubi's Place",place,"Leave",telAdre.bakeryScene.bakeryuuuuuu);
+	simpleChoices("Milk", milk, "Tea", tea, "Chat", chatWithRubi, "Rubi's Place", place, "Leave", telAdre.bakeryScene.bakeryuuuuuu);
 }
 
 //Choose Milk?
@@ -530,7 +538,7 @@ public function buyRubiMilk():void {
  	rubiAffection(3);
 	player.modThickness(100,1);
 	if(rubiAffection() >= 30 && flags[kFLAGS.RUBI_ADMITTED_GENDER] == 0) doNext(specialRelationship20scene);
-	else doNext(13);
+	else doNext(camp.returnToCampUseOneHour);
 }
 
 //Choose Tea?
@@ -557,7 +565,7 @@ public function getTeaFromRubi():void {
 	rubiAffection(5);
 	fatigue(-25);
 	if(rubiAffection() >= 30 && flags[kFLAGS.RUBI_ADMITTED_GENDER] == 0) doNext(specialRelationship20scene);
-	else doNext(13);
+	else doNext(camp.returnToCampUseOneHour);
 }
 
 //Choose Chat?
@@ -593,7 +601,7 @@ public function chatWithRubi():void {
 		outputText("\n\nEventually you run out of topics to discuss and excuse yourself, giving Rubi a kiss on the lips before heading back to camp.");
 	}
 	if(rubiAffection() >= 30 && flags[kFLAGS.RUBI_ADMITTED_GENDER] == 0) doNext(specialRelationship20scene);
-	else doNext(13);
+	else doNext(camp.returnToCampUseOneHour);
 }
 
 //Choose Rubi's Place?
@@ -625,8 +633,7 @@ public function rubisFuckingHouseYouPervert():void {
 			outputText("\n\n\"<i>Ooh, that looks so sexy, babe.  Let me get that for you.  My treat, for such a sexy beast,</i>\" Rubi exclaims, and passes the money to the tailor.  As you leave the shop, you thank your lover profusely, and then head back to camp.");
 			outputText("\n\nIt's only once you get back tbat you realize you meant to fuck Rubi while you were in town!  You giggle and curse your airheadedness.  Oh well, you can always go into town again, there's always more shopping to be done!");
 			//(Add Bimbo Skirt to inventory)
-			menuLoc = 2;
-			inventory.takeItem(armors.BIMBOSK);
+			inventory.takeItem(armors.BIMBOSK, camp.returnToCampUseOneHour);
 			return;
 		}
 		//(If Bimbo Skirt not found)
@@ -664,7 +671,7 @@ public function rubisFuckingHouseYouPervert():void {
 	addButton(0,"Sex",rubiSexMenu);
 	addButton(1,"Closet",goInRubisClosetSoThatYouCanComeOutOfTheCloset);
 	addButton(2,"Talk",talkToRubiInHouse);
-	if(rubiAffection() >= 50 && !rubiBimbo() && flags[kFLAGS.RUBI_COCK_SIZE] > 0 && (!rubiBimbo() || flags[kFLAGS.RUBI_DEBIMBO] > 0) && flags[kFLAGS.RUBI_SHE] == 0) {
+	if(rubiAffection() >= 50 && !rubiBimbo() && flags[kFLAGS.RUBI_COCK_SIZE] > 0 && (!rubiBimbo() || flags[kFLAGS.RUBI_DEBIMBO] > 0)) {
 		//First Time:
 		if(flags[kFLAGS.TIMES_RUBI_MASSAGED] == 0) outputText("\n\nRubi gestures to some bottles and a box from the bakery before mentioning, \"<i>You look awful tense, babe.  I know you've got it hard out there, and well, I-I thought maybe I could really pamper you today, if you'd like.</i>\"");
 		else outputText("\n\nRubi nods towards the bottles and box in the corner and gives you a sly wink.  \"<i>Want another massage?</i>\"");
@@ -675,44 +682,32 @@ public function rubisFuckingHouseYouPervert():void {
 		outputText("\n\n<b>You could use your snake-like motions to hypnotize Rubi and turn [rubi em] into a more complacent, eager slut. Doing so is likely irreversible.</b>")
 		addButton(5,"Hypno",hypnoBimboficationForRubiSloots);
 	}
-	addButton(9,"Leave",eventParser,13);
+	addButton(9,"Leave",camp.returnToCampUseOneHour);
 }
 
 private function rubiSexMenu():void {
 	//[Fuck Rubi (if player has cock, OR at least a 4</i>\" clit)] [Dildo Fuck (If player has Deluxe Dildo)] [Tease] [Release (Only if Normal or Incubus Rubi who has been teased)] [Titfuck (Bimbo Rubi only)] [Give Item]
-	var fuck:int = 0;
-	var dildo:int = 0;
-	var releas:int = 0;
-	var titfuck:int = 0;
-	var give:int = 0;
-	if(player.lust >= 33) {
-		if(player.hasCock() || (player.hasVagina() && player.clitLength >= 4))
-			fuck = 3899;
-		if(player.hasKeyItem("Deluxe Dildo") >= 0) dildo = 3900;
-	}
-	if(flags[kFLAGS.RUBI_BLU_BALLS] > 0 && flags[kFLAGS.RUBI_ORGASM_DENIAL] > 0 && !rubiBimbo()) releas = 3902;
-
 	menu();
-	if(fuck > 0)
-		addButton(0,"Fuck",eventParser,fuck);
-	if(dildo > 0)
-		addButton(1,"Dildo Fuck",eventParser,dildo);
-	addButton(2," Tease ",eventParser,3901);
-	if(releas > 0 && flags[kFLAGS.RUBI_COCK_SIZE] > 0)
-		addButton(3,"Release",eventParser,releas);
-	if(flags[kFLAGS.RUBI_AFFECTION] >= 75 && rubiCapacity() < player.biggestCockArea() && player.hasCock())
-		addButton(4,"Train",anallyTrainYourBitchBoySlutHowToBeAnalForDCL);
+	if (player.lust >= 33) {
+		if (player.hasCock() || (player.hasVagina() && player.clitLength >= 4)) addButton(0, "Fuck", fuckRubi);
+		if (player.hasKeyItem("Deluxe Dildo") >= 0) addButton(1, "Dildo Fuck", dildoFuckRubi);
+	}
+	addButton(2, "Tease", teaseRubi);
+	if (flags[kFLAGS.RUBI_BLU_BALLS] > 0 && flags[kFLAGS.RUBI_ORGASM_DENIAL] > 0 && !rubiBimbo() && flags[kFLAGS.RUBI_COCK_SIZE] > 0) addButton(3, "Release", releaseRubi);
+
+	if (flags[kFLAGS.RUBI_AFFECTION] >= 75 && rubiCapacity() < player.biggestCockArea() && player.hasCock())
+		addButton(4, "Train", anallyTrainYourBitchBoySlutHowToBeAnalForDCL);
 	//Get Fucked
 	//PC gets fucked by Rubi
 	//Rubi must have at least a 5" cock
 	//Requires 75 Affection
-	if(flags[kFLAGS.RUBI_AFFECTION] >= 75 && flags[kFLAGS.RUBI_COCK_SIZE] >= 5)
-		addButton(5,"Get Fucked",getFuckedByRubi);
+	if (flags[kFLAGS.RUBI_AFFECTION] >= 75 && flags[kFLAGS.RUBI_COCK_SIZE] >= 5)
+		addButton(5, "Get Fucked", getFuckedByRubi);
 	//Hotdogging
 	//PC hotdogs Rubi's ass
 	//PC must have a penis
-	if(player.hasCock()) addButton(6,"Hotdogging",rubiHotdogging);
-	addButton(9,"Back",rubisFuckingHouseYouPervert);
+	if (player.hasCock()) addButton(6, "Hotdogging", rubiHotdogging);
+	addButton(9, "Back", rubisFuckingHouseYouPervert);
 }
 
 
@@ -911,7 +906,7 @@ public function fuckRubi():void {
 
 	outputText("\n\nYou're tempted to drift off as well, but as they say, you've got things to see and people to do.  So you peel yourself away from Rubi, grab a quick shower, and head off back to camp.");
 	player.orgasm();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	rubiAffection(1);
 	if(flags[kFLAGS.RUBI_ORGASM_DENIAL] > 0) flags[kFLAGS.RUBI_BLU_BALLS]++;
 }
@@ -988,7 +983,7 @@ public function dildoFuckRubi():void {
 	//(PC doesn't have either, but breasts above A-cup?)
 	else outputText("your [chest], rubbing your nipples vigorously, in desperate need of release.");
 	//(Bonus, fuckable nipples?)
-	if(player.hasFuckableNipples()) outputText("  You fingers easily slip inside each nipple, pumping in and out like little cocks.");
+	if(player.hasFuckableNipples()) outputText("  Your fingers easily slip inside each nipple, pumping in and out like little cocks.");
 	//(No cock, no pussy, no breasts?)
 	if(player.gender == 0 && player.biggestTitSize() == 0) outputText("  Your hands roam all along your body, from your bare crotch to your nipples, even through your hair, all in search of something to give you the release you so desperately crave.");
 
@@ -1018,7 +1013,7 @@ public function dildoFuckRubi():void {
 	player.orgasm();
 	rubiAffection(1);
 	if(flags[kFLAGS.RUBI_ORGASM_DENIAL] > 0) flags[kFLAGS.RUBI_BLU_BALLS] += 2;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Tease
@@ -1098,7 +1093,7 @@ public function teaseRubi():void {
 		outputText("\n\nWith your devious fun accomplished, you stand, make yourself look presentable, and head out the door.  Your last sight of Rubi is that of [rubi em] sitting spread eagle on the couch with a supremely satisfied look on [rubi eir] face.");
 	}
 	dynStats("lus", 5+player.lib/10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Release
@@ -1168,7 +1163,7 @@ public function releaseRubi():void {
 	rubiAffection(flags[kFLAGS.RUBI_BLU_BALLS]);
 	flags[kFLAGS.RUBI_BLU_BALLS] = 0;
 	flags[kFLAGS.RUBI_ORGASM_DENIAL] = 0;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Cheating Rubi
@@ -1180,21 +1175,21 @@ public function cheatingRubi():void {
 	outputText("\n\nShe gives you an exasperated sigh and says, \"<i>I dunno, she took off again, like she does with you.  Some guy came in, she got all giggly, and they got out of here.  If you see her, let her know I'm taking all of today's tips again.</i>\"  With that she turns to service another table.");
 	outputText("\n\nSo your bimboified slut is seeing someone else?  What will you do about this?");
 	//[Find Her] [Don't Care]
-	simpleChoices("Find Her",3905,"Don't Care",3904,"",0,"",0,"",0);
+	simpleChoices("Find Her", findBimboCheatster, "Don't Care", dontCareAboutNoCheatingRubis, "", null, "", null, "", null);
 }
 
 //(Don't Care)
-public function dontCareAboutNoCheatingRubis():void {
+private function dontCareAboutNoCheatingRubis():void {
 	clearOutput();
 	rubiSprite();
 	outputText("You shrug your shoulders.  It's not really your problem, is it?  You're free to fuck who you choose, and so is she.");
 	outputText("\n\nYou stand up and leave the bakery, deciding to wander around Tel'Adre a bit more.");
 	//(Kicks PC back out to Tel'Adre; PC can still get the Cheating Rubi event)
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //(Find Her)
-public function findBimboCheatster():void {
+private function findBimboCheatster():void {
 	clearOutput();
 	rubiSprite();
 	outputText("You let out a disgruntled sigh.  Rubi's seeing someone else?!  Not on your watch!  You leave the bakery and make your way towards her neighborhood.  It doesn't take long, you've gone with her there enough times to memorize the path, even without her leading.");
@@ -1202,7 +1197,7 @@ public function findBimboCheatster():void {
 	outputText("\n\nThere she is, Rubi, splayed out on the couch, naked with two fingers buried deep inside her pussy.  You shift around a bit, and see nearby her a tanned man in the process of taking off his shirt.  So, you got to them before they did anything.  Rubi moans, running a hand through her platinum blonde hair and staring at the tanned man.");
 	outputText("\n\nYou could interrupt them before they go any further, or wait until it's over.");
 	//[Interrupt] [Wait]
-	simpleChoices("Interrupt",interruptTheNTRsYouCrazyFool,"Watch n Wait",waitAndGetNTRedLikeTheBoyBitchYouAre,"",0,"",0,"",0);
+	simpleChoices("Interrupt", interruptTheNTRsYouCrazyFool, "Watch n Wait", waitAndGetNTRedLikeTheBoyBitchYouAre, "", null, "", null, "", null);
 }
 //(Interrupt)
 private function interruptTheNTRsYouCrazyFool():void {
@@ -1273,7 +1268,7 @@ private function NTRbimboBitchResolution():void {
 	outputText("\n\nRubi hugs the cushion close, apparently done with her speech.  So how do you react?");
 	outputText("\n\nYou could tell her no, forbidding her to see anyone else.  Or you could say yes, letting her sleep with anyone.  You could always break up with her.  Or there might be a fourth option...");
 	//[No] [Yes] [Break Up] [Pimp]
-	simpleChoices("No",noBimboNTR,"Yes",yesBimboNTR,"Break Up",breakUpWithRubi,"Pimp",pimpOutRubi,"",0);
+	simpleChoices("No", noBimboNTR, "Yes", yesBimboNTR, "Break Up", breakUpWithRubi, "Pimp", pimpOutRubi, "", null);
 }
 
 //(No)
@@ -1284,7 +1279,7 @@ private function noBimboNTR():void {
 	outputText("\n\n\"<i>Of course, baby.  Whatever you say,</i>\" then she giggles, \"<i>At least I'll have you to look forward to, whenever you roll into town.</i>\"");
 	outputText("\n\nThat's that then, Rubi will refrain from sleeping around.  With that settled, you decide to let her get dressed and mull it over.  You head out of the house, and make your way back to camp.");
 	flags[kFLAGS.RUBI_PROSTITUTION] = -1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //(Yes)
 private function yesBimboNTR():void {
@@ -1294,7 +1289,7 @@ private function yesBimboNTR():void {
 	outputText("\n\n\"<i>Ohh baby I love you so much!</i>\"  She plants a fury of kisses all over your face, giggling constantly.  \"<i>None of them could ever compare to you, but they will help.</i>\"");
 	outputText("\n\nThat's that then, Rubi will be free to sleep with anyone, just as you are.  With that settled, you decide to let her get dressed.  You head out of the house, and make your way back to camp.");
 	flags[kFLAGS.RUBI_PROSTITUTION] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //(Break Up)
@@ -1306,7 +1301,7 @@ private function breakUpWithRubi():void {
 	outputText("\n\nAnd with that, she slams the door behind you.  Well, that could have gone better.  With an exasperated sigh you head back to your camp.");
 	flags[kFLAGS.RUBI_PROSTITUTION] = -2;
 	flags[kFLAGS.RUBI_DISABLED] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //(Pimp)
 private function pimpOutRubi():void {
@@ -1316,7 +1311,7 @@ private function pimpOutRubi():void {
 	outputText("\n\nRubi thinks it over and finally nods happily, \"<i>Oh, it's such a great idea, baby!  I'll be like Edryn then!  And I'll give you your 'cut' whenever you come by as well.</i>\"  She giggles and plants a kiss right on your lips.  \"<i>Oooh, I'll need more outfits, and make up, and...</i>\" her voice trails off as she excitedly hurries off to her bedroom.");
 	outputText("\n\nThat's that then, Rubi will officially prostitute herself and share the profits with you.  With that settled, you decide to let her go through her wardrobe in peace.  You head out of the house, and make your way back to camp.");
 	flags[kFLAGS.RUBI_PROSTITUTION] = 2;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Chocolate Covered Strawberries, Oil, Massage?
@@ -1336,33 +1331,33 @@ private function chocoRubiMassage():void {
 	outputText(images.showImage("rubi-get-massage"), false);
 	clearOutput();
 	rubiSprite();
-	outputText("You look over his supplies and decide that a pampered day at Rubi's \"spa\" is just what you need.  Allowing him to escort you to his bed, you catch a few peeps of a pint-sized pup-tent in Rubi's bottoms.  He doesn't seem aware of your prying gaze, but he's blushing nonetheless, perhaps lost in his own less-than-pure thoughts as he guides you to the corner of his room.");
+	outputText("You look over [rubi eir] supplies and decide that a pampered day at Rubi's \"spa\" is just what you need.  Allowing [rubi em] to escort you to [rubi eir] bed, you catch a few peeps of a pint-sized pup-tent in Rubi's bottoms.  [rubi Ey] doesn't seem aware of your prying gaze, but [rubi ey]'s blushing nonetheless, perhaps lost in [rubi eir] own less-than-pure thoughts as [rubi ey] guides you to the corner of [rubi eir] room.");
 
-	outputText("\n\n\"<i>Babe, you'll need to... ah, take off your equipment for this,</i>\" Rubi instructs, holding a bottle full of shimmering fluid as he prances around the room.  You arch an eyebrow at him questioningly as you take in his eager expression, waiting until he starts to gnaw at his bottom lip before you ");
-	if(player.cor >= 66) outputText("start sensually undressing, turning the simple act into a seductive show that causes Rubi's petite boner to jerk unpredictably beneath his clothes.  A small, damp stain appears at the tip by the time you finish your salacious tease.");
-	else if(player.cor >= 33) outputText("get undressed without much pause or fanfare.  Rubi makes a show of turning his head, but you can see him peeping glimpses out of the corners of his eyes, and his boner seems to be bigger and harder than it was moments before.");
+	outputText("\n\n\"<i>Babe, you'll need to... ah, take off your equipment for this,</i>\" Rubi instructs, holding a bottle full of shimmering fluid as [rubi ey] prances around the room.  You arch an eyebrow at [rubi em] questioningly as you take in [rubi eir] eager expression, waiting until [rubi ey] starts to gnaw at [rubi eir] bottom lip before you ");
+	if(player.cor >= 66) outputText("start sensually undressing, turning the simple act into a seductive show that causes Rubi's petite boner to jerk unpredictably beneath [rubi eir] clothes.  A small, damp stain appears at the tip by the time you finish your salacious tease.");
+	else if(player.cor >= 33) outputText("get undressed without much pause or fanfare.  Rubi makes a show of turning [rubi eir] head, but you can see [rubi em] peeping glimpses out of the corners of [rubi eir] eyes, and [rubi eir] boner seems to be bigger and harder than it was moments before.");
 	else {
-		outputText("make him turn around while you undress.  You quickly shuck your clothes and ask him what to do next, holding a hand across your [chest] and groin");
+		outputText("make [rubi em] turn around while you undress.  You quickly shuck your clothes and ask [rubi em] what to do next, holding a hand across your [chest] and groin");
 		if(player.biggestCockArea() >= 40 || player.biggestTitSize() >= 8) outputText(", not that it does much good");
 		outputText(".");
 	}
 
 	outputText("\n\nRubi politely holds a towel between you as you climb into the bed face down, your head coming to rest on a down-filled pillow.  The fluffy fabric barrier is draped across your [butt], though your feminine boyfriend is sure to fold it so that your [legs] are fully exposed.  The box is placed in front of your " + player.face() + " and opened.  Inside is a candied, fruity treasure - chocolate covered strawberries.  Rubi's slender fingers pluck up one of the delectable treats and press it into your yielding lips, the sweet treat gliding onto your tongue whereupon it goes to work releasing starbursts of flavor.  You hum contently as you devour the confectionary gift, already feeling much more relaxed than you had been.  The rest are within easy reach, and you languidly set to snacking on them.");
 
-	outputText("\n\nMeanwhile, you hear Rubi's clothing falling by the wayside.  You aren't sure what else you expected from the sexy little trap.  When you turn to look at him, you're treated to the sight of him all dolled up for you.  He has a crotchless set of panties clinging to his ");
+	outputText("\n\nMeanwhile, you hear Rubi's clothing falling by the wayside.  You aren't sure what else you expected from the sexy little trap.  When you turn to look at [rubi em], you're treated to the sight of [rubi em] all dolled up for you.  [rubi Ey] has a crotchless set of panties clinging to [rubi eir] ");
 	if(flags[kFLAGS.RUBI_BLU_BALLS] < 3) outputText("small");
 	else if(flags[kFLAGS.RUBI_BLU_BALLS] < 8) outputText("big");
 	else outputText("huge, stretched");
-	outputText(" scrotum while allowing his delicate, aroused maleness to hang out freely, bouncing up in excitement as soon as you lay eyes on it.  Clinging to his svelte torso, a lacy corset compresses his middle slightly and amplifies his next-to-nonexistent chest, giving him an even greater appearance of femininity than before.");
+	outputText(" scrotum while allowing [rubi eir] delicate, aroused maleness to hang out freely, bouncing up in excitement as soon as you lay eyes on it.  Clinging to [rubi eir] svelte torso, a lacy corset compresses [rubi eir] middle slightly and amplifies [rubi eir] next-to-nonexistent chest, giving [rubi em] an even greater appearance of femininity than before.");
 
-	outputText("\n\n" + player.mf("Giggling","Smiling") + " appreciatively, you lick some half-melted chocolate from your upper lip.  You flick your gaze back to his dong in time to see a pearl of clear pre-cum bead on his cute cock's crown.  Rubi clenches his knees together, a little embarrassed, but he musters his courage and climbs into bed with you, his pert bottom coming to rest on your own.  Chastity is maintained, of course, by the fluffy, white towel between your (mostly) nude bodies.  His weight is noticeable but not uncomfortable, and he begins to work on your shoulders almost immediately, squeezing the right one while his left pops the cap on a bottle of oil.");
+	outputText("\n\n" + player.mf("Giggling","Smiling") + " appreciatively, you lick some half-melted chocolate from your upper lip.  You flick your gaze back to [rubi eir] dong in time to see a pearl of clear pre-cum bead on [rubi eir] cute cock's crown.  Rubi clenches [rubi eir] knees together, a little embarrassed, but [rubi ey] musters [rubi eir] courage and climbs into bed with you, [rubi eir] pert bottom coming to rest on your own.  Chastity is maintained, of course, by the fluffy, white towel between your (mostly) nude bodies.  [rubi Eir] weight is noticeable but not uncomfortable, and [rubi ey] begins to work on your shoulders almost immediately, squeezing the right one while [rubi eir] left pops the cap on a bottle of oil.");
 
-	outputText("\n\nOhhhh, that's cold!  The slippery glaze rubs down your spine as he pours it out all over your back, and you shiver from the difference between his hands and the slick fluid.  He sets the bottle aside after your top half has a generous coating and apologizes, \"<i>Sorry, I'll get you warmed up in a second, babe.</i>\"  It's clear from his tone that he seems genuinely penitent for the slip-up, but when his fingers begin to knead your " + player.skinFurScales() +", all is immediately forgiven.  You moan while Rubi puts his girlish palms to work on your muscles.  His touches are electric, and each contact releases tension that you didn't even know you had.  Lubricating the whole process, the oil is enhancing the touches, warming nicely from the heat of two bodies so close together.");
+	outputText("\n\nOhhhh, that's cold!  The slippery glaze rubs down your spine as [rubi ey] pours it out all over your back, and you shiver from the difference between [rubi eir] hands and the slick fluid.  [rubi Ey] sets the bottle aside after your top half has a generous coating and apologizes, \"<i>Sorry, I'll get you warmed up in a second, babe.</i>\"  It's clear from [rubi eir] tone that [rubi ey] seems genuinely penitent for the slip-up, but when [rubi eir] fingers begin to knead your " + player.skinFurScales() +", all is immediately forgiven.  You moan while Rubi puts [rubi eir] girlish palms to work on your muscles.  [rubi Eir] touches are electric, and each contact releases tension that you didn't even know you had.  Lubricating the whole process, the oil is enhancing the touches, warming nicely from the heat of two bodies so close together.");
 
-	outputText("\n\nGrunting as he exerts himself for your pleasure, the girlish brunette leans down to tend to a particularly stubborn knot, inadvertently pressing his tumescent organ into your crack along with the intervening fabric.  You both groan out loud at the same time - him from the pressure on his most sensitive, erotic spot, and you from the relief his hands are doling out.  You slowly drag another strawberry to your lips and begin to lick and suck on the tip, slowly melting the layers of chocolate until the red tip is revealed, pushing in and out of your lips teasingly.  Rubi is barely able to handle the display.  He's breathing heavily and barely stopping himself from humping you through the towel.");
-	outputText("\n\nRubi whimpers, \"<i>I-uh... ummm, [name], I'm getting c-c-close,</i>\" without stopping.  His tail is slowly rubbing on your [leg] as he tries to keep his rebellious hips in place, but they jerk and stutter again and again, pressing his hot little tool into the towel.  You're totally and completely relaxed, and he's wound tighter than a spring.");
+	outputText("\n\nGrunting as [rubi ey] exerts [rubi em]self for your pleasure, the girlish brunette leans down to tend to a particularly stubborn knot, inadvertently pressing [rubi eir] tumescent organ into your crack along with the intervening fabric.  You both groan out loud at the same time - [rubi em] from the pressure on [rubi eir] most sensitive, erotic spot, and you from the relief [rubi eir] hands are doling out.  You slowly drag another strawberry to your lips and begin to lick and suck on the tip, slowly melting the layers of chocolate until the red tip is revealed, pushing in and out of your lips teasingly.  Rubi is barely able to handle the display.  [rubi Ey]'s breathing heavily and barely stopping [rubi em]self from humping you through the towel.");
+	outputText("\n\nRubi whimpers, \"<i>I-uh... ummm, [name], I'm getting c-c-close,</i>\" without stopping.  [rubi Eir] tail is slowly rubbing on your [leg] as [rubi ey] tries to keep [rubi eir] rebellious hips in place, but they jerk and stutter again and again, pressing [rubi eir] hot little tool into the towel.  You're totally and completely relaxed, and [rubi ey]'s wound tighter than a spring.");
 
-	outputText("\n\nDo you let him release or force him to stay all bottled up?  He has been awful nice...");
+	outputText("\n\nDo you let [rubi em] release or force [rubi em] to stay all bottled up?  [rubi Ey] has been awful nice...");
 	fatigue(-40);
 	dynStats("lib", -1, "lus", 5);
 	flags[kFLAGS.TIMES_RUBI_MASSAGED]++;
@@ -1377,40 +1372,40 @@ private function chocoRubiMassage():void {
 private function bottleUpRubiMassage():void {
 	clearOutput();
 	rubiSprite();
-	outputText("You bite the strawberry in half and mouth, \"<i>No, not yet.  Just let it build up.</i>\"  He whines plaintively, but you cock your head to the side and say, \"<i>Come on, do it for me.  Just, don't let any out....  Here, come off of there and come into bed with me.  We can snuggle and let you relax a bit.</i>\"");
-	outputText("\n\nYou pat the bed next to your hip and assist Rubi in snuggling against you, making sure you don't accidentally brush his boner - no point in letting him spill it all out after you've kept him on edge so long.  He slowly relaxes into your shoulder, and you share a kiss with him before feeding him the rest of the strawberries.");
-	outputText("\n\nHe gratefully says, \"<i>Thanks, babe,</i>\" and though his body is still warm with almost feverish desire, he won't be cumming any time soon.");
+	outputText("You bite the strawberry in half and mouth, \"<i>No, not yet.  Just let it build up.</i>\"  [rubi Ey] whines plaintively, but you cock your head to the side and say, \"<i>Come on, do it for me.  Just, don't let any out....  Here, come off of there and come into bed with me.  We can snuggle and let you relax a bit.</i>\"");
+	outputText("\n\nYou pat the bed next to your hip and assist Rubi in snuggling against you, making sure you don't accidentally brush [rubi eir] boner - no point in letting [rubi em] spill it all out after you've kept [rubi em] on edge so long.  [rubi Ey] slowly relaxes into your shoulder, and you share a kiss with [rubi em] before feeding [rubi em] the rest of the strawberries.");
+	outputText("\n\n[rubi Ey] gratefully says, \"<i>Thanks, babe,</i>\" and though [rubi eir] body is still warm with almost feverish desire, [rubi ey] won't be cumming any time soon.");
 	flags[kFLAGS.RUBI_ORGASM_DENIAL] = 1;
 	flags[kFLAGS.RUBI_BLU_BALLS]++;
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //Release/Not Pent Up
 private function releaseRubiMassage():void {
 	clearOutput();
 	rubiSprite();
-	outputText("You figure after all the pampering he did, he deserves a treat.");
-	outputText("\n\nPushing the strawberry deeper, you bring its widest point to your oral entrance and let your tongue play across the chocolaty surface, melting the mocha-hued shell as your eyes lock with Rubi's.  He groans as he drinks in the oral feast.  Bubbling pre-cum freely, his short, girly cock looks like it's about ready to explode.  It almost looks like an overinflated sausage except this one is dangerously close to letting loose.  He manages to hold it back though, waiting for your permission to cum since he is on your backside after all.");
+	outputText("You figure after all the pampering [rubi ey] did, [rubi ey] deserves a treat.");
+	outputText("\n\nPushing the strawberry deeper, you bring its widest point to your oral entrance and let your tongue play across the chocolaty surface, melting the mocha-hued shell as your eyes lock with Rubi's.  [rubi Ey] groans as [rubi ey] drinks in the oral feast.  Bubbling pre-cum freely, [rubi eir] short, girly cock looks like it's about ready to explode.  It almost looks like an overinflated sausage except this one is dangerously close to letting loose.  [rubi Ey] manages to hold it back though, waiting for your permission to cum since [rubi ey] is on your backside after all.");
 	outputText("\n\nYou push the strawberry into your mouth and swallow it, noisily smacking your lips before saying, \"<i>Come on Rubi, don't keep me waiting.  You deserve to release some tension too.</i>\"");
 
-	outputText("\n\nAt your proclamation, Rubi bites down on his lower lip and his eyelids flutter down low, uncontrolled.  He moans, \"<i>Ohhh-okay!</i>\" and grabs hold of your towel-wrapped buns, pushing them together around his length.  You feel his turgid phallus bounce against your bottom once, twice, thrice, and then your lover's high-pitched voice is luridly moaning, accompanied by a sensation of dampness on your bottom.");
+	outputText("\n\nAt your proclamation, Rubi bites down on [rubi eir] lower lip and [rubi eir] eyelids flutter down low, uncontrolled.  [rubi Ey] moans, \"<i>Ohhh-okay!</i>\" and grabs hold of your towel-wrapped buns, pushing them together around [rubi eir] length.  You feel [rubi eir] turgid phallus bounce against your bottom once, twice, thrice, and then your lover's high-pitched voice is luridly moaning, accompanied by a sensation of dampness on your bottom.");
 	//Not pent up or <= 3
-	if(flags[kFLAGS.RUBI_BLU_BALLS] <= 3) outputText("\n\nBubbling spurts of semen boil out of his petite sack, quickly soaking into the fluffy fabric as Rubi exhausts himself.  Soon, he's barely letting out a single drop of cum, but his boner is dutifully convulsing as if it could keep cumming forever.  The look of relief on his face is adorable, and you pull Rubi down into a snuggle while the cum-rag handles his lurid ejaculation.");
+	if(flags[kFLAGS.RUBI_BLU_BALLS] <= 3) outputText("\n\nBubbling spurts of semen boil out of [rubi eir] petite sack, quickly soaking into the fluffy fabric as Rubi exhausts [rubi em]self.  Soon, [rubi ey]'s barely letting out a single drop of cum, but [rubi eir] boner is dutifully convulsing as if it could keep cumming forever.  The look of relief on [rubi eir] face is adorable, and you pull Rubi down into a snuggle while the cum-rag handles [rubi eir] lurid ejaculation.");
 	//<= 5
-	else if(flags[kFLAGS.RUBI_BLU_BALLS] <= 5) outputText("\n\nThick lances of hot cum splatter wetly into the fluffy fabric as Rubi's backed-up balls do their best to empty the hot load you forced them to hold in.  His warm jism quickly soaks into the towel and puddles in the dick-shaped depression he's molded into your ass-cleavage, slowly dripping through the barrier onto your bottom.  His tongue drools out of his mouth in a display of palpable relief as he empties, eventually collapsing onto your back as the last of his load drools out of him.\n\nYou pull him off of you and into a snuggle as he slowly calms, kissing him and thanking him for the wonderful evening.");
+	else if(flags[kFLAGS.RUBI_BLU_BALLS] <= 5) outputText("\n\nThick lances of hot cum splatter wetly into the fluffy fabric as Rubi's backed-up balls do their best to empty the hot load you forced them to hold in.  [rubi Eir] warm jism quickly soaks into the towel and puddles in the dick-shaped depression [rubi ey]'s molded into your ass-cleavage, slowly dripping through the barrier onto your bottom.  [rubi Eir] tongue drools out of [rubi eir] mouth in a display of palpable relief as [rubi ey] empties, eventually collapsing onto your back as the last of [rubi eir] load drools out of [rubi em].\n\nYou pull [rubi em] off of you and into a snuggle as [rubi ey] slowly calms, kissing [rubi em] and thanking [rubi em] for the wonderful evening.");
 	//<= 7
 	else if(flags[kFLAGS.RUBI_BLU_BALLS] <= 7) {
-		outputText("\n\nHis cum shoots out hard enough to go right through the towel and into your crack.  Numerous spurts erupt out of his tiny cock, firing so fast and hard that the fabric turns into a sloppy mess, and your [butt] becomes moist with his sticky boy-goo.  Rubi's voluminous ejaculations abruptly lance up onto your back as he changes position, tongue hanging out in a display of complete relief and rapture, his eyes rolled most of the way as he completely loses himself to his thunderous climax.  Gurgling as they shrink, the femboy's balls convulse with each shot until they return to their normal size.  Your back has already been treated to a one-man bukkake show at that point, however.");
-		outputText("\n\nRubi abruptly shudders, squirting a few weak strands of cream into the sopping-wet towel before he flops down atop you into his own mess.  You pull him to the side for a snuggle and rouse him with a kiss.  When he seems sane enough to understand you again, you thank him for the wonderful time.  Rubi blushes at that before apologizing for the mess and helping to clean you up before you go.  More than one towel has fallen prey to your boy-toy's backed up virility this day.");
+		outputText("\n\nHis cum shoots out hard enough to go right through the towel and into your crack.  Numerous spurts erupt out of [rubi eir] tiny cock, firing so fast and hard that the fabric turns into a sloppy mess, and your [butt] becomes moist with [rubi eir] sticky boy-goo.  Rubi's voluminous ejaculations abruptly lance up onto your back as [rubi ey] changes position, tongue hanging out in a display of complete relief and rapture, [rubi eir] eyes rolled most of the way as [rubi ey] completely loses [rubi em]self to [rubi eir] thunderous climax.  Gurgling as they shrink, the femboy's balls convulse with each shot until they return to their normal size.  Your back has already been treated to a one-man bukkake show at that point, however.");
+		outputText("\n\nRubi abruptly shudders, squirting a few weak strands of cream into the sopping-wet towel before [rubi ey] flops down atop you into [rubi eir] own mess.  You pull [rubi em] to the side for a snuggle and rouse [rubi em] with a kiss.  When [rubi ey] seems sane enough to understand you again, you thank [rubi em] for the wonderful time.  Rubi blushes at that before apologizing for the mess and helping to clean you up before you go.  More than one towel has fallen prey to your boy-toy's backed up virility this day.");
 	}
 	//<= 9
 	else {
-		outputText("\n\nHis cum rolls out of him in a thick, white wave, forcefully enough to immediately seep through the towel and voluminous enough that by his third squirt semen is dripping from the fringes of the sodden fabric.  Moaning like a whore, his hands knead your soaked bottom as his body is wracked by paroxysms of pleasure.  Muscles the femboy didn't even know he had are working triple-time to spray his bounty of liquid love out, and as his back arches involuntarily, his spurting jizz-fountain lifts to hose down your back, the cum beading on the oil like rain on glass.  His balls are shrinking by the second, but the bed is turning into a hot, wet mess along with your body.  You watch as his eyes roll the whole way back, and his tongue lolls from his mouth - Rubi's brain has shut down under the onslaught of his pleasure, leaving his body to jizz on autopilot until he goes dry.");
-		outputText("\n\nSlowly, the flood dies down to a lazy drip, and then, with a whimper, it ends.  Rubi splashes down on your jizz-stained back nervelessly, his hands sinking into the puddles he's turned the mattress into on either side of you.  You teasingly roll your cheeks from side to side, earning a few last twitches from his spent erection before you pull the exhausted femboy down beside you.  Rubi whimpers as you hug him close and kiss him, ignoring the mess he's made so that you can simply enjoy the tender moment with your lover.  It looks like you both got what you needed today, though Rubi's going to go through a few more towels before you're fit to depart...");
+		outputText("\n\nHis cum rolls out of [rubi em] in a thick, white wave, forcefully enough to immediately seep through the towel and voluminous enough that by [rubi eir] third squirt semen is dripping from the fringes of the sodden fabric.  Moaning like a whore, [rubi eir] hands knead your soaked bottom as [rubi eir] body is wracked by paroxysms of pleasure.  Muscles the femboy didn't even know [rubi ey] had are working triple-time to spray [rubi eir] bounty of liquid love out, and as [rubi eir] back arches involuntarily, [rubi eir] spurting jizz-fountain lifts to hose down your back, the cum beading on the oil like rain on glass.  [rubi Eir] balls are shrinking by the second, but the bed is turning into a hot, wet mess along with your body.  You watch as [rubi eir] eyes roll the whole way back, and [rubi eir] tongue lolls from [rubi eir] mouth - Rubi's brain has shut down under the onslaught of [rubi eir] pleasure, leaving [rubi eir] body to jizz on autopilot until [rubi ey] goes dry.");
+		outputText("\n\nSlowly, the flood dies down to a lazy drip, and then, with a whimper, it ends.  Rubi splashes down on your jizz-stained back nervelessly, [rubi eir] hands sinking into the puddles [rubi ey]'s turned the mattress into on either side of you.  You teasingly roll your cheeks from side to side, earning a few last twitches from [rubi eir] spent erection before you pull the exhausted femboy down beside you.  Rubi whimpers as you hug [rubi em] close and kiss [rubi em], ignoring the mess [rubi ey]'s made so that you can simply enjoy the tender moment with your lover.  It looks like you both got what you needed today, though Rubi's going to go through a few more towels before you're fit to depart...");
 	}
 	flags[kFLAGS.RUBI_ORGASM_DENIAL] = 0;
 	flags[kFLAGS.RUBI_BLU_BALLS] = 0;
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //Closet
@@ -2029,11 +2024,11 @@ private function putOnAWaitressUniformYouWhore():void {
 }
 private function cookingDate():void {
 	outputText("\n\n<b>Third forgot to write this one!</b>");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Dates
-private function dateIntro(date:*):void {
+private function dateIntro(date:Function):void {
 	clearOutput();
 	rubiSprite();
 	//(First Time)
@@ -2086,7 +2081,7 @@ private function iceCreamDate():void {
 	outputText("\n\nOnce you're back in the house, Rubi sprawls out on the couch, a devilish grin on [rubi eir] face.  \"<i>So, you plan on giving me a good \"kiss\" good night?\"");
 	//[Go to Sex menu]
 	rubiSexMenu();
-	addButton(9,"Leave",eventParser,13);
+	addButton(9,"Leave",camp.returnToCampUseOneHour);
 }
 
 //Fancy Dinner Date
@@ -2124,7 +2119,7 @@ private function fancyDate():void {
 		outputText("\n\nOnce you're back in the house, Rubi sprawls out on the couch, a devilish grin on [rubi eir] face.  \"<i>So, you plan on giving me a good \"kiss\" good night?\"");
 		//[to sex menu]
 		rubiSexMenu();
-		addButton(9,"Leave",eventParser,13);
+		addButton(9,"Leave",camp.returnToCampUseOneHour);
 	}
 	//Can't Afford It?
 	else {
@@ -2147,7 +2142,7 @@ private function exhibitionistDate():void {
 	else outputText("glistening, wet pussy");
 	outputText(".");
 
-	outputText("\n\nThe female equine's jaw drops slightly and her eyes dart between the demon-" + rubiMF("boy","girl") + "'s crotch, and both you and Rubi's faces.  The two of you rush past quickly, until the latest target of your your lover's exhibitionism is out of sight.");
+	outputText("\n\nThe female equine's jaw drops slightly and her eyes dart between the demon-" + rubiMF("boy","girl") + "'s crotch, and both you and Rubi's faces.  The two of you rush past quickly, until the latest target of your lover's exhibitionism is out of sight.");
 
 	outputText("\n\nRubi begins giggling madly once the two of you duck into an alleyway.  \"<i>That was so great!  Did you see her face?  Aaaah, I love it!</i>\"  It takes several minutes for Rubi to calm down, and by the time [rubi ey]'s done, [rubi ey]'s practically dragging you back out onto the streets.  \"<i>Come on, I wanna flash some more people,</i>\" [rubi ey] says, simply.  Looks like [rubi ey]'s really enjoying [rubi em]self.");
 
@@ -2159,7 +2154,7 @@ private function exhibitionistDate():void {
 
 	//[Go to sex menu]
 	rubiSexMenu();
-	addButton(9,"Leave",eventParser,13);
+	addButton(9,"Leave",camp.returnToCampUseOneHour);
 }
 
 //Bar Date
@@ -2190,7 +2185,7 @@ private function barDate():void {
 	outputText("\n\nBy the time you enter Rubi's bedroom, [rubi eir] lips are locked with yours.  \"<i>So babe, what are we going to do about this?</i>\"");
 	//[Goto Sex menu]
 	rubiSexMenu();
-	addButton(9,"Leave",eventParser,13);
+	addButton(9,"Leave",camp.returnToCampUseOneHour);
 }
 
 //Anal Training
@@ -2401,7 +2396,7 @@ private function anallyTrainYourBitchBoySlutHowToBeAnalForDCL():void {
 		outputText("\n\nYou decide this is the best time to head out as well, and make your way out of the apartment and back to camp.");
 		player.orgasm();
 	}
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Get Fucked
@@ -2505,7 +2500,7 @@ private function getFuckedByRubi():void {
 	outputText("\n\nYou waggle a finger at [rubi em] hazily, and [rubi ey] climbs up onto the bed next to you.  You wrap your arms around [rubi em] and kiss [rubi em] passionately before pulling [rubi em] into a cuddling hug.  The two of you drift off into a short nap, contentedly wrapped up in each other's arms.");
 	player.orgasm();
 	dynStats("sen", 2);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Hotdogging
@@ -2607,7 +2602,7 @@ private function teaseButtjobs():void {
 	flags[kFLAGS.RUBI_BLU_BALLS]++;
 	flags[kFLAGS.RUBI_ORGASM_DENIAL] = 1;
 	player.orgasm();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Pop
@@ -2657,7 +2652,8 @@ private function popButtjobs():void {
 
 	outputText("\n\n\"<i>No, babe, I'm lucky to have found you,</i>\" [rubi ey] says, snuggling [rubi eir] naked body up against yours as the two of you drift off into a lazy, sex-induced nap.");
 	player.orgasm();
-	doNext(13);
+	flags[kFLAGS.RUBI_BLU_BALLS] = 0; //Since he just came so he should be cured of blue balls
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Give Item
@@ -2786,6 +2782,21 @@ private function giveRubiATFItem(itype:ItemType):void {
 			flags[kFLAGS.RUBI_SHE] = 0;
 			flags[kFLAGS.RUBI_CUNTTYPE] = 0;
 		}
+		//(If Rubi gets red skin)
+		if(rand(3) == 0 && flags[kFLAGS.RUBI_SKIN] != 1 && itype == consumables.INCUBID) {
+			outputText("\n\nRubi clutches [rubi eir] stomach suddenly as you notice red spots appearing on [rubi eir] ");
+			if(flags[kFLAGS.RUBI_SKIN] != 2) outputText("skin");
+			else outputText("coat of fur");
+			outputText(".  The blotches soon spread, rapidly overtaking [rubi eir] body.  ");
+			if(flags[kFLAGS.RUBI_SKIN] == 2) outputText("Meanwhile the silky soft fur that covered [rubi eir] body seems to be falling out as this red menace takes over.  ");
+			outputText("In no time at all, [rubi eir] smooth, hairless skin now appears to be a deep crimson, matching the color of [rubi eir] spade tail that [rubi ey] received long ago.");
+			flags[kFLAGS.RUBI_SKIN] = 1;
+		}
+		//(If Rubi gets horns)
+		if(rand(3) == 0 && flags[kFLAGS.RUBI_HORNTYPE] == 0 && itype == consumables.INCUBID) {
+			outputText("\n\nRubi's hands suddenly dart up, clutching [rubi eir] head as though [rubi ey] has a massive headache.  [rubi Ey] feels around blindly, trying to locate the source of the pain, and then you see it.  Two small bulges appear on [rubi eir] forehead, just at the hairline.  They grow larger and larger until the skin splits cleanly open revealing shiny black bone.  Horns.  They grow up and backwards, forming light ridges.  They don't quite grow completely past [rubi eir] head, however, before the growth stops.  Rubi calms and stands.  [rubi Eir] hands roam over every inch of [rubi eir] new addition as glances in the mirror, marveling at [rubi eir] demonic appearance.");
+			flags[kFLAGS.RUBI_HORNTYPE] = 1;
+		}
 	}
 	//Gro+
 	//Can choose Boobs or Penis. Grow that body part by 2.
@@ -2863,7 +2874,7 @@ private function giveRubiATFItem(itype:ItemType):void {
 		flags[kFLAGS.RUBI_BIMBO] = 1;
 		flags[kFLAGS.RUBI_HAIR] = 1;
 		rubiSexMenu();
-		addButton(9,"Leave",eventParser,13);
+		addButton(9,"Leave",camp.returnToCampUseOneHour);
 		return;
 	}
 	//Equinum
@@ -2963,12 +2974,12 @@ private function giveRubiATFItem(itype:ItemType):void {
 		}
 		//(Gaining Whiskers and Paws)
 		else if(flags[kFLAGS.RUBI_WHISKERS] != 1 || flags[kFLAGS.RUBI_HANDS] != 1) {
-			outputText("\n\nRubi's hands dart to [rubi eir] face this time as a number of whiskers sprout from [rubi eir] cheeks.  They twitch cutely at [rubi eir] touch, but that's not the full extend of the changes.  Rubi looks at [rubi eir] hands and gasps, marveling as they sprout a fine layer of white fur and morph.  Patches of skin on [rubi eir] palms and fingers brighten, becoming pink in colour, as the white fur overtakes the rest.  In the end, Rubi is left with a pair of paw-like hands.");
+			outputText("\n\nRubi's hands dart to [rubi eir] face this time as a number of whiskers sprout from [rubi eir] cheeks.  They twitch cutely at [rubi eir] touch, but that's not the full extend of the changes.  Rubi looks at [rubi eir] hands and gasps, marveling as they sprout a fine layer of white fur and morph.  Patches of skin on [rubi eir] palms and fingers brighten, becoming pink in color, as the white fur overtakes the rest.  In the end, Rubi is left with a pair of paw-like hands.");
 			flags[kFLAGS.RUBI_WHISKERS] = 1;
 			flags[kFLAGS.RUBI_HANDS] = 1;
 		}
 		else if(flags[kFLAGS.RUBI_LOWERBODY] != 1) {
-			outputText("\n\nRubi then sits down as a shooting pain seems to go up [rubi eir] legs.  [rubi Ey] cradles one leg as a similar process happens there, the foot being overtaken by white fur while pink pads form on the soles and toes.  [rubi Eir] heel lengthens as well, drawing itself away from the toes and forming what you're sure is a digitigrate structure.  Sure enough, when the transformation is over and Rubi takes a few tentative steps on [rubi eir] new legs, [rubi ey] is forced to walk on tip-toes, which really helps accentuate [rubi eir] ass.");
+			outputText("\n\nRubi then sits down as a shooting pain seems to go up [rubi eir] legs.  [rubi Ey] cradles one leg as a similar process happens there, the foot being overtaken by white fur while pink pads form on the soles and toes.  [rubi Eir] heel lengthens as well, drawing itself away from the toes and forming what you're sure is a digitigrade structure.  Sure enough, when the transformation is over and Rubi takes a few tentative steps on [rubi eir] new legs, [rubi ey] is forced to walk on tip-toes, which really helps accentuate [rubi eir] ass.");
 			flags[kFLAGS.RUBI_LOWERBODY] = 1;
 		}
 		//(Gaining Cat Penis)
@@ -3089,7 +3100,7 @@ private function rubiPenisGroPlus():void {
 	outputText(images.showImage("rubi-gro-plus-penis"), false);
 	clearOutput();
 	rubiSprite();
-	outputText("You hand over the vial of greenish liquid.  Rubi takes a moment to look it over before, before taking a deep breath and injecting the entire thing into the base of [rubi eir] [rubi cock].");
+	outputText("You hand over the vial of greenish liquid.  Rubi takes a moment to look it over, before taking a deep breath and injecting the entire thing into the base of [rubi eir] [rubi cock].");
 
 	//(If Penis increase)
 	if(flags[kFLAGS.RUBI_COCK_SIZE] < 12 || (this.rubiGetCockType() == CockTypesEnum.HORSE && flags[kFLAGS.RUBI_COCK_SIZE] < 20) || (flags[kFLAGS.RUBI_COCK_SIZE] < 30 && flags[kFLAGS.HYPER_HAPPY])) {
@@ -3161,6 +3172,132 @@ private function rubiPenisReducto():void {
 private function pickAnItemToFeedRubi():void {
 	clearOutput();
 	rubiSprite();
+	var button:int = 0;
+	var closet:Array = [];
+	var gifts:Array = [];
+	menu();
+	if (flags[kFLAGS.RUBI_SUITCLOTHES] == 1)
+		closet[closet.length] = "Suitclothes";
+	else {
+		gifts.push("Suitclothes");
+		if (player.hasItem(armors.CLSSYCL)) addButton(button++, "Suitclothes", giveRubiClothes, armors.CLSSYCL);
+	}
+	
+	if (flags[kFLAGS.RUBI_FETISH_CLOTHES] == 1)
+		closet[closet.length] = "Rubber Fetish Clothes";
+	else {
+		gifts.push("Rubber Fetish Clothes");
+		if (player.hasItem(armors.RBBRCLT)) addButton(button++, "Rubberclothes", giveRubiClothes, armors.RBBRCLT);
+	}
+	
+	if (flags[kFLAGS.RUBI_GREEN_ADVENTURER] == 1)
+		closet[closet.length] = "A Green Adventurer's Outfit";
+	else {
+		gifts.push("A Green Adventurer's Outfit");
+		if (player.hasItem(armors.ADVCLTH)) addButton(button++, "Green Clothes", giveRubiClothes, armors.ADVCLTH);
+	}
+	
+	if (flags[kFLAGS.RUBI_TUBE_TOP] == 1)
+		closet[closet.length] = "A Tube Top";
+	else {
+		gifts.push("A Tube Top");
+		if (player.hasItem(armors.TUBETOP)) addButton(button++, "Tube Top", giveRubiClothes, armors.TUBETOP);
+	}
+	
+	if (flags[kFLAGS.RUBI_BODYSUIT] == 1)
+		closet[closet.length] = "A Sheer Bodysuit";
+	else {
+		gifts.push("A Sheer Bodysuit");
+		if (player.hasItem(armors.T_BSUIT)) addButton(button++, "Bodysuit", giveRubiClothes, armors.T_BSUIT);
+	}
+	
+	if (flags[kFLAGS.RUBI_LONGDRESS] == 1)
+		closet[closet.length] = "A Long Dress";
+	else {
+		gifts.push("A Long Dress");
+		if (player.hasItem(armors.B_DRESS)) addButton(button++, "Long Dress", giveRubiClothes, armors.B_DRESS);
+	}
+	
+	if (flags[kFLAGS.RUBI_TIGHT_PANTS] == 1)
+		closet[closet.length] = "A Dashing Outfit With Tight Leather Pants";
+	else {
+		gifts.push("A Dashing Outfit With Tight Leather Pants");
+		if (player.hasItem(armors.LTHRPNT)) addButton(button++, "Leather Pants", giveRubiClothes, armors.LTHRPNT);
+	}
+	
+	if (flags[kFLAGS.RUBI_NURSE_CLOTHES] == 1)
+		closet[closet.length] = "Nurse's Clothes";
+	else {
+		gifts.push("Nurse's Clothes");
+		if (player.hasItem(armors.NURSECL)) addButton(button++, "Nurse Clothes", giveRubiClothes, armors.NURSECL);
+	}
+	
+	if (flags[kFLAGS.RUBI_SWIMWEAR] == 1)
+		closet[closet.length] = "Slutty Swimwear";
+	else {
+		gifts.push("Slutty Swimwear");
+		if (player.hasItem(armors.S_SWMWR)) addButton(button++, "SluttySwim", giveRubiClothes, armors.S_SWMWR);
+	}
+	
+	if (flags[kFLAGS.RUBI_BIMBO_MINIDRESS] == 1)
+		closet[closet.length] = "A Bimbo Minidress";
+	else
+		gifts.push("A Bimbo Minidress"); //No button, must be found in a special event
+	
+	if (flags[kFLAGS.RUBI_BONDAGE_STRAPS] == 1)
+		closet[closet.length] = "Bondage Straps";
+	else {
+		gifts.push("Bondage Straps");
+		if (player.hasItem(armors.BONSTRP)) addButton(button++, "Bondage S.", giveRubiClothes, armors.BONSTRP);
+	}
+	
+	if (flags[kFLAGS.RUBI_INQUISITORS_CORSET] == 1)
+		closet[closet.length] = "An Inquisitor's Corset";
+	else {
+		gifts.push("An Iquisitor's Corset");
+		if (player.hasItem(armors.I_CORST)) addButton(button++, "I. Corset", giveRubiClothes, armors.I_CORST);
+	}
+	
+	if (flags[kFLAGS.RUBI_AFFECTION] >= 100)
+		closet[closet.length] = "A Risque Waitress's Uniform";
+	else
+		gifts.push("A Risque Waitress's Uniform");
+	
+	if (closet.length > 0) {
+		outputText("<b>Rubi's Closet:</b>");
+		for (var x:int = 0; x < closet.length; x++) outputText("\n" + closet[x]);
+		outputText("\n\n");
+	}
+	
+	if (gifts.length > 0) {
+		outputText("After a quick glance around Rubi's things, you bet [rubi ey] could really use... " + gifts[rand(gifts.length)] + ".\n\n");
+	}
+	else {
+		outputText("You've given Rubi all the clothes [rubi ey] would want to make use of.");
+		if (silly()) outputText("  (Achievement Unlocked: Dress-tacular)");
+		outputText("\n\n");
+	}
+	
+	if (!rubiBimbo() && !rubiIncubus() && rubiAffection() >= 100) {
+		outputText("You could give Rubi some incubi draft to make [rubi em] a little more manly but corrupt, or you could give Rubi a Bimbo Draft to turn [rubi em] into a smoking hot, female sex-bomb.\n\n");
+	}
+	outputText("What will you give [rubi em]?");
+	if (player.hasItem(consumables.BIMBOLQ) && !rubiBimbo()) addButton(button++, "Bimbo Liq", giveRubiATFItem, consumables.BIMBOLQ);
+	if (player.hasItem(consumables.INCUBID)) addButton(button++, "Incubi Draft", giveRubiATFItem, consumables.INCUBID);
+	if (player.hasItem(consumables.P_DRAFT)) addButton(button++, "Pure Draft", giveRubiATFItem, consumables.P_DRAFT);
+	if (player.hasItem(consumables.SUCMILK)) addButton(button++, "Sucb Milk", giveRubiATFItem, consumables.SUCMILK);
+	if (player.hasItem(consumables.P_S_MLK)) addButton(button++, "PureScbMlk", giveRubiATFItem, consumables.P_S_MLK);
+	if (player.hasItem(consumables.PURPEAC, 5)) addButton(button++, "Pure Peach", giveRubiATFItem, consumables.PURPEAC);
+	if (player.hasItem(consumables.EQUINUM)) addButton(button++, "Equinum", giveRubiATFItem, consumables.EQUINUM);
+	if (player.hasItem(consumables.W_FRUIT)) addButton(button++, "Whsk.Fruit", giveRubiATFItem, consumables.W_FRUIT);
+	if (player.hasItem(consumables.REDUCTO)) addButton(button++, "Reducto", giveRubiATFItem, consumables.REDUCTO);
+	if (player.hasItem(consumables.GROPLUS)) addButton(button++, "Gro Plus", giveRubiATFItem, consumables.GROPLUS);
+	if (player.hasItem(consumables.TRAPOIL)) addButton(button++, "Trap Oil", giveRubiATFItem, consumables.TRAPOIL);
+	addButton(9, "Back", rubiAppearance);
+
+	
+	
+/*	
 	var closet:Array = [];
 	var gifts:Array = [];
 	var buttonNames:Array = [];
@@ -3442,7 +3579,8 @@ private function pickAnItemToFeedRubi():void {
 		if(events[counter] != 0) addButton(counter,eventNames[counter],functions[counter],events[counter]);
 		counter++;
 	}
-	addButton(9,"Back",rubiAppearance);
+	addButton(9, "Back", rubiAppearance);
+*/
 		//choices(eventNames[0],events[0],eventNames[1],events[1],eventNames[2],events[2],eventNames[3],events[3],eventNames[4],events[4],eventNames[5],events[5],eventNames[6],events[6],eventNames[7],events[7],eventNames[8],events[8],"Back",3898);
 }
 

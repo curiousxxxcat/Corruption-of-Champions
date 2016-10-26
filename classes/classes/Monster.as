@@ -43,7 +43,7 @@
 		protected final function statScreenRefresh():void {
 			game.statScreenRefresh();
 		}
-		protected final function doNext(eventNo:*):void {
+		protected final function doNext(eventNo:Function):void { //Now typesafe
 			game.doNext(eventNo);
 		}
 		protected final function combatMiss():Boolean {
@@ -105,9 +105,9 @@
 		public var temperment:Number = TEMPERMENT_AVOID_GRAPPLES;
 
 		//Used for special attacks.
-		public var special1:* = 0;
-		public var special2:* = 0;
-		public var special3:* = 0;
+		public var special1:Function = null;
+		public var special2:Function = null;
+		public var special3:Function = null;
 
 		//he
 		public var pronoun1:String = "";
@@ -598,7 +598,8 @@
 				attacks--;
 			}
 			removeStatusAffect(StatusAffects.Attacks);
-			if (!game.combatRoundOver()) game.doNext(1);
+//			if (!game.combatRoundOver()) game.doNext(1);
+			game.combatRoundOver(); //The doNext here was not required
 		}
 
 		/**
@@ -718,8 +719,8 @@
 				if (!handleConstricted()) return;
 			}
 			//If grappling... TODO implement grappling
-			if (game.gameState == 2) {
-				game.gameState = 1;
+//			if (game.gameState == 2) {
+//				game.gameState = 1;
 				//temperment - used for determining grapple behaviors
 				//0 - avoid grapples/break grapple
 				//1 - lust determines > 50 grapple
@@ -735,7 +736,7 @@
 				 mainClassPtr.outputText("Lust Placeholder!!", false);
 				 mainClassPtr.doNext(3);
 				 return;*/
-			}
+//			}
 			performCombatAction();
 		}
 
@@ -799,15 +800,13 @@
 		protected function performCombatAction():void
 		{
 			var actions:Array = [eAttack,special1,special2,special3].filter(
-					function(special:*,idx:int,array:Array):Boolean{
-						return special != 0 && special != null;
+					function(special:Function, idx:int, array:Array):Boolean {
+						return special != null;
 					}
 			);
 			var rando:int = int(Math.random() * (actions.length));
-			var action:* = actions[rando];
-			if (action is Number) game.eventParser(action);
-			else if (action is Function) action();
-			else trace("monster tried to do "+typeof(action));
+			var action:Function = actions[rando];
+			action();
 		}
 
 		/**
@@ -833,13 +832,13 @@
 				outputText("Your desire reaches uncontrollable levels, and you end up openly masturbating.\n\nThe lust and pleasure cause you to black out for hours on end.", true);
 				player.lust = 0;
 			}
-			game.gameState = 0;
+			game.inCombat = false;
 			game.clearStatuses(false);
 			var temp:Number = rand(10) + 1;
 			if(temp > player.gems) temp = player.gems;
 			outputText("\n\nYou'll probably wake up in eight hours or so, missing " + temp + " gems.", false);
 			player.gems -= temp;
-			game.doNext(16);
+			game.doNext(game.camp.returnToCampUseEightHours);
 		}
 
 		/**
@@ -1012,18 +1011,18 @@
 			result +=".\n\n";
 
 			// COMBAT AND OTHER STATS
-			result+=Hehas+"str="+str+", tou="+tou+", spe="+spe+", inte="+inte+", lib="+lib+", sens="+sens+", cor="+cor+".\n";
-			result += Pronoun1+" can "+weaponVerb+" you with  "+weaponPerk+" "+weaponName+" (attack "+weaponAttack+", value "+weaponValue+").\n";
-			result += Pronoun1 +" is guarded with "+armorPerk+" "+armorName+" (defense "+armorDef+", value "+armorValue+").\n";
-			result += Hehas+HP+"/"+eMaxHP()+" HP, "+lust+"/100 lust, "+fatigue+"/100 fatigue. "+Pronoun3+" bonus HP="+bonusHP+", and lust vulnerability="+lustVuln+".\n";
-			result += Heis+"level "+level+" and "+have+" "+gems+" gems. You will be awarded "+XP+" XP.\n";
-			if (special1 || special2 || special3){
-				result+=Hehas+[special1,special2,special3]
-								.filter(function(x:*,index:int,array:Array):Boolean{return x>0 || x is Function})
-								.length
-						+" special attacks.\n"
-			} else {
-				result+=Hehas+"no special attacks.\n";
+			result += Hehas + "str=" + str + ", tou=" + tou + ", spe=" + spe+", inte=" + inte+", lib=" + lib + ", sens=" + sens + ", cor=" + cor + ".\n";
+			result += Pronoun1 + " can " + weaponVerb + " you with  " + weaponPerk + " " + weaponName+" (attack " + weaponAttack + ", value " + weaponValue+").\n";
+			result += Pronoun1 + " is guarded with " + armorPerk + " " + armorName+" (defense " + armorDef + ", value " + armorValue+").\n";
+			result += Hehas + HP + "/" + eMaxHP() + " HP, " + lust + "/100 lust, " + fatigue+"/100 fatigue. " + Pronoun3 + " bonus HP=" + bonusHP + ", and lust vulnerability=" + lustVuln + ".\n";
+			result += Heis + "level " + level + " and " + have+" " + gems + " gems. You will be awarded " + XP + " XP.\n";
+			
+			var numSpec:int = (special1 != null ? 1 : 0) + (special2 != null ? 1 : 0) + (special3 != null ? 1 : 0);
+			if (numSpec > 0) {
+				result += Hehas + numSpec + " special attack" + (numSpec > 1 ? "s" : "") + ".\n";
+			}
+			else {
+				result += Hehas + "no special attacks.\n";
 			}
 
 			return result;
@@ -1068,10 +1067,10 @@
 			if(findStatusAffect(StatusAffects.Blind) >= 0) {
 				addStatusValue(StatusAffects.Blind,1,-1);
 				if(statusAffectv1(StatusAffects.Blind) <= 0) {
-					outputText("<b>" + capitalA + short + " is no longer blind!</b>\n\n", false);
+					outputText("<b>" + capitalA + short + (plural ? " are" : " is") + " no longer blind!</b>\n\n", false);
 					removeStatusAffect(StatusAffects.Blind);
 				}
-				else outputText("<b>" + capitalA + short + " is currently blind!</b>\n\n", false);
+				else outputText("<b>" + capitalA + short + (plural ? " are" : " is") + " currently blind!</b>\n\n", false);
 			}
 			if(findStatusAffect(StatusAffects.Earthshield) >= 0) {
 				outputText("<b>" + capitalA + short + " is protected by a shield of rocks!</b>\n\n");
@@ -1170,33 +1169,6 @@
 				outputText("Stimulated by the coils of fur, you find yourself growing more and more aroused...\n\n");
 				game.dynStats("lus", 5+player.sens/10);
 			}
-			if(player.findStatusAffect(StatusAffects.Blind) >= 0 && findStatusAffect(StatusAffects.Sandstorm) < 0) {
-				if(player.findStatusAffect(StatusAffects.SheilaOil) >= 0) {
-					if(player.statusAffectv1(StatusAffects.Blind) <= 0) {
-						outputText("<b>You finish wiping the demon's tainted oils away from your eyes; though the smell lingers, you can at least see.  Sheila actually seems happy to once again be under your gaze.</b>\n\n", false);
-						player.removeStatusAffect(StatusAffects.Blind);
-					}
-					else {
-						outputText("<b>You scrub at the oily secretion with the back of your hand and wipe some of it away, but only smear the remainder out more thinly.  You can hear the demon giggling at your discomfort.</b>\n\n", false);
-						player.addStatusValue(StatusAffects.Blind,1,-1);
-					}
-				}
-				else {
-					//Remove blind if countdown to 0
-					if(player.statusAffectv1(StatusAffects.Blind) == 0) {
-						player.removeStatusAffect(StatusAffects.Blind);
-						//Alert PC that blind is gone if no more stacks are there.
-						if(player.findStatusAffect(StatusAffects.Blind) < 0) {
-							outputText("<b>Your eyes have cleared and you are no longer blind!</b>\n\n", false);
-						}
-						else outputText("<b>You are blind, and many physical attacks will miss much more often.</b>\n\n", false);
-					}
-					else {
-						player.addStatusValue(StatusAffects.Blind,1,-1);
-						outputText("<b>You are blind, and many physical attacks will miss much more often.</b>\n\n", false);
-					}
-				}
-			}
 			if(findStatusAffect(StatusAffects.QueenBind) >= 0) {
 				outputText("You're utterly restrained by the Harpy Queen's magical ropes!\n\n");
 				if(flags[kFLAGS.PC_FETISH] >= 2) game.dynStats("lus", 3);
@@ -1223,5 +1195,41 @@
 				game.dynStats("lus", (3 + int(player.lib/20 + player.cor/30)));
 			}
 		}
+		
+		public function handleAwardItemText(itype:ItemType):void
+		{ //New Function, override this function in child classes if you want a monster to output special item drop text
+			if (itype != null) outputText("\nThere is " + itype.longName + " on your defeated opponent.  ");
+		}
+
+		public function handleAwardText():void
+		{ //New Function, override this function in child classes if you want a monster to output special gem and XP text
+			//This function doesn’t add the gems or XP to the player, it just provides the output text
+			if (this.gems == 1) outputText("\n\nYou snag a single gem and " + this.XP + " XP as you walk away from your victory.");
+			else if (this.gems > 1) outputText("\n\nYou grab " + this.gems + " gems and " + this.XP + " XP from your victory.");
+			else if (this.gems == 0) outputText("\n\nYou gain " + this.XP + " XP from the battle.");
+		}
+		
+		public function handleCombatLossText(inDungeon:Boolean, gemsLost:int):int
+		{ //New Function, override this function in child classes if you want a monster to output special text after the player loses in combat
+			//This function doesn’t take the gems away from the player, it just provides the output text
+			if (!inDungeon) {
+				outputText("\n\nYou'll probably come to your senses in eight hours or so");
+				if (player.gems > 1)
+					outputText(", missing " + gemsLost + " gems.");
+				else if (player.gems == 1)
+					outputText(", missing your only gem.");
+				else outputText(".");
+			}
+			else {
+				outputText("\n\nSomehow you came out of that alive");
+				if (player.gems > 1)
+					outputText(", but after checking your gem pouch, you realize you're missing " + gemsLost + " gems.");
+				else if (player.gems == 1)
+					outputText(", but after checking your gem pouch, you realize you're missing your only gem.");
+				else outputText(".");
+			}
+			return 8; //This allows different monsters to delay the player by different amounts of time after a combat loss. Normal loss causes an eight hour blackout
+		}
+
 	}
 }

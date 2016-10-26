@@ -3,10 +3,7 @@ package classes.Scenes.Places.TelAdre {
 	import classes.GlobalFlags.kFLAGS;
 	import classes.GlobalFlags.kGAMECLASS;
 
-	public class Edryn extends TelAdreAbstractContent {
-public function Edryn(){
-
-}
+	public class Edryn extends TelAdreAbstractContent implements TimeAwareInterface {
 //VARS
 //player.statusAffectv1(StatusAffects.Edryn) >= 4 = FREE SEX
 // EDRYN_TIMES_HEL_THREESOMED:int = 404;
@@ -14,18 +11,61 @@ public function Edryn(){
 // EDRYN_PREGNANCY_INCUBATION:int = 68;
 // TIMES_EATEN_EDRYN_PUSSY_RUT:int = 776;
 
+		public var pregnancy:PregnancyStore;
+
+		public function Edryn()
+		{
+			pregnancy = new PregnancyStore(kFLAGS.EDRYN_PREGNANCY_TYPE, kFLAGS.EDRYN_PREGNANCY_INCUBATION, 0, 0);
+			CoC.timeAwareClassAdd(this);
+		}
+
+		//Implementation of TimeAwareInterface
+		public function timeChange():Boolean
+		{
+			pregnancy.pregnancyAdvance();
+			trace("\nEdryn time change: Time is " + model.time.hours + ", incubation: " + pregnancy.incubation + ", event: " + pregnancy.event);
+			if (pregnancy.isPregnant && flags[kFLAGS.EDRYN_PREGNANT_AND_NOT_TOLD_PC_YET] == 0 && pregnancy.type != PregnancyStore.PREGNANCY_TAOTH) {
+				flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION]++; //Pregnancy on hold until the PC discovers it
+			}
+			return false;
+		}
+	
+		public function timeChangeLarge():Boolean {
+			if (pregnancy.isPregnant && pregnancy.incubation == 0) {
+				if (pregnancy.type == PregnancyStore.PREGNANCY_TAOTH) {
+					kGAMECLASS.urtaQuest.urtaAndEdrynGodChildEpilogue();
+					//Since these flag can't be in use prior to Taoth's arrival I abused them to store Edryn's previous pregnancy type and incubation
+					//Did it so that if Edryn is someday made able to carry someone else's baby this will still work properly
+					pregnancy.knockUpForce(flags[kFLAGS.URTA_FERTILE], flags[kFLAGS.URTA_PREG_EVERYBODY]);
+					flags[kFLAGS.URTA_FERTILE] = 0;
+					flags[kFLAGS.URTA_PREG_EVERYBODY] = 0;
+					return true;
+				}
+				else if (pregnancy.type == PregnancyStore.PREGNANCY_PLAYER) {
+					flags[kFLAGS.EDRYN_NUMBER_OF_KIDS]++; //Add one kid
+					flags[kFLAGS.EDRYN_NEEDS_TO_TALK_ABOUT_KID] = 1; //Set 'needs to talk to edryn about da kid
+					pregnancy.knockUpForce(); //Clear Pregnancy
+				}
+			}
+			return false;
+		}
+		//End of Interface Implementation
 
 public function edrynBarTalk():void {
 	spriteSelect(14);
 	if(player.findStatusAffect(StatusAffects.Edryn) < 0) player.createStatusAffect(StatusAffects.Edryn,0,0,0,0);
 	outputText("", true);
 	outputText(images.showImage("edryn-bar-chat"));
-
+	
 	//Used for finding what cock to use!
 	var x:Number = player.cockThatFits(300);
 	//If no cocks fit, set to primary
 	if(x < 0) x = 0;
 
+	if (telAdre.katherineEmployment.canTalkToEdryn()) { //Katherine training discussion
+		telAdre.katherineEmployment.talkToEdryn();
+		return;
+	}
 	//Talk about latest birth
 	if(flags[kFLAGS.EDRYN_NEEDS_TO_TALK_ABOUT_KID] == 1) {
 		var kidGender:Number = rand(2);
@@ -58,7 +98,7 @@ public function edrynBarTalk():void {
 		return;
 	}
 	//Mid-pregnancy talk
-	else if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] > 0) {
+	else if (pregnancy.isPregnant) {
 		outputText("Edryn smiles pleasantly as you approach, ", false);
 		outputText("offering you a spot at the table across from her.  She pushes aside the piled-up dishes and shifts uncomfortably on her pregnant bulk.  You smile at her and enjoy a light chat for a while, until Edryn runs out of food.  She excuses herself, and rises to go to the restroom.\n\n", false);
 		//Edryn pregnant offer
@@ -88,7 +128,6 @@ public function edrynBarTalk():void {
 		else if(player.cockArea(x) <= 24) {
 			outputText("She looks down, eyes fixating on your crotch for a moment.  Edryn asks, \"<i>When did you get so small?  We can't fuck like this!  ", false);
 			//(Chance of equinum,gro+(twice only),minotaur blood, or purified incubus draft)
-			menuLoc = 2;
 			var itype:ItemType;
 			if(flags[kFLAGS.EDRYN_GIFT_COUNTER] < 2) {
 				outputText("Here, take some of this stuff.  We confiscated it off one of the miscreants we kicked out the other day, and I KNOW it'll get you to be big enough for me.  Just don't go too nuts with it, okay?</i>\"\n\n", false);
@@ -107,17 +146,16 @@ public function edrynBarTalk():void {
 				doNext(telAdre.barTelAdre);
 				return;
 			}
-			inventory.takeItem(itype);
+			inventory.takeItem(itype, camp.returnToCampUseOneHour);
 			return;
 		}
 		//(Too big)
 		else {
 			outputText("She looks down and gasps, \"<i>Holy shit!  Why do you have a monster like that!?  When a centaur is shocked by how big you are it's time to go easy on the dick enlargement pills, dear.</i>\"\n\n", false);
 			if(flags[kFLAGS.EDRYN_GIFT_COUNTER] < 2) {
-				menuLoc = 2;
 				outputText("Her eyes light up and she suggests, \"<i>Take some of this; it ought to take down some of that swelling.</i>\"\n\n", false);
 				flags[kFLAGS.EDRYN_GIFT_COUNTER]++;
-				inventory.takeItem(consumables.REDUCTO);
+				inventory.takeItem(consumables.REDUCTO, camp.returnToCampUseOneHour);
 				return;
 			}
 			//(ALT)
@@ -140,7 +178,7 @@ public function edrynBarTalk():void {
 		if(player.cocks[0].cockType == CockTypesEnum.HORSE) outputText("pours out of its sheath", false);
 		else outputText("fills near instantaneously", false);
 		outputText(", now rock-hard.  You breathe deeply, your mind subsumed in a sea of equine instincts.  The hard floor squeezes your " + cockDescript(0) + " painfully underneath you, forcing you to rise up onto your hooves.  You can feel more than a few curious gazes sliding along your now fully exposed maleness, and it twitches as if it were happy for the attention.\n\n", false);
-		outputText("Swaying back and forth, alternatively snorting and breathing deeply of the female's scent, your gaze immediately locks onto the returning mare.  Your " + cockDescript(0) + " jumps and bounces underneath you, painfully hard and swollen.  A thick dollop of pre beads on your " + cockHead(0) + ", as if the bar needed your display to be any more overtly sexual.  Edryn looks you over, walking alongside you she talks, \"<i>My my, someone liked what they saw.  Or was it smelled?  I can never tell what it is that gets you " + player.mf("studs","hotties") + " so worked up about me.</i>\"\n\n", false);
+		outputText("Swaying back and forth, alternatively snorting and breathing deeply of the female's scent, your gaze immediately locks onto the returning mare.  Your " + cockDescript(0) + " jumps and bounces underneath you, painfully hard and swollen.  A thick dollop of pre beads on your " + player.cockHead() + ", as if the bar needed your display to be any more overtly sexual.  Edryn looks you over, walking alongside you she talks, \"<i>My my, someone liked what they saw.  Or was it smelled?  I can never tell what it is that gets you " + player.mf("studs","hotties") + " so worked up about me.</i>\"\n\n", false);
 		outputText("A soft hand slides under your belly, hefting your " + cockDescript(0) + " and smearing the bead of pre over it with long slick strokes.  She coos, \"<i>", false);
 		dynStats("lus", 70);
 		edrynOffer();
@@ -318,7 +356,7 @@ private function edrynOffer():void {
 	}
 }
 
-private function edrynSexSelecter():void {
+public function edrynSexSelecter():void {
 	spriteSelect(14);
 	var cost:Number = 0;
 	switch(player.statusAffectv1(StatusAffects.Edryn)) {
@@ -377,7 +415,7 @@ private function fuckEdrynTaur():void {
 	else outputText("caresses a breast", false);
 	outputText(" while she caresses the side of your " + player.face() + " with the other.  Your body pumps away while your tongues entwine, tracing saliva over each other's lips.  She pulls back and moans out again, trailing off into a whinny as she orgasms underneath you.\n\n", false);
 
-	outputText("Her cunt locks tightly around you once again, clamping down in a series of rings from the base all the way to your " + cockHead(x) + ".  At once, they start sliding from the base towards the tip, new ones forming along the bottom of the shaft as her pussy milks your " + cockDescript(x) + " hard.  Trapped inside her, all you can do is groan and cum in response to her climax.  You throw back your head as you feel the warmth of your release building in your ", false);
+	outputText("Her cunt locks tightly around you once again, clamping down in a series of rings from the base all the way to your " + player.cockHead(x) + ".  At once, they start sliding from the base towards the tip, new ones forming along the bottom of the shaft as her pussy milks your " + cockDescript(x) + " hard.  Trapped inside her, all you can do is groan and cum in response to her climax.  You throw back your head as you feel the warmth of your release building in your ", false);
 	if(player.balls > 0) outputText(ballsDescriptLight(), false);
 	else outputText("loins", false);
 	outputText(".\n\n", false);
@@ -400,7 +438,7 @@ private function fuckEdrynTaur():void {
 	player.orgasm();
 	dynStats("sen", -3);
 	if(player.lust < 30) player.lust = 30;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 private function fuckEdrynNonTaur():void {
 	spriteSelect(14);
@@ -422,7 +460,7 @@ private function fuckEdrynNonTaur():void {
 	else outputText("self with your hand", false);
 	outputText(", you guide your " + cockDescript(x) + " towards the shining, black horse-cunt in front of you.  It parts easily, like a velvet curtain.  You slowly slide forward into Edryn's welcoming nethers, enjoying not having to fight to get your large " + Appearance.cockNoun(CockTypesEnum.HUMAN) + " in for a change.  She trembles as you pass the halfway point, ", false);
 	if(player.cocks[x].cockType == CockTypesEnum.HORSE) outputText("feeling your ring of prepuce slipping between her lips.  ", false);
-	else outputText("squirting little bit of fluid on the floor.  ", false);
+	else outputText("squirting a little bit of fluid on the floor.  ", false);
 	outputText("The further you push inside, the more aware of her warmth you become.  Her body temperature is higher than a human's, and it feels almost good enough to make you melt.\n\n", false);
 
 	outputText("She whinnies and pushes back against you, forcing your entire " + cockDescript(x) + " to slip up her well-lubed passage.  You slap her ass, watching the furred flanks jiggle slightly.  Edryn looks over her shoulder again to and gives you a sultry look.  Before you can puzzle out what she's trying to tell you, her entire cunt contracts tightly, like a silken vise.  It wrings your " + cockDescript(x) + " tightly, immobilizing you inside the powerful centauress and making your " + player.legs() + " feel wobbly and weak.\n\n", false);
@@ -457,7 +495,7 @@ private function fuckEdrynNonTaur():void {
 	player.orgasm();
 	dynStats("sen", -3);
 	if(player.lust < 30) player.lust = 30;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 public function edrynBar():Boolean {
@@ -478,6 +516,20 @@ Scene proc's the first time the PC visits the Wet Bitch after all requirements a
 
 //Introduction -- Hel x Edryn -- Wet Bitch Entrance
 //(PC goes to the Wet Bitch during Edryn's hours)
+
+private var edrynHeliaLastThreesomeCheck:int;
+
+public function edrynHeliaThreesomePossible():Boolean {
+	if (model.time.totalTime == edrynHeliaLastThreesomeCheck || model.time.totalTime == -edrynHeliaLastThreesomeCheck) //Only choose action once per visit to the bar
+		return edrynHeliaLastThreesomeCheck > 0;
+	edrynHeliaLastThreesomeCheck = model.time.totalTime;
+	if (player.gender == 0 || model.time.hours < 14 || model.time.hours >= 20 || rand(2) == 0 || (flags[kFLAGS.HEL_FUCKBUDDY] == 0 && !kGAMECLASS.helFollower.followerHel())
+	|| (flags[kFLAGS.HEL_FOLLOWER_LEVEL] == 1 && flags[kFLAGS.HEL_HARPY_QUEEN_DEFEATED] == 0)) {
+		edrynHeliaLastThreesomeCheck = -edrynHeliaLastThreesomeCheck; //Make the saved time negative to indicate Helia is not at the bar right now
+		return false;
+	}
+	return true;
+}
 
 public function helAppearance():void {
 	outputText("\n\nTo your surprise, you see Hel the salamander sitting in a corner table, a pair of foxy fox-morph girls sitting on her lap.  When she sees you enter, the pretty reptile lifts her tankard and shouts, \"<i>Hey! " + player.short + "! Over here!</i>\" over the loud noises of the bar.", false);
@@ -518,7 +570,7 @@ public function approachHelAtZeBitch():void {
 		outputText("  Eventually, though, Hel gives you a sultry look and asks if you're up for a little group activity.  Are you?\n\n", false);
 	}
 	//(Display Options: [Threesome] [Leave]
-	simpleChoices("Edryn3Some",edryn,"Fox Girls",kGAMECLASS.helScene.heliaPlusFoxyFluffs,"",0,"",0,"Leave",leaveHelInZeBitch);
+	simpleChoices("Edryn3Some", edryn, "Fox Girls", kGAMECLASS.helScene.heliaPlusFoxyFluffs, "", null, "", null, "Leave", leaveHelInZeBitch);
 }
 
 //First Time - Leave
@@ -595,7 +647,7 @@ private function threesomeEdrynAndHel():void {
 	outputText("\"<i>Oh yeah. We... We gotta go again sometime,</i>\" Hel agrees, nearly falling off Edryn's back.  You give each of the girls a long kiss before collecting your " + player.armorName + " and walking off back to camp.\n\n", false);
 	player.orgasm();
 	kGAMECLASS.helFollower.helAffection(5);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //Pregdryn:
@@ -610,10 +662,9 @@ public function findOutEdrynIsPregnant():void {
 
 	outputText("<b>How do you react?</b>", false);
 
-	var aroused:Number = 0;
-	if(player.totalCocks() > 0) aroused = 2493;
+	var aroused:Function = (player.totalCocks() > 0 ? arousedByPregdryn : null);
 	//[Shocked] [Pleased] [Aroused (Requires Wang)]
-	simpleChoices("Shocked",shockedByEdrynsPregnancy,"Pleased",pleasedbyPregdryn,"Aroused",aroused,"",0,"",0);
+	simpleChoices("Shocked", shockedByEdrynsPregnancy, "Pleased", pleasedbyPregdryn, "Aroused", aroused, "", null, "", null);
 }
 
 //Shocked
@@ -624,7 +675,7 @@ private function shockedByEdrynsPregnancy():void {
 
 	outputText("\n\n<b>What do you do?</b>", false);
 	//[Accept it] [Reject it]
-	simpleChoices("Accept It",shockedByPregdrynThenAccept,"Reject It",beAnAssholeToPregdryn,"",0,"",0,"",0);
+	simpleChoices("Accept It", shockedByPregdrynThenAccept, "Reject It", beAnAssholeToPregdryn, "", null, "", null, "", null);
 }
 //Accept it
 private function shockedByPregdrynThenAccept():void {
@@ -679,13 +730,13 @@ private function pregdrynOffer(cs:Boolean = true):void {
 	spriteSelect(14);
 	if(cs) outputText("", true);
 	//Used to call post birthing sexings.
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] == 0) {
+	if (!pregnancy.isPregnant) {
 		//Actually choose the sex scene
 		edrynSexSelecter();
 		return;
 	}
 	//VERY Pregnant Offer
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] < 250) {
+	if (pregnancy.incubation < 250) {
 		outputText("Edryn struggles to move, practically waddling thanks to her swollen, pregnant belly.  As usual, the glistening black lips of her sex are on display, and with the hormones pouring through her, she's leaking a steady trail of slime.  The scent coming off her is unreal!  It's like it's reaching right into your brain and cranking the 'fuck' dial up to maximum.  ", false);
 		if(player.cockTotal() > 1) outputText("All of your " + multiCockDescriptLight() + " fill in seconds, growing rock hard and actually aching with their need.  ", false);
 		else if(player.cockTotal() == 1) outputText("Your " + cockDescript(0) + " fills in seconds, growing rock hard and actually aching with need.  ", false);
@@ -753,13 +804,13 @@ private function pregdrynOffer(cs:Boolean = true):void {
 		outputText("\n\nHow do you want to handle this?  ");
 		menu();
 		outputText("You could have some great, pregnant taur sex.");
-		addButton(0,"Preg. Fuck",eventParser,2495);
+		addButton(0,"Preg. Fuck", fuckPregEdryn);
 		if(player.biggestCockArea() >= 300) {
 			outputText("  Since at least part of you isn't acceptable to her, you could eat her out until you get off from her pheromones alone.");
-			addButton(1,"NoFitEating",jizzFromEatingPregdrynOut);
+			addButton(1,"NoFitEating", jizzFromEatingPregdrynOut);
 		}
 		outputText("  Or, you could go down on her until you're in a frenzy, then fuck her wildly.");
-		addButton(2,"Eat,Rut,Fuck",eatEdrynPussyLikeABawss);
+		addButton(2,"Eat,Rut,Fuck", eatEdrynPussyLikeABawss);
 		return;
 	}
 	//(PC TOO BIG)
@@ -842,7 +893,7 @@ public function fuckPregEdryn():void {
 	else {
 		outputText("Edryn smiles at you as you close the door behind you.  She stretches and lays out on a large batch of pillows, using them to help support the added weight of her pregnancy.  Her hindquarters are facing towards you, and she twists back to give you a 'come-hither' gesture.  You hesitantly climb down into the soft, padded mass with her and align your body behind hers.  Her position is perfect, and you wrap your arms around her 'human' waist to drag your horse-half into position.  Edryn grabs your face and pulls you into a kiss, her archery-strengthened arms easily maintaining their grip as the two of you get settled into place.\n\n", false);
 
-		outputText("You break the kiss and suck the bottom of her earlobe into your mouth, straining to keep your mouth steady as you pull your " + cockDescript(x) + " into position with her needy sex.  The " + cockHead(x) + " slips into the hot folds, forcing a gasp from your lips that lets Edryn's earlobe escape its oral prison.  She smirks, then nibbles at your shoulder while you slide the rest of the way into her large, slippery channel.  It's a near perfect fit thanks to your similar body types, and the both of you sigh out whinnies of pleasure.\n\n", false);
+		outputText("You break the kiss and suck the bottom of her earlobe into your mouth, straining to keep your mouth steady as you pull your " + cockDescript(x) + " into position with her needy sex.  The " + player.cockHead(x) + " slips into the hot folds, forcing a gasp from your lips that lets Edryn's earlobe escape its oral prison.  She smirks, then nibbles at your shoulder while you slide the rest of the way into her large, slippery channel.  It's a near perfect fit thanks to your similar body types, and the both of you sigh out whinnies of pleasure.\n\n", false);
 
 		outputText("Edryn bites down harder, sending a jolt of pain through your shoulder.  Her hips wiggle against yours, and she begins rhythmically clenching and relaxing her entrance, squeezing you tightly ", false);
 		if(!player.hasSheath()) outputText("by the base", false);
@@ -860,7 +911,7 @@ public function fuckPregEdryn():void {
 		outputText("Your " + cockDescript(x) + " is milked from ", false);
 		if(!player.hasSheath()) outputText("base", false);
 		else outputText("sheath", false);
-		outputText(" to " + cockHead(x) + ", culminating in a tight squeeze at the tip. Then it releases and starts all over again.  Instinctively, you whinny and explode inside the warm, soaking wet tunnel.  The french-kiss turns into a feverish slobber-fest while the two of you mate, lost to orgasm.", false);
+		outputText(" to " + player.cockHead(x) + ", culminating in a tight squeeze at the tip. Then it releases and starts all over again.  Instinctively, you whinny and explode inside the warm, soaking wet tunnel.  The french-kiss turns into a feverish slobber-fest while the two of you mate, lost to orgasm.", false);
 		if(player.cumQ() < 300) {}
 		else if(player.cumQ() < 1000) outputText("Your prodigious jism output soaks her sloppy tunnel and drips from the entrance with the centauress' girlcum.", false);
 		else {
@@ -877,7 +928,7 @@ public function fuckPregEdryn():void {
 	}
 	player.orgasm();
 	dynStats("sen", -.5);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //EAT THE BITCH'S CUNT OUT
@@ -942,12 +993,12 @@ private function jizzFromEatingPregdrynOut():void {
 	outputText("\"<i>Turn-about is fair play!</i>\" she exclaims. You leave, unable to dispute the logic.", false);
 	player.orgasm();
 	dynStats("lib", 1, "sen", 2);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function edrynPregChance():void {
 	//Get out if already pregged.
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] > 0) return;
+	if (pregnancy.isPregnant) return;
 
 	//See if any of the scenarios get her preg
 	var preg:Boolean = false;
@@ -971,9 +1022,9 @@ private function edrynPregChance():void {
 		trace("Edryn knocked up!");
 	}
 	else trace("Edryn not knocked up!");
-	if(preg) {
-		flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] = 500;
-		flags[kFLAGS.EDRYN_PREGNAT_AND_NOT_TOLD_PC_YET] = 0;
+	if (preg) {
+		pregnancy.knockUpForce(PregnancyStore.PREGNANCY_PLAYER, PregnancyStore.INCUBATION_CENTAUR + 80);
+		flags[kFLAGS.EDRYN_PREGNANT_AND_NOT_TOLD_PC_YET] = 0;
 	}
 }
 
@@ -1036,7 +1087,7 @@ private function edrynFucktroduction():void {
 }
 
 //Eat Her Out Till Shit Goes Crazy
-private function eatEdrynPussyLikeABawss():void {
+public function eatEdrynPussyLikeABawss():void {
 	clearOutput();
 	outputText(images.showImage("edryn-eat-her-out"));
 	var x:int = player.cockThatFits(300);
@@ -1046,7 +1097,7 @@ private function eatEdrynPussyLikeABawss():void {
 	if(player.cockTotal() == 1) outputText("its underside");
 	else outputText("their underside");
 	outputText(".  You smile mirthfully when you realize Edryn is actually blushing, and beet red at that!  Her hindlegs prance nervously around as she studies you over her shoulder, and her tail won't stop the steady back-and-forth swish that sends more of the boner-fueling musk towards your nose.");
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] > 0) outputText("  You can tell that since she's gotten pregnant her pheromones have become more potent, but that's little more than a dim note on a forgotten chalkboard to your brain.  It's impossible to think about measuring the potency of anything that isn't your own tool in such a swelteringly hot atmosphere.");
+	if (pregnancy.isPregnant) outputText("  You can tell that since she's gotten pregnant her pheromones have become more potent, but that's little more than a dim note on a forgotten chalkboard to your brain.  It's impossible to think about measuring the potency of anything that isn't your own tool in such a swelteringly hot atmosphere.");
 	else outputText("  You note that the smell seems more powerful in an enclosed space, but that's little more than a dim note on a forgotten chalkboard to your brain.  It's nigh-impossible to think about anything but plunging yourself [sheath] deep inside her when exposed to her scent this strongly.");
 
 	outputText("\n\n\"<i>Are you going to fuck me, or just stare at my pussy all day?</i>\" the blushing centaur teases as she takes mincing steps towards you, back end first.  \"<i>I'm okay with either, provided you let me grind it on you until I'm satisfied.</i>\"");
@@ -1074,10 +1125,10 @@ private function eatEdrynPussyLikeABawss():void {
 	outputText("\n\nEdryn trots away on wobbly legs after her long, wet cum finally finishes, saying, \"<i>Mmm, that WAS a good cum, but I thought you were going to-URK!</i>\"  She grunts as you slam your " + cockDescript(x) + " straight into her cunt");
 	if(y >= 0) outputText(" and your " + cockDescript(y) + " into her asshole");
 	outputText(".  Her ");
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] > 0) outputText("milky tits, swollen from her pregnancy,");
+	if (pregnancy.isPregnant) outputText("milky tits, swollen from her pregnancy,");
 	else outputText("big tits");
 	outputText(" bounce around ludicrously, their owner too insensate from your forceful insertion to attempt to restrain them");
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] > 0) outputText(" as they drip milk everywhere");
+	if (pregnancy.isPregnant) outputText(" as they drip milk everywhere");
 	outputText(".  You grab hold of her gigantic, equine ass with one hand and her exotic tail with the other and push harder against her until her slick, welcoming moisture is wrapped around you on all sides");
 	if(y >= 0) outputText(" and clenching tightness is wreathing your other erection");
 	outputText(".  You growl savagely as you feel her inhuman warmth squeezing from all sides.  Flexing tightly, the myriad strong muscles that make up the girl's horse-like hindquarters all compress around you at once, utterly immobilizing you.");
@@ -1085,7 +1136,7 @@ private function eatEdrynPussyLikeABawss():void {
 	outputText("\n\nYou whine piteously - the need to fuck and breed her is overwhelming, but to move now only invites pain.  Edryn chuckles, \"<i>Baby, you can't surprise a girl like that.  Now, don't go too crazy, and I'll let you go, okay?</i>\"  You lean across her furry back, soaking up her warmth as you nod into her muscular animal-half.  Yes, anything... anything to fuck her again.  \"<i>Okay then.</i>\"");
 
 	outputText("\n\nLike magic, the crushing pressure is gone, and you're free to plumb her depths with wanton abandon.  You groan throatily as you begin to hump her again, this time taking it slow enough not to rouse her ire, your hands wrapping halfway around her ");
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] > 0) outputText("baby-filled ");
+	if (pregnancy.isPregnant) outputText("baby-filled ");
 	outputText("middle for support, [legs] dangling slightly above the ground as you twist to ram your [cocks]");
 	outputText(" inside.  Slurps and squishes echo through the small room while you work Edryn's gushing, well-lubed gash.  Moaning excitedly, the horse-girl is starting to get into it, and you gradually pick up your tempo until your [hips] are clapping wetly against her soaked haunches.  She whickers and glances back over her shoulder, blushing so red you briefly wonder if you're fucking a demoness.");
 
@@ -1098,7 +1149,7 @@ private function eatEdrynPussyLikeABawss():void {
 	outputText(" hilt");
 	if(y >= 0) outputText("s");
 	outputText(".  The blissful relief that washes through you obliterates conscious thought and replaces it with creamy, placid warmth, causing your eyelids to droop heavily and your tongue to hang limply from your mouth while you pump the squirming centaur full of sperm.  You feel like a happy, bottomless well of semen, with immense, untapped reserves still left to dispense.  Clearly, your rutting body has gone into overdrive, and before long Edryn's ebony cunt is drizzling white cream onto the ground.");
-	if(flags[kFLAGS.EDRYN_PREGNANCY_INCUBATION] == 0) {
+	if (!pregnancy.isPregnant) {
 		outputText("  Her empty womb takes in the spermy deposits with aplomb, though you start to worry when you feel her sides bulge out thanks to her stretching middle.  Edryn's legs give out, and her pussy starts to constrict tighter, squeezing into concentric rings that move from her entrance towards her cervix, squeezing hot loads straight into that well-creamed womb.  You keep bouncing on her ass as best you can, too pleasured to care, not stopping until your dick goes dry and the jism is soaking Edryn's entire back half.");
 		if(y >= 0) outputText("  Her ass is in a similar state.  It's so pressurized with jizz that it squirts out of her with each contraction.");
 	}
@@ -1125,7 +1176,7 @@ private function postEdrynEatOutRut():void {
 	edrynPregChance();
 	edrynPregChance();
 	flags[kFLAGS.TIMES_EATEN_EDRYN_PUSSY_RUT]++;
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 }
 }

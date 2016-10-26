@@ -40,8 +40,8 @@ public function satyrEncounter(location:int = 0):void {
 		else outputText("sodden expanse of the swamp");
 		outputText(" when you hear strange music emanating not far from where you are.  Do you investigate?");
 		//[Yes][No]
-		if(location == 0) doYesNo(createCallBackFunction(consensualSatyrFuck,0),13);
-		else doYesNo(createCallBackFunction(consensualSatyrFuck,0),13);
+		if(location == 0) doYesNo(createCallBackFunction(consensualSatyrFuck,0), camp.returnToCampUseOneHour);
+		else doYesNo(createCallBackFunction(consensualSatyrFuck,0), camp.returnToCampUseOneHour);
 	}
 }
 
@@ -86,7 +86,7 @@ private function consensualSatyrFuck(loc:int = 0):void {
 	}
 	//What should you do?
 	//[Trick him] [Keep Drinking] [Skip Foreplay] [Leave]
-	simpleChoices("Trick Him",trick,"Keep Drinking",keepDrinking,"Skip Foreplay",foreplay,"",0,"Leave",leavePartySatyr);
+	simpleChoices("Trick Him", trick, "Keep Drinking", keepDrinking, "Skip Foreplay", foreplay, "", null, "Leave", leavePartySatyr);
 }
 
 //[=Keep Drinking=]
@@ -105,13 +105,13 @@ private function keepDrinking():void {
 	//[hymen check]
 	if(player.hasVagina()) player.cuntChange(25,true,true,false);
 	else player.buttChange(25,true,true,false);
-	outputText("\n\nYou wake up you don't know how many hours later, head spinning in pain at the heavy drinking you did earlier.  Come to think of it... all the bottles and dishes of food seem to be gone.  The only thing left are puddles of warm cum all around you and on you.  You get up, dazed, only to feel a strange feeling inside your [vagOrAss]; you double over as pain explodes from your [vagOrAss] and gasps as a flood of semen dribbles from your used ");
+	outputText("\n\nYou wake up you don't know how many hours later, head spinning in pain at the heavy drinking you did earlier.  Come to think of it... all the bottles and dishes of food seem to be gone.  The only thing left are puddles of warm cum all around you and on you.  You get up, dazed, only to feel a strange feeling inside your [vagOrAss]; you double over as pain explodes from your [vagOrAss] and gasp as a flood of semen dribbles from your used ");
 	if(player.hasVagina()) outputText("vagina");
 	else outputText("ass");
 	outputText(".  This must be the work of that satyr!  Mentally, you remind yourself to watch out for him next time.  You clean yourself up as best as you can and redress, then wobble your way towards your camp, trying to stifle the pain, in your head and elsewhere, along the way.");
 	//(8 hours lost) (PC is pregnant (either vagina or ass) with a satyr, slimefeed)
 	satyrPreggo();
-	doNext(15);
+	doNext(camp.returnToCampUseFourHours);
 }
 
 //[=Leave=]
@@ -120,11 +120,10 @@ private function leavePartySatyr():void {
 	spriteSelect(98);
 	outputText("You thank the satyr for his generosity, but you don't think you can handle this kind of booze, so you get up and start on your way back to your camp.");
 	
-	outputText("\n\nThere is a sudden loud, indignant bleat from behind you, and you hear something suddenly charging clumsily forward.  Though you only realise this when something slams into your back, knocking you to the ground.  When you roll around, you find the satyr standing over you, face contorted in fury.  \"<i>Nobody leaves me until I'm done with them!</i>\" he roars, and attacks you again!\n\n");
+	outputText("\n\nThere is a sudden loud, indignant bleat from behind you, and you hear something suddenly charging clumsily forward.  Though you only realize this when something slams into your back, knocking you to the ground.  When you roll around, you find the satyr standing over you, face contorted in fury.  \"<i>Nobody leaves me until I'm done with them!</i>\" he roars, and attacks you again!\n\n");
 
 	var satyr:Satyr = new Satyr();
 	startCombat(satyr);
-	doNext(1);
 	//proc first attack;
 	satyr.satyrCharge();
 	//(Initiate combat with frenzied satyr, on the first round PC suffers the effects of a satyr charge (some HP lost and stunned))
@@ -149,7 +148,7 @@ private function trickZeSatyr():void {
 	
 	player.gems += 10+rand(10);
 	statScreenRefresh();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[=Skip Foreplay=]
 private function skipForeplay():void {
@@ -242,7 +241,7 @@ internal function defeatASatyr():void {
 	}
 	var bikiniTits:Function = null;
 	if(player.hasVagina() && player.biggestTitSize() >= 4 && player.armor == armors.LMARMOR) bikiniTits = (player.armor as LustyMaidensArmor).lustyMaidenPaizuri;
-	simpleChoices("FuckHisButt",butt,"Ride Face",faces,"B.Titfuck",bikiniTits,"",0,"Leave",cleanupAfterCombat);
+	simpleChoices("FuckHisButt", butt, "Ride Face", faces, "B.Titfuck", bikiniTits, "", null, "Leave", cleanupAfterCombat);
 }
 //Female (Z)
 private function femaleTakesAdvantageOfSatyr():void {
@@ -308,7 +307,7 @@ private function malesTakeAdvantageOfSatyrs():void {
 	//(High Cum Amount)
 	else outputText("  You shoot jet after jet of cum, far faster than the satyr's ass can milk you for it, and still he doesn't seem to stop trying.  His rippling muscles draw your cum inside his bowels in big bubbles.  When his ass finally goes lax, you're propelled halfway out of him by the force of your own backflowing seed; the satyr's ass looks like a wreck, and his belly is overflowing with so much spunk you're surprised it didn't come out of his mouth.");
 	
-	outputText("\n\nSated for the moment, your gaze drifts towards the satyr.  He makes no sound; indeed, when you take a better look at him, you realise he's fallen asleep, still idly shaking his ass back and forth and jerking his cum-dribbling cock.  You don't even spare him a contemptuous look as you pull your bottoms up and head back.");
+	outputText("\n\nSated for the moment, your gaze drifts towards the satyr.  He makes no sound; indeed, when you take a better look at him, you realize he's fallen asleep, still idly shaking his ass back and forth and jerking his cum-dribbling cock.  You don't even spare him a contemptuous look as you pull your bottoms up and head back.");
 	//reduce lust
 	player.orgasm();
 	cleanupAfterCombat();
@@ -390,24 +389,20 @@ private function willinglyBoneSatyr():void {
 	player.slimeFeed();
 	player.orgasm();
 	satyrPreggo();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 
 //Pregnancy Stuff (Z)
 private function satyrPreggo():void {
-	if(player.hasVagina()) {
-		if(player.pregnancyIncubation == 0 && player.pregnancyType == 0) {
-			player.knockUp(19,160);
-		}
+	if (player.hasVagina()) {
+		player.knockUp(PregnancyStore.PREGNANCY_SATYR, PregnancyStore.INCUBATION_SATYR); //Satyrs can now fertilize eggs for ovipositing players
 	}
 	else {
-		if(player.buttPregnancyIncubation == 0 && player.buttPregnancyType == 0) {
-			player.buttPregnancyType = 19;
-			player.buttPregnancyIncubation = 160;
-		}
+		player.buttKnockUp(PregnancyStore.PREGNANCY_SATYR, PregnancyStore.INCUBATION_SATYR, 1, 1);
 	}
 }
+
 //Birthing (Z)
 //Baby is always male.
 public function satyrBirth(vag:Boolean):void {
@@ -431,7 +426,7 @@ public function satyrBirth(vag:Boolean):void {
 	else player.buttChange(40,true,false,true);
 	outputText("Long minutes pass as your body recovers from the strain, bouncing back with unnatural vitality from the exhaustion and pain of giving birth, but finally you are ready to look at it.");
 	
-	outputText("\n\nIt looks like a cute little goat-man; the proof of such hangs between his legs, far larger than it should be on any infant.  He bleats at you meekly, and then begins to grow on his own!  His horns extend into curling, extravagant loops of bone, bending over his head; his soft flesh becomes tougher as his muscles develop, giving him a nice athletic build.  Finally his cock and balls grow to an impressive size, not only because of his natural - or unnatural - growth, but because it  hardens with each passing moment; despite having been born only moments ago, your new son seems to be sexually aware.  Moments later he unbends and you get to take a good look at your newborn, and grown up, satyr.");
+	outputText("\n\nIt looks like a cute little goat-man; the proof of such hangs between his legs, far larger than it should be on any infant.  He bleats at you meekly, and then begins to grow on his own!  His horns extend into curling, extravagant loops of bone, bending over his head; his soft flesh becomes tougher as his muscles develop, giving him a nice athletic build.  Finally his cock and balls grow to an impressive size, not only because of his natural - or unnatural - growth, but because it hardens with each passing moment; despite having been born only moments ago, your new son seems to be sexually aware.  Moments later he unbends and you get to take a good look at your newborn, and grown up, satyr.");
 	
 	outputText("\n\nHe strokes his small beard and gives you a wicked grin, thrusting his hips at you and spattering you with a few drops of pre-cum, then turns and bounds off.  Exhausted");
 	if(player.cor < 33) outputText(" and more than a bit disgusted");

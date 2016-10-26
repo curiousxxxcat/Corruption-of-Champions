@@ -88,27 +88,22 @@ package classes.Scenes.Areas
 			}
 			choices[choices.length] = satyrScene.satyrEncounter;
 			choices[choices.length] = satyrScene.satyrEncounter;
-			if (flags[kFLAGS.SHEILA_CLOCK] >= 0) {
+			if (flags[kFLAGS.SHEILA_DISABLED] == 0 && flags[kFLAGS.SHEILA_CLOCK] >= 0) { //Aparently Sheila was supposed to be disabled after certain events - now fixed
 				choices[choices.length] = kGAMECLASS.sheilaScene.sheilaEncounterRouter;
 				choices[choices.length] = kGAMECLASS.sheilaScene.sheilaEncounterRouter;
 			}
 			//Pick one
 			choices[rand(choices.length)]();
 		}
-
-		private function plainsLoot():void
-		{
-			//OVI
-			if (rand(2) == 0) {
-				outputText("While exploring the plains you nearly trip over a discarded, hexagonal bottle.  ", false);
-				menuLoc = 2;
-				inventory.takeItem(consumables.OVIELIX);
+		
+		private function plainsLoot():void {
+			if (rand(2) == 0) { //OVI
+				outputText("While exploring the plains you nearly trip over a discarded, hexagonal bottle.  ");
+				inventory.takeItem(consumables.OVIELIX, camp.returnToCampUseOneHour);
 			}
-			// FIND KANGAAA
-			else {
-				outputText("While exploring the plains you come across a strange-looking plant.  As you peer at it, you realize it has some fruit you can get at.  ", false);
-				menuLoc = 2;
-				inventory.takeItem(consumables.KANGAFT);
+			else { //FIND KANGAAA
+				outputText("While exploring the plains you come across a strange-looking plant.  As you peer at it, you realize it has some fruit you can get at.  ");
+				inventory.takeItem(consumables.KANGAFT, camp.returnToCampUseOneHour);
 			}
 		}
 	}

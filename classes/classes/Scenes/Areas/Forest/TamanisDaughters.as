@@ -1,6 +1,7 @@
 package classes.Scenes.Areas.Forest
 {
 	import classes.*;
+	import classes.GlobalFlags.kFLAGS;
 	import classes.Scenes.Monsters.Goblin;
 	import classes.internals.WeightedDrop;
 
@@ -29,8 +30,11 @@ package classes.Scenes.Areas.Forest
 		}
 
 		private function tamaniShowsUp():void {
-			if(findStatusAffect(StatusAffects.Tamani) < 0 && rand(6) == 0) {
-				createStatusAffect(StatusAffects.Tamani,0,0,0,0);
+			if (TamainsDaughtersScene.tamaniPresent) {
+				if (rand(4) == 0) goblinDrugAttack(); //Tamani already there - chance of potion
+			}
+			else if (rand(6) == 0) {
+				TamainsDaughtersScene.tamaniPresent = true;
 				outputText("A high-pitched yet familiar voice calls out, \"<i><b>So this is where you skanks ran off to---wait a second.  Are you trying to poach Tamani's man!?</b></i>\"\n\n", false);
 				outputText("You can see Tamani lurking around the rear of the goblin pack, visibly berating her daughters.  On one hand it sounds like she might help you, but knowing goblins, she'll probably forget about her anger and help them subdue you for more cum...\n\n", false);
 				//(+5 mob strength)
@@ -43,31 +47,33 @@ package classes.Scenes.Areas.Forest
 				//append combat desc
 				long += " <b>Tamani lurks in the back of the crowd, curvier than her brood and watching with a mixture of amusement and irritation.  She runs a hand through her pink and black hair, waiting for an opportunity to get involved...</b>";
 			}
-			//Tamani already there - chance of potion
-			else if(rand(4) == 0 && findStatusAffect(StatusAffects.Tamani) >= 0) {
-				goblinDrugAttack();
-			}
 		}
 
 		override protected function performCombatAction():void
 		{
-			var select:Number=1;
+			var select:int = 1;
 			//mid-round madness!
 			midRoundMadness();
 			tamaniShowsUp();
 
-			if(special1 > 0 || special1 is Function) select++;
-			if(special2 > 0 || special2 is Function) select++;
-			if(special3 > 0 || special3 is Function) select++;
-			var rando:int = rand(select);
-			//Tamani's Daughters get multiattacks!
-			if(rando == 0) {
-				createStatusAffect(StatusAffects.Attacks,int(player.statusAffectv2(StatusAffects.Tamani)/2/10),0,0,0);
-				eAttack();
+			if (special1 != null) select++;
+			if (special2 != null) select++;
+			if (special3 != null) select++;
+			switch (rand(select)) {
+				case 0:
+					createStatusAffect(StatusAffects.Attacks, int(flags[kFLAGS.TAMANI_NUMBER_OF_DAUGHTERS] / 20), 0, 0, 0); //Tamani's Daughters get multiattacks!
+					eAttack();
+					break;
+				case 1:
+					special1();
+					break;
+				case 2:
+					special2();
+					break;
+				default:
+					special3();
+					break;
 			}
-			if(rando == 1) game.eventParser(special1);
-			if(rando == 2) game.eventParser(special2);
-			if(rando == 3) game.eventParser(special3);
 			combatRoundOver();
 		}
 
@@ -114,11 +120,11 @@ package classes.Scenes.Areas.Forest
 			this.weaponName = "fists";
 			this.weaponVerb="tiny punch";
 			this.armorName = "leather straps";
-			this.bonusHP = 50 + (int(player.statusAffectv2(StatusAffects.Tamani)/2)*15);
+			this.bonusHP = 50 + (int(flags[kFLAGS.TAMANI_NUMBER_OF_DAUGHTERS] / 2) * 15);
 			this.lust = 30;
 			this.lustVuln = .65;
 			this.temperment = TEMPERMENT_RANDOM_GRAPPLES;
-			this.level = 8 + (Math.floor(player.statusAffectv2(StatusAffects.Tamani) / 2 / 10));
+			this.level = 8 + (Math.floor(flags[kFLAGS.TAMANI_NUMBER_OF_DAUGHTERS] / 20));
 			this.gems = rand(15) + 5;
 			this.drop = new WeightedDrop().
 					add(consumables.GOB_ALE,5).
@@ -126,7 +132,7 @@ package classes.Scenes.Areas.Forest
 							consumables.PINKDYE,
 							consumables.BLUEDYE,
 							consumables.ORANGDY,
-							consumables.PURPDYE,1);
+							consumables.PURPDYE);
 			this.special1 = goblinDrugAttack;
 			this.special2 = goblinTeaseAttack;
 			checkMonster();

@@ -14,10 +14,10 @@
 			game.spriteSelect(7);
 			if (findStatusAffect(StatusAffects.Uber) < 0) {
 				if (rand(2) == 0) {
-					outputText("Ceraph winks and says, \"<i><i>Have you ever cum without being touched? You will.</i></i>\"\n\n", false);
+					outputText("Ceraph winks and says, \"<i>Have you ever cum without being touched? You will.</i>\"\n\n", false);
 				}
 				else {
-					outputText("Ceraph titters, \"<i><i>Let me show you the true power of an Omnibus.</i></i>\"\n\n", false);
+					outputText("Ceraph titters, \"<i>Let me show you the true power of an Omnibus.</i>\"\n\n", false);
 				}
 				outputText("Despite her sultry tease, you can tell she's starting to build up to something big...", false);
 				createStatusAffect(StatusAffects.Uber, 0, 0, 0, 0);
@@ -37,7 +37,7 @@
 					//(Avoid!)
 					if (flags[kFLAGS.IN_COMBAT_USE_PLAYER_WAITED_FLAG] == 1) {
 						outputText("She throws her hands out, palms facing you, and a rush of pink flame washes towards you.  Thanks to your decision to wait, it's easy to avoid the onrushing flames and her attack.\n\n", false);
-						outputText("Ceraph sighs and asks, \"<i><i>Why would you move?  It would make you feel soooo good!</i></i>\"", false);
+						outputText("Ceraph sighs and asks, \"<i>Why would you move?  It would make you feel soooo good!</i>\"", false);
 					}
 					//(AUTO-LOSE)
 					else {
@@ -147,7 +147,7 @@
 			var damage:Number = 0;
 			outputText("The demoness weaves her whip in the air until you can practically hear it slithering like a snake, cutting the air as it weaves back and forth, still magically alight with flames.  In a blink she lashes out twice in quick succession!\n", false);
 			//First hit!
-			doNext(1);
+			doNext(game.playerMenu);
 			//Blind dodge change
 			if (findStatusAffect(StatusAffects.Blind) >= 0 && rand(10) != 9) {
 				outputText(capitalA + short + " completely misses you with a blind attack!", false);

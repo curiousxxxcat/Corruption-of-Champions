@@ -13,7 +13,7 @@ package classes.Scenes.Areas.HighMountains
 			this.a = "";
 			this.short = "Izumi";
 			this.imageName = "izumi";
-			this.long = "You're fighting the immense Oni, Izumi.  Standing around 9 feet tall and weilding little more than her fists, she is the picture of strength and power.  She is clad in a scandalous blue and white Kimono, the garment drawing your eyes to her humongous breasts, and her perfectly sculpted thighs.  A curious horn juts from her head, the texture of it almost lost amongst the rock lining the inside of the cave.\n\nA distinctly cocky grin is painted across her face, her undivided attention focused upon you.";
+			this.long = "You're fighting the immense Oni, Izumi.  Standing around 9 feet tall and wielding little more than her fists, she is the picture of strength and power.  She is clad in a scandalous blue and white Kimono, the garment drawing your eyes to her humongous breasts, and her perfectly sculpted thighs.  A curious horn juts from her head, the texture of it almost lost amongst the rock lining the inside of the cave.\n\nA distinctly cocky grin is painted across her face, her undivided attention focused upon you.";
 			// this.plural = false;
 			this.createVagina(false, VAGINA_WETNESS_SLICK, VAGINA_LOOSENESS_NORMAL);
 			createBreastRow(Appearance.breastCupInverse("FF")); // The doc mentions her breasts would be around D/DD on a "normal human" so err, winging this shit
@@ -287,7 +287,7 @@ package classes.Scenes.Areas.HighMountains
 			if (player.isBiped()) outputText(" raise a [leg] and kick her roundly");
 			else if (player.isNaga()) outputText(" raise your tail and slap her solidly");
 			else outputText(" and slap her square");
-			outputText(" in the face.  Izumi drops you, staggering back in surprise.  “Ow !”  She actually yelps, covering her face with her hands.\n\n");
+			outputText(" in the face.  Izumi drops you, staggering back in surprise.  “Ow!”  She actually yelps, covering her face with her hands.\n\n");
 
 			outputText("You drop to the ground and roll away, expecting some form of retribution.  Izumi glares at you from behind her hand for a moment, then snickers.  Slowly, she drops back into her fighting stance and gestures for your bout to continue.");
 			
@@ -416,7 +416,7 @@ package classes.Scenes.Areas.HighMountains
 						else outputText(" erection throbs");
 						outputText(", pressed up against Izumi’s stomach muscles.  Her muscles ripple and undulate as she struggles to keep you in her grip, abs flexing, bumping, encircling your insistent erection");
 						if (player.totalCocks() > 1) outputText("s");
-						outputText(", stimulating you even further.  You realise in a flash of panic that if you don’t get out of this soon, you may actually... ");
+						outputText(", stimulating you even further.  You realize in a flash of panic that if you don’t get out of this soon, you may actually... ");
 					}
 					else
 					{

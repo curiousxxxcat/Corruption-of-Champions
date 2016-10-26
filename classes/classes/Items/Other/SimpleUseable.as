@@ -1,25 +1,34 @@
-/**
- * Created by aimozg on 10.01.14.
- */
 package classes.Items.Other
 {
-import classes.Items.Useable;
-import classes.Player;
+	import classes.Items.Useable;
+	import classes.Player;
 
-public class SimpleUseable extends Useable
+	public class SimpleUseable extends Useable 
 	{
-		private var effect:Function;
-
-		override public function useItem(player:Player, output:Boolean, external:Boolean):void
-		{
-			effect(player);
-		}
-
-		public function SimpleUseable(id:String, shortName:String, longName:String, effect:Function,value:Number = 0, description:String = null)
+		//This class should be used for items which the player cannot consume, wear or use directly.
+		//The useFunction or useText should describe the item or give a hint as to its purpose. After attempted use SimpleUseables return to the inventory automatically.
+		private var canUseFunction:Function;
+		private var canUseText:String;
+		
+		public function SimpleUseable(id:String, shortName:String, longName:String, value:Number, description:String, useText:String, useFunction:Function = null) 
 		{
 			super(id, shortName, longName, value, description);
-			// TODO check function arity and probably arg type
-			this.effect = effect;
+			canUseFunction = useFunction;
+			canUseText = useText;
+		}
+		
+		override public function canUse():Boolean 
+		{
+			clearOutput();
+			if (canUseFunction != null)
+			{
+				canUseFunction();
+			}
+			else
+			{
+				outputText(canUseText);
+			}
+			return false;
 		}
 	}
 }

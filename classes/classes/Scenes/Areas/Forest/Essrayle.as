@@ -57,7 +57,7 @@ public function essrayleMeetingI():void {
 		
 	}
 	else {
-		outputText("During your travels through the forest, you stumble upon a familiar face once again.  \"<i>Oh, hello!</i></i>\ Essrayle cheerily waves to you, causing her ample tits to jiggle slightly.  \"<i>I was wondering if you'd be back.</i>\"  She moves closer, massive melons wobbling mere inches away from you, \"<i>I had a feeling you would though.</i>\"  Cooing warmly, she brushes a lock of hair aside with enough of an exaggerated motion to set the bouncy pair to bobbing.");
+		outputText("During your travels through the forest, you stumble upon a familiar face once again.  \"<i>Oh, hello!</i>\ Essrayle cheerily waves to you, causing her ample tits to jiggle slightly.  \"<i>I was wondering if you'd be back.</i>\"  She moves closer, massive melons wobbling mere inches away from you, \"<i>I had a feeling you would though.</i>\"  Cooing warmly, she brushes a lock of hair aside with enough of an exaggerated motion to set the bouncy pair to bobbing.");
 		outputText("\n\n\"<i>So, did you come back just to say hi, or might there be some other reason?</i>\"  Those slender, green hands fall upon her shapely hips as her gorgeous amethyst eyes peer deeply into yours.  \"<i>If you came to give me a feeding, I simply must thank you this time, I insist.</i>\"  Abruptly, those tits squish against your chest as she leans in close, asking seductively, \"<i>So, feeling up for some gardening?</i>\"");
 	}
 	flags[kFLAGS.MET_ESSY]++;
@@ -71,9 +71,9 @@ public function essrayleMeetingI():void {
 //>If No
 private function noPlantsForMe():void {
 	clearOutput();
-	outputText("Essy pouts, ears flattening to the sides a bit.  \"<i>I see,</i>\" she nods, looking at you with a thinly masked disappointment.  She seems to instantly put on a false smile and move aside, gesturing to the path ahead with a sweep of the arm.  \"<i>Well, in that case, you must be going somewhere important.  Best not keep you waiting.  I do wish you luck in your adventures!</i>\" She continues to beam as you head on off, leaving her behind you in no time.  Though as you leave, you swear you hear a mumbled, \"<i>Leave it to me to find the prudish ones.</i>\"");
+	outputText("Essy pouts, ears flattening to the sides a bit.  \"<i>I see,</i>\" she nods, looking at you with thinly masked disappointment.  She seems to instantly put on a false smile and move aside, gesturing to the path ahead with a sweep of the arm.  \"<i>Well, in that case, you must be going somewhere important.  Best not keep you waiting.  I do wish you luck in your adventures!</i>\" She continues to beam as you head on off, leaving her behind you in no time.  Though as you leave, you swear you hear a mumbled, \"<i>Leave it to me to find the prudish ones.</i>\"");
 	flags[kFLAGS.TURNED_DOWN_ESSY_FIRST_MEETING] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
  
 //>If Yes
@@ -102,9 +102,9 @@ private function plantsForMe():void {
 	//(If breasts present)
 	if(player.breastRows[0].breastRating >= 1) {
 		outputText("\n\n\"<i>Oooh, how I adore these,</i>\" she coos to you, taking your breasts into two hands and beginning to squeeze and knead firmly into the pillowy flesh");
-		if(player.bRows() > 0) outputText(" of your uppermost pair");
+		if(player.bRows() > 1) outputText(" of your uppermost pair");
 		outputText(".  You moan, and this only seems to encourage her, as she takes your nipples between thumb and forefinger, twisting and turning them this way and that.  She giggles at how your moans seem to fluctuate by coincidence, continuing to tease them");
-		if(player.bRows() > 0) outputText(", steadily working over the multitude of fleshy mounds on your body");
+		if(player.bRows() > 1) outputText(", steadily working over the multitude of fleshy mounds on your body");
 		outputText(".");
 		if(player.hasFuckableNipples()) outputText("  Her fingers play with your nipples and press gently to tease at them.  She seems quite surprised as they sink in with minimal effort.  A grin spreads over her face as she begins to steadily thrust those digits in and out of your nipples, fingers swirling about the interiors all the while.");
 		outputText("  \"<i>You certainly have a lovely pair, but they could always be better, don't you think?</i>\"");
@@ -213,22 +213,17 @@ private function plantsForMe2(BE:int = 0):void {
 		//Boost size, set lactation quantity.
 		player.growTits(7,player.bRows(),false,2);
 		player.boostLactation(player.bRows());
-		
-		
         outputText("\n\nYou sit there for the next hour or two, milking your bloated bosom and giving the flora a generous watering in the process.  When all is taken care of, you stumble back upright with a brief struggle and don your gear once more.  The smell of fresh-cut flowers seems to linger on your [armor] as you depart.");
 	}
-	if(player.biggestTitSize() >= 1) {
-		if(player.findStatusAffect(StatusAffects.Feeder) >= 0) {
-			player.addStatusValue(StatusAffects.Feeder,1,1);
-			player.changeStatusValue(StatusAffects.Feeder,2,0);
-		}
-		player.boostLactation(0.01);
-	}
+	if (player.hasBreasts() && player.isLactating()) {
+        player.milked();
+        player.boostLactation(0.01);
+    }
 	player.orgasm();
 	dynStats("lib", 1);
 	//Slimefeed!
 	player.slimeFeed();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 
@@ -252,7 +247,7 @@ public function approachTrappedEssy():void {
 		
 		outputText("\n\nA pair of ethereal hands deepens their kneading strokes as they pump the girl's enormous, gushing breasts, the flush of her lilac blush spreading from her cheeks all the way down to her chest. The hyacinth hue purples her green skin and brings a deep, violet blush to Essrayle's spasming nipples, her bovid moaning becoming louder, shorter, and higher pitched.  Amidst this wanton display she manages to gasp out a word now and then, trying to communicate through the suffocating haze of her lactation-induced climaxes.  It takes some time - punctuated by keening sounds of bliss, the constant torrent of fountaining milk, and gushing spray of femme-cum from the bulbous, scarlet bud between her legs - but you gather that she's explaining how too much stimulation leaves her too weak to escape her pot.");
 		
-		outputText("\n\nThe ensorcelled hands eventually fade away, allowing the plant to slump in utter exhaustion, skin shimmering with the milk-like sap she's covered herself in. The soil around her hips shifts and she slowly rouses, her breasts already refilling before your eyes. You can understand why the Sand Witches would want to keep the plant girl - the bounty of her vernal breasts seem endless! They must've planted her and gone to get help moving the leafy cow, safe in the knowledge she wouldn't be leaving on her own power any time soon.")
+		outputText("\n\nThe ensorcelled hands eventually fade away, allowing the plant to slump in utter exhaustion, skin shimmering with the milk-like sap she's covered herself in. The soil around her hips shifts and she slowly rouses, her breasts already refilling before your eyes. You can understand why the Sand Witches would want to keep the plant girl - the bounty of her vernal breasts seems endless! They must've planted her and gone to get help moving the leafy cow, safe in the knowledge she wouldn't be leaving on her own power any time soon.")
 	
 		outputText("\n\nThe two of you sit there and try to figure a way out of the mess she's gotten herself into, though you can't be sure if there's an ulterior motive to your lingering or not.  Talking is slow as she has to fight through lingering waves of pleasure - the ghostly hands tenderized her titanic tits so thoroughly that even a light breeze is enough to send orgasmic bliss through her loins.  Thankfully, none of the sand witches comes to investigate all the noise, though judging by the tracks on the ground around you, more than a few of them have paid Essy a social call before you found her.");
 		
@@ -265,7 +260,7 @@ public function approachTrappedEssy():void {
 	menu();
 	//Option: [Feed her] [leave]
 	if(player.gender > 0) addButton(0,"Feed Her",feedTrappedEssy);
-	addButton(4,"Leave",eventParser,1);
+	addButton(4, "Leave", playerMenu);
 }
 
 //[Feed Her]
@@ -307,7 +302,7 @@ private function hasCockFeedEssy(newPage:Boolean = true):void {
 	
 	outputText("\n\nExhausted anew, Essy reclines in her pot, already dozing with an expression of happy contentment.  Though she's still imprisoned, you've at least set her at ease.  While you might like to move her somewhere more private, the sheer weight of her pot is more than enough to frustrate any attempt you might make.  Best to just leave her and check in later.");
 	player.orgasm();
-	doNext(1);
+	doNext(playerMenu);
 }
 
 private function hasPussyFeedEssy(newPage:Boolean = true):void {
@@ -321,14 +316,14 @@ private function hasPussyFeedEssy(newPage:Boolean = true):void {
 	
 	outputText("\n\nEssrayle, squeaking at the sensation of your clenching loins, begins to ask what you're doing, but the moment your inner muscles tighten around her nipple, coherent speech falls by the wayside.  Slowly, you rock back and forth against her mammary, savoring the feel of her bulging udder against your loins while grinding into her supple flesh to coax the sensitive nub deeper.  Your [hips] pound against her bust, the pliable pillows yielding and cushioning your insistent ardor, the taut surface bouncing you back upward with each ass-slapping buffet.  The unexpected but not unappreciated elasticity of the plant girl's mammoth milkers leaves you off-balance and grasping for something to steady yourself.  Reaching out, your palms inadvertently seize two of her unoccupied teats, clamping down so strongly that you roughly tug her fat nipples, bringing spurting sap to their taxed tips.");
 
-	outputText("\n\nUp and down, up and down you go, setting a steady rhythm and lactation and startled moos from the verdant girl as you go.  The intensity of her pleasure robs her udders of all moderation, the dairy-burdened tits loosing heavy flows of creamy sap that ooze and spurt over the bloated swell of her milk-fat tits, dripping into the soil beneath her.  During your ride, you take note of the girl's eager, leaking nipples around you, and make a point of alternating your pumping grip to each teat in turn, squeezing splattering gouts of nectar in alabaster fountains, ensuring that the two of you are utterly soaked in her warm, rich sap.  With the squelching, moaning, flesh-slapping din the two of you are raising, it's simply amazing no one's come to check on the commotion.  Though, you suppose, the planty slut's orgasmic moos are likely to be the least weird noise in this cave.");
+	outputText("\n\nUp and down, back and forth you go, setting a steady rhythm and lactation and startled moos from the verdant girl as you go.  The intensity of her pleasure robs her udders of all moderation, the dairy-burdened tits letting loose heavy flows of creamy sap that ooze and spurt over the bloated swell of her milk-laden tits, dripping into the soil beneath her.  During your ride, you take note of the girl's eager, leaking nipples around you, and make a point of alternating your pumping grip to each teat in turn, squeezing splattering gouts of nectar in alabaster fountains, ensuring that the two of you are utterly soaked in her warm, rich sap.  With the squelching, moaning, flesh-slapping din the two of you are raising, it's simply amazing no one's come to check on the commotion.  Though, you suppose, the planty slut's orgasmic moos are likely to be the least weird noise in this cave.");
 	
-	outputText("\n\nYour lewd, tit-humping labor swells to a fever pitch as her over-stimulated udder plumps inside you, fattening with her blossoming lust.  The cock-like knob inside you becomes swollen with milk, ballooning longer and thicker until your suckling inner walls strain to bear the girl's bloated nipple.  Feeling the trembling clench of your orgasm building, you tighten your grip and thrust yourself as deeply as you can on the cunny-stuffing mammary.  Her breast, unable to resist your peaking squeeze, gushes with pressurized jets of fertile sap, flooding your pussy with a warmth a bit too fluid to be cum, but still thick enough to send a shiver of fulfillment down your spine.  You watch your tummy grow pudgy, then plump, and finally obese as your womb is flooded with her tingling, fertile milk.  The two of you cry out in orgasmic bliss and, positively swollen with the cow's bounty, you collapsing into her very soaked cleavage, still gripping her lactating nipples.  You lay there, panting softly with her for a time, just soaking in the stimulating thrill of your ponderous belly, giving Essy's tits a tender squeeze now and then just to hear her moo with delight.");
+	outputText("\n\nYour lewd, tit-humping labor swells to a fever pitch as her over-stimulated udder plumps inside you, fattening with her blossoming lust.  The cock-like knob inside you becomes swollen with milk, ballooning longer and thicker until your suckling inner walls strain to bear the girl's bloated nipple.  Feeling the trembling clench of your orgasm building, you tighten your grip and thrust yourself as deeply as you can on the cunny-stuffing mammary.  Her breast, unable to resist your peaking squeeze, gushes with pressurized jets of fertile sap, flooding your pussy with a warmth a bit too fluid to be cum, but still thick enough to send a shiver of fulfillment down your spine.  You watch your tummy grow pudgy, then plump, and finally obese as your womb is flooded with her tingling, fertile milk.  The two of you cry out in orgasmic bliss and, positively swollen with the plant-girl's bounty, you collapsing into her very soaked cleavage, still gripping her lactating nipples.  You lay there, panting softly with her for a time, just soaking in the stimulating thrill of your ponderous belly, giving Essy's tits a tender squeeze now and then just to hear her moo with delight.");
 	
 	outputText("\n\nIt takes you a while, but you extricate yourself and clean off the best you can, leaving her with a friendly kiss on the cheek before you head on your way once more.  With visitors like you, she hardly seems like she'll mind being trapped in the enchanted flower pot.");
 	player.orgasm();
 	if(player.fertility < 50) player.fertility++;
-	doNext(1);
+	doNext(playerMenu);
 }
 
 //(After defeating the Cum Witch)
@@ -361,7 +356,7 @@ private function declineEssyPrizes():void {
 	statScreenRefresh();
 	
 	outputText("\n\n\"<i>Well, maybe in the future you'll change your mind and find another way to do it on your own.  But I guess for now I'll just see you around!  Thanks for the save, hun!</i>\"  The planty beauty blows you a kiss before she heads off, bulging breasts jiggling and bouncing steadily all the way.");
-	doNext(1);
+	doNext(playerMenu);
 }
 
 //[Yes]
@@ -412,7 +407,7 @@ private function yesGimmeGiantNipplesEssy():void {
 	
 	essyRewardEpilogueOUTTIES();
 	//[gain purple fruit] [Next]
-	inventory.takeItem(consumables.PRFRUIT);
+	inventory.takeItem(consumables.PRFRUIT, camp.returnToCampUseOneHour);
 }
 
 //[No]
@@ -428,14 +423,14 @@ private function essyRewardEpilogueOUTTIES():void {
 	outputText("\n\nThe passionate kiss goes on for a while before she releases it, sticky strands of saliva still clinging to both of your mouths.  Separating, she leans back and puffs herself out once more, smiling to you.  \"<i>Do enjoy yourself a bit, Hero.  Here's hoping we meet again.</i>\"  She places the back of her hand conspiratorially against the side of her mouth and lowers her voice.  \"<i>After you get a chance to enjoy your improved chest a bit, I'd love to get my shot at playing with those lovely melons!</i>\"");
 	outputText("\n\nWith a shameless giggle, she kisses the peak of one of your breasts while groping the one next to it.  \"<i>Mmm, yes, I'd ravish them hard and drain you dry right now, but out of respect I'll let you have the first crack at it.</i>\"  With a dainty wave, she shuffles towards the exit and is gone once more.\n\n");
 	//[End Encounter]
-	doNext(1);
+	doNext(playerMenu);
 }
 
 public function askMotherToReleaseEssy():void {
 	clearOutput();
 	if(flags[kFLAGS.SAND_WITCHES_COWED] == 0) {
 		outputText("You point out that the witches have a friend of yours trapped here with magic and you'd like her released.");
-		outputText("\n\nThe Sand Mother cocks her head to the side before understanding dawns on her luminescent eyes.  \"<i>The plant-woman?  She seeks pleasure like a demon, yet lacks the corruption we would expect.  I can give the order to turn her loose, but see her out, and should she return, I can not promise her freedom again.</i>\"");
+		outputText("\n\nThe Sand Mother cocks her head to the side before understanding dawns on her luminescent eyes.  \"<i>The plant-woman?  She seeks pleasure like a demon, yet lacks the corruption we would expect.  I can give the order to turn her loose, but see her out, and should she return, I cannot promise her freedom again.</i>\"");
 		outputText("\n\nThat'll have to do.");
 	}
 	else {
@@ -443,7 +438,7 @@ public function askMotherToReleaseEssy():void {
 		outputText("\n\nThat'll do.");
 	}
 	flags[kFLAGS.TOLD_MOTHER_TO_RELEASE_ESSY] = 1;
-	doNext(1);
+	doNext(playerMenu);
 }
 }
 }

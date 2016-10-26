@@ -86,7 +86,7 @@ public function helpValentinesDay():void {
 public function leaveValentinesDayForever():void {
 	clearOutput();
 	outputText("Ultimately, this is not worth your time.  You wish Scylla good luck, but tell her you won't help her make the holiday more popular in Tel'Adre, as you have other things to do.  Her expression turns sad and she nods in understanding as you turn away and go back into the streets of Tel'Adre.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[next]
@@ -140,7 +140,7 @@ public function goHomeFromVDay():void {
 	//With no other things to do, you go back to camp to rest.
 	//{Small Lust Increase, return to camp, go to sleep}
 	dynStats("lus", 10);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //([Scylla])
@@ -201,7 +201,7 @@ public function cuddleWithScyllaVDay():void {
 	
 	outputText("\n\n(<b>You have gained the Pure and Loving perk!</b>");
 	player.createPerk(PerkLib.PureAndLoving,0,0,0,0);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //[Make out]
@@ -260,7 +260,7 @@ public function makeOutWithScyllaVDayII():void {
 		player.createPerk(PerkLib.SensualLover,0,0,0,0);
 	}
 	
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //[Feed Her!]
@@ -272,7 +272,7 @@ public function feedScyllaVDay():void {
 	player.orgasm();
 	outputText("\n\n(<b>You have gained the One Track Mind perk.</b>");
 	player.createPerk(PerkLib.OneTrackMind,0,0,0,0);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 
@@ -358,7 +358,7 @@ public function fuckAbbyVDay():void {
 	
 	player.orgasm();
 	dynStats("sen", -3);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //{PLEASURE HER}
@@ -375,7 +375,7 @@ public function pleasureAbbyVDay():void {
 	//([Naga tongue]
 	if(player.tongueType == TONUGE_SNAKE) outputText("  Your fingers make it into her pussy alongside your tongue, and the prehensile thing, longer and more flexible than a human's, ravages the insides of her pussy, tasting everywhere as Abby shakes in her orgasm.  Her pussy eagerly tries to milk both your fingers and your tongue, clenching and gripping at them as it drips her pussy juices all over your face.  Abby screams out in a loud, uninhibited orgasm at last, expressing her ecstasy.");
 	//([Demon/Dragon Tongue]
-	else if(player.tongueType == TONUGE_DEMONIC) outputText("  Abylon shakes in excitement, pleasure, and fear as you extend your inhuman tongue to reach deep into the recesses of her pussy.  She can not hold out a moment longer, her cunt gripping your inhuman muscle tightly, the hole and muscles inside quivering as you can taster her orgasmic juices with every single point of your tongue.  She screams, shudders and moans, tongue lolling out from the intense pleasure as you force your own tongue to roll around inside her and stretch her in multiple ways. Only you holding her stops Abylon from slumping forward, it seems...");
+	else if(player.tongueType == TONUGE_DEMONIC) outputText("  Abylon shakes in excitement, pleasure, and fear as you extend your inhuman tongue to reach deep into the recesses of her pussy.  She cannot hold out a moment longer, her cunt gripping your inhuman muscle tightly, the hole and muscles inside quivering as you can taster her orgasmic juices with every single point of your tongue.  She screams, shudders and moans, tongue lolling out from the intense pleasure as you force your own tongue to roll around inside her and stretch her in multiple ways. Only you holding her stops Abylon from slumping forward, it seems...");
 	//([Human tongue]
 	else outputText("  Hooking your fingers at the front and back of her cunny, you plunge your tongue in and wiggle it eagerly.  Abby clamps down on all three invaders and loudly moans out, screaming to her content at last, as your face is flooded with pussy juice.");
 	
@@ -388,7 +388,7 @@ public function pleasureAbbyVDay():void {
 	outputText("\n\n(<b>You've received the Pure and Loving Perk!</b>)");
 	player.createPerk(PerkLib.PureAndLoving,0,0,0,0);
 	dynStats("lus", 80);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //([Pastie])
@@ -408,7 +408,7 @@ public function goVisitPastyVDay():void {
 	}
 	else {
 		outputText("\n\nYou tell Pastie that, regrettably, you only have what she sees.  She nods and says, \"<i>Too bad.  I think I'll better get going, then.  It's been somewhat fun, and I finally get a chance to go to sleep sober and wake up without a hangover.");
-		doNext(14);
+		doNext(camp.returnToCampUseTwoHours);
 	}
 }
 
@@ -489,7 +489,7 @@ public function fuckPastieForVDay():void {
 	outputText("With a semi-sadistic grin, you watch Pastie saunter towards you, clearly allured by the scent of your genitals.  You stroke your " + cockDescript(x) + ", quickly bringing it to an erection, imagining how tight even this little thing will feel inside Pastie's small, but now unnaturaly stretchable body.");
 	
 	outputText("\n\nBeing able to resist no longer, you grab her little bum and direct her towards your cock, not really hearing whether she's cheering, complaining, or asking you to stop; honestly, you could care less when you press your " + cockDescript(x) + " against the entrance to her diminutive vagina and start pushing.");
-	outputText("\n\nAfter a while of fruitless pressing against her little legs, bum, and clit, Pastie finally gives way. Even your " + cockHead(x) + " is enough to stretch her already, but there's not much else to do now other than pushing it in deeper.");
+	outputText("\n\nAfter a while of fruitless pressing against her little legs, bum, and clit, Pastie finally gives way. Even your " + player.cockHead(x) + " is enough to stretch her already, but there's not much else to do now other than pushing it in deeper.");
 	
 	outputText("\n\nThe tightness of Pastie's confines is amazing, even as her body balloons out to more than twice its usual thickness, stretching and quivering around you, trying to either accommodate your " + cockDescript(x) + " or push it out completely.  It almost borders on painful, but also feels like a divine cum milking machine meant to draw your seed out of you.  You gently press Pastie down and pull her up your erection, essentially using her body as a masturbation aid, moaning all the while...");
 	
@@ -517,7 +517,7 @@ public function fuckPastieForVDay():void {
 	player.createPerk(PerkLib.OneTrackMind,0,0,0,0);
 	player.orgasm();
 	dynStats("sen", -2);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //[RubDick]
@@ -537,7 +537,7 @@ public function rubPastieOnYourWangDawg():void {
 	
 	outputText("\n\nPolishing your mast with the amorous drunk has been fun, but you think you've teased her enough. Raising the tempo of your fey massage, you can feel your release building up just behind your [cock biggest] in a heavy pressure that floods your loins with urgency.  Gritting your teeth, you wrap your other hand around the first and bounce her faster and faster along your meat.  Eager caresses become frantic friction as Pastie feels your flesh swelling against her.");
 	if(player.balls > 0) outputText("  Your [balls] lurch, " + player.skin() + " contracting as liquid passion rises within you.");
-	outputText("  Your [ass] clenches in anticipation, heralding your climax, so you slide the fairy up your shaft, pulling free from the grip of her arms and legs, holding the confused girl directly in front of your " + multiCockDescriptLight() + " while loosing your grasp to bear her entire, curvaceous form to the open air.  With a shuddering gasp, you erupt your intoxicating cream directly into the fey girl, your orgasm");
+	outputText("  Your [ass] clenches in anticipation, heralding your climax, so you slide the fairy up your shaft, pulling free from the grip of her arms and legs, holding the confused girl directly in front of your " + player.multiCockDescriptLight() + " while loosing your grasp to bear her entire, curvaceous form to the open air.  With a shuddering gasp, you erupt your intoxicating cream directly into the fey girl, your orgasm");
 	//low cum production:
 	if(player.cumQ() < 250) outputText(" easily drenching the tiny fairy, in plump pearls up and down her naked flesh.");
 	else if(player.cumQ() < 750) outputText(" leaving her and the arm you're holding her in dripping with a sticky alabaster lacquer.");
@@ -553,7 +553,7 @@ public function rubPastieOnYourWangDawg():void {
 	player.createPerk(PerkLib.OneTrackMind,0,0,0,0);
 	player.orgasm();
 	dynStats("sen", -2);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 //[Pussy Dive]
@@ -590,7 +590,7 @@ public function goForAPushayDivePasty():void {
 	
 	player.orgasm();
 	dynStats("sen", -2);
-	doNext(14);
+	doNext(camp.returnToCampUseTwoHours);
 }
 
 /*END!

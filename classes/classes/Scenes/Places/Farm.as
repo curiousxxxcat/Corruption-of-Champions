@@ -26,7 +26,7 @@
 	}
 	
 public function farmExploreEncounter():void {
-
+outputText("Whitney marches up to you as soon as you approach the farm, a stoic expression plastered across her face.");
 	if (flags[kFLAGS.FARM_CORRUPTION_STARTED] > 0)
 	{
 		farmCorruption.rootScene();
@@ -39,7 +39,7 @@ public function farmExploreEncounter():void {
 	{
 		outputText("Whitney marches up to you as soon as you approach the farm, a stoic expression plastered across her face.");
 		outputText("\n\n\"<i>What the fuck do you think you're doing here [name]? After what you did to Marble you still think you're welcome here? Leave. <b>Now</b>.</i>\"");
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	
@@ -56,8 +56,7 @@ public function farmExploreEncounter():void {
 			player.addStatusValue(StatusAffects.MetWhitney,1,1);
 			if(player.statusAffectv1(StatusAffects.MetWhitney) == 2) outputText("<b>You've been to the farm enough to easily find it.  You can return by selecting it from the places menu (and will no longer encounter it during random lake exploration)</b>.\n\n", false);
 		}
-		menuLoc = 2;
-		inventory.takeItem(consumables.CANINEP);
+		inventory.takeItem(consumables.CANINEP, camp.returnToCampUseOneHour);
 	}
 	//Repeat Offender
 	else {
@@ -105,14 +104,14 @@ public function farmExploreEncounter():void {
 		if(flags[kFLAGS.WHITNEY_FLIPPED_OUT_OVER_KELLY] == 0) addButton(0,"Explore",exploreFarm);
 		if(flags[kFLAGS.WHITNEY_FLIPPED_OUT_OVER_KELLY] == 0) addButton(6,"Talk",talkWhitney);
 		if(flags[kFLAGS.WHITNEY_FLIPPED_OUT_OVER_KELLY] == 0) addButton(7,"Work",workFarm);
-		addButton(9,"Leave",eventParser,13);		
+		addButton(9,"Leave",camp.returnToCampUseOneHour);		
 	}		
 }
 
 //[YES]
 private function whitneyMilkerHookup(breast:Boolean = true):void {
 	spriteSelect(62);
-	outputText("Whitney takes the gear back to her farm after promising to have it working within the hour.  She did leave you with a cryptic warning to \"<i><i>leave the milkings to the beasts, lest you become one</i>.</i>\"\n\nYou shrug and head back to check up on camp.", true);
+	outputText("Whitney takes the gear back to her farm after promising to have it working within the hour.  She did leave you with a cryptic warning to \"<i>leave the milkings to the beasts, lest you become one</i>.</i>\"\n\nYou shrug and head back to check up on camp.", true);
 	if(breast) {
 		player.createKeyItem("Breast Milker - Installed At Whitney's Farm",0,0,0,0);
 		player.removeKeyItem("Breast Milker");	
@@ -121,14 +120,14 @@ private function whitneyMilkerHookup(breast:Boolean = true):void {
 		player.createKeyItem("Cock Milker - Installed At Whitney's Farm",0,0,0,0);
 		player.removeKeyItem("Cock Milker");
 	}
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[NO]
 private function whitneyMilkerRefusal():void {
 	spriteSelect(62);
 	clearOutput();
 	outputText("Whitney shrugs and the two of you resume your conversation.  But like all good things, it has to come to an end.  The two of you go your separate ways.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //TALK
 private function talkWhitney():void {
@@ -152,6 +151,7 @@ private function talkWhitney():void {
 
 		outputText("\n\n“<i>Those two are hard workers, in their own different ways. Doubt I’d be able to keep the farm going without them.</i>” She sighs. “<i>When you are out in the sticks like this, you have to make allowances for the people you find yourself lumped together with. Be understanding, and look for the good in everyone. If you set boundaries and stand firm by 'em you can get by with most anyone.</i>” She looks you in the eye. “<i>You should be careful how much time you spend around just anyone, though. Some folks don’t have your best interests at heart. Some others think they do, and they’re even more dangerous. Know what I mean?</i>” Not particularly, but you get the distinct impression you’re being warned about something. Feeling slightly unsettled, you politely take your leave. Whitney nods once and returns to her book, the picture of placidity.");
 		
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	
@@ -168,6 +168,7 @@ private function talkWhitney():void {
 		
 		outputText("\n\n“<i> I had my reasons. I grew up in the country, </i>” she goes on after a short pause, “<i>and never held much with city life. Particularly not hot, dusty, close ‘n stinky city life. Course farm life is stinky too,</i>” she acknowledges as she heaves up the milk pail and starts to walk it towards a barn. You offer to help, but she shakes her head. “<i> But least here it’s stink you’ve created yourself. I moved out here eight years ago, and never regretted it. As for Urta... well, she was finding better friends at the bottom of bottles by then. </i>” She disappears into the barn with the milk, and you decide to leave it at that.");
 		
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 
@@ -214,11 +215,11 @@ private function talkWhitney():void {
 		{
 			if (player.findStatusAffect(StatusAffects.BreastsMilked) < 0) outputText("\n\n");
 			
-			outputText("You notice a number of smaller bottles filled with a creamy fluid on the table, arranged in a cargo container. It takes you a moment to realise what it is. “<i>Why d’you think I pay you for it?</i> ” says Whitney with a laugh, catching your expression. “<i>I kin use some of it for my herd, but it’s just as easy to sell it to goblins ‘n harpies. Much better to buy it from me than to waste energy catching and beating it out of a satyr. 'Sides, how'd ya think I kept my hair so luxurious? Goblin hairdressers are top notch.</i>”");
+			outputText("You notice a number of smaller bottles filled with a creamy fluid on the table, arranged in a cargo container. It takes you a moment to realize what it is. “<i>Why d’you think I pay you for it?</i> ” says Whitney with a laugh, catching your expression. “<i>I kin use some of it for my herd, but it’s just as easy to sell it to goblins ‘n harpies. Much better to buy it from me than to waste energy catching and beating it out of a satyr. 'Sides, how'd ya think I kept my hair so luxurious? Goblin hairdressers are top notch.</i>”");
 		}
 		
+		doNext(camp.returnToCampUseOneHour);
 		return;
-		
 	}
 	
 	// Requires: PC cleared Factory
@@ -236,6 +237,7 @@ private function talkWhitney():void {
 		
 		outputText("\n\nShe stops for such a long while that you wonder whether she’s finished. “<i>Could- could you recognise any of those prisoners? The ones from your town. You said some of em stayed even when you freed em. What did you think about that? I often wonder- is it better never to know what happened to somebody, or find em and discover nothing but a twisted shell of what you remember: a soulless monster who even likes what’s been done to em?</i>” She stops and you think you see tears glittering in eyes still gazing at the lake. You wait a little longer but evidently that’s all you’re getting. You put a hand on her shoulder and then quietly walk away.");
 		
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 
@@ -250,10 +252,11 @@ private function talkWhitney():void {
 
 		outputText("\n\n“<i>Listen [name],</i>” says Whitney hesitantly, “<i>I reckon I might come across as a bit... distant sometimes, but you know I 'preciate you coming down here to talk all the time, right? I like that a lot. Nobody 'round here is exactly a great conversationalist, and it’s nice to have someone who jus' listens. Particularly if they’re off savin' the world rest of the time.</i>” Slightly taken aback by her sincerity, you say it’s no big deal; you like hanging around the farm with her, too. She smiles broadly at that, and then with a nod of her head invites you to walk with her down to the storage barn. As delicately as you can, you ask her if she left Tel’Adre because of what happened to her husband.");
 
-		outputText("\n\n“<i>Color kinda disappeared from that place for me,</i>” she replies. “<i>Maybe I coulda done what Urta did and used alcohol to make it feel better, but... I dunno. I couldn’t bear the sympathy and I couldn’t bear hanging around the same places he once did. I just wanted to be on my own. So I sold everything I had, used it to buy seed and supplies, then came out here, where I knew there was a ruin of a farm.</i>” She laughs shortly. “<i>'Course I knew. My family used to live here, 'til the demons came. My ma and pa thought they were so dang lucky to get me to Tel’Adre in one piece, and they thought I was so dang crazy to come out here again. Just told em it was something I had to do.</i>” She shakes her head fondly as she throws a knot in the pepper bag’s mouth and then shoves it into the gloom of the barn. “<i>Pa still sometimes comes out here, try’na persuade me to sell up and move back. Sell to who, I tell him? Anyways I think I’m reasonably safe. Demons have got bigger fish to fry these days.</i>” She looks at you with something different in her expression, and it takes you a while to realise what it is - real belief.");
+		outputText("\n\n“<i>Color kinda disappeared from that place for me,</i>” she replies. “<i>Maybe I coulda done what Urta did and used alcohol to make it feel better, but... I dunno. I couldn’t bear the sympathy and I couldn’t bear hanging around the same places he once did. I just wanted to be on my own. So I sold everything I had, used it to buy seed and supplies, then came out here, where I knew there was a ruin of a farm.</i>” She laughs shortly. “<i>'Course I knew. My family used to live here, 'til the demons came. My ma and pa thought they were so dang lucky to get me to Tel’Adre in one piece, and they thought I was so dang crazy to come out here again. Just told em it was something I had to do.</i>” She shakes her head fondly as she throws a knot in the pepper bag’s mouth and then shoves it into the gloom of the barn. “<i>Pa still sometimes comes out here, try’na persuade me to sell up and move back. Sell to who, I tell him? Anyways I think I’m reasonably safe. Demons have got bigger fish to fry these days.</i>” She looks at you with something different in her expression, and it takes you a while to realize what it is - real belief.");
 
 		outputText("\n\nYou say goodbye with a hug and leave with a funny feeling in your gut.");
 		
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	
@@ -267,7 +270,7 @@ private function talkWhitney():void {
 	//[HAVE MILKER THAT ISN'T PLUGGED IN]
 	if(rand(4) == 0 && player.hasKeyItem("Breast Milker - Installed At Whitney's Farm") < 0) {
 		if(player.hasKeyItem("Breast Milker") >= 0) {
-			outputText("Before you can say much of anything, Whitney exclaims, \"<i><i>My stars! Is that one of them demon's milking machines?</i></i>\"\n\n", false);
+			outputText("Before you can say much of anything, Whitney exclaims, \"<i>My stars! Is that one of them demon's milking machines?</i>\"\n\n", false);
 			outputText("You nod and tell her how you liberated it from the demonic factory and explain that even though it should be fully functional, it'll need to connect to some other machinery to work, and it's way more than any one person could handle.\n\n", false);
 			outputText("\"<i>Well of course, it needs hooked into a pump system, collection reservoir, and a power source.  It just happens I've got all that equipment set up for my cows in the barn, and I reckon it'd be easier to plug into than a girl sniffing minotaur musk,</i>\" Whitney explains, \"<i>If you like I could get it all set up for ya, hell, I might even toss you a few gems if you can produce enough milk.</i>\"\n\n", false);
 			//(, hell, if you manage to gather large enough quantities with it, I might be able to find a way to inseminate my cattle with it and be able to pay you for it.  Don't you worry none, I know ways to make this kind of thing work).</i>\"
@@ -282,24 +285,24 @@ private function talkWhitney():void {
 			else if(player.cor <= 66) outputText("You flush with a touch of exhibitionism", false);
 			else outputText("You flush hotly and arch your back, openly displaying your milk to the dog-girl", false);
 			outputText(" as her words sink in.   Runners of milk leak down your " + allBreastsDescript() + ", released by the stress of being so exposed.   In no time flat you're soaked in milk.\n\n", false);
-			outputText("Whitney starts to giggle, but immediately stifles it, apologizing, \"<i>Ah'm sorry, I didn't mean nothing by it.  I know a few folks who LOVE being a walking milk-fountain.  If ya like, I could probably get you set up with your own milking equipment.   You'd be able to keep up with the…fluid accumulations that seem to be troubling you.   I'd even be able to toss you a few gems if you produce enough.</i>\"\n\n", false);
+			outputText("Whitney starts to giggle, but immediately stifles it, apologizing, \"<i>Ah'm sorry, I didn't mean nothing by it.  I know a few folks who LOVE being a walking milk-fountain.  If ya like, I could probably get you set up with your own milking equipment.   You'd be able to keep up with the... fluid accumulations that seem to be troubling you.   I'd even be able to toss you a few gems if you produce enough.</i>\"\n\n", false);
 			outputText("It almost sounds too good to be true.   The farmer-girl nods, reading your expression quite clearly, \"<i>Yes, there is a bit of a catch.  I'll need 250 gems for the parts to get this all set up.   Equipment like this isn't cheap.   Whaddya say, hun?   I understand if you don't want to – you can always just wait for the milk to stop.</i>\"\n\n", false);
 			if(player.gems >= 250) {
 				outputText("Do you purchase a breast-milker from Whitney for 250 gems?", false);
-				doYesNo(2182,2183);
+				doYesNo(breastMilkerPurchase, breastMilkerNoPurchase);
 			}
 			else {
 				outputText("You don't have enough money for the milker.  You apologize and head back to camp, maybe you can get one later.", false);
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 			}
 			return;
 		}
 	}
 	//[HAVE COCK MILKER THAT ISN'T PLUGGED IN]
 	if(rand(4) == 0 && player.hasKeyItem("Cock Milker - Installed At Whitney's Farm") < 0 && player.hasKeyItem("Cock Milker") >= 0) {
-		outputText("Before you can say much of anything, Whitney exclaims, \"<i><i>My stars! Is that one of them demon's milking machines?</i></i>\"\n\n", false);
+		outputText("Before you can say much of anything, Whitney exclaims, \"<i>My stars! Is that one of them demon's milking machines?</i>\"\n\n", false);
 		outputText("You nod and tell her how you got it and explain that even though it should be fully functional, it'll need to connect to some other machinery to work, and it's way more than any one person could handle.\n\n", false);
-		outputText("\"<i><i>Well of course, it needs hooked into a pump system, collection reservoir, and a power source.  It just happens I've got all that equipment set up for my cows in the barn, and I reckon it'd be easier to plug into than a girl sniffing minotaur musk.</i></i>\" Whitney explains, \"<i><i>If you like I could get it all set up for ya, hell, if you manage to gather large enough quantities with it, I might be able to find a way to inseminate my cattle with it and pay ya for it.  Don't you worry none, I know ways to make this kind of thing work.</i></i>\"\n\n", false);
+		outputText("\"<i>Well of course, it needs hooked into a pump system, collection reservoir, and a power source.  It just happens I've got all that equipment set up for my cows in the barn, and I reckon it'd be easier to plug into than a girl sniffing minotaur musk.</i>\" Whitney explains, \"<i>If you like I could get it all set up for ya, hell, if you manage to gather large enough quantities with it, I might be able to find a way to inseminate my cattle with it and pay ya for it.  Don't you worry none, I know ways to make this kind of thing work.</i>\"\n\n", false);
 		outputText("Do you give the cock milker to Whitney for her to hook up?", false);
 		doYesNo(createCallBackFunction(whitneyMilkerHookup,false),whitneyMilkerRefusal);
 		return;
@@ -317,8 +320,26 @@ private function talkWhitney():void {
 	if(player.inte < 30) dynStats("int", .5);
 	if(player.inte < 40) dynStats("int", .5);
 	dynStats("lus", -5);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	//+3 int if less than 15, +2 int if less 20, +1 int if less than 30, +.5 int if less than 40.
+}
+
+private function breastMilkerPurchase():void {
+	outputText("Whitney takes the gems and leaves with the promise of having your gear set up within the hour.  She calls back over her shoulder with a cryptic warning, \"<i>Watch how much time you spend getting milked like an animal, lest you wind up like one.</i>\"", true);
+	doNext(camp.returnToCampUseOneHour);
+	player.createKeyItem("Breast Milker - Installed At Whitney's Farm", 0, 0, 0, 0);
+	player.gems -= 250;
+	statScreenRefresh();
+}
+
+private function breastMilkerNoPurchase():void {
+	doNext(camp.returnToCampUseOneHour);
+	outputText("Whitney shrugs and the two of you chat about other things, just passing the time and enjoying a relatively normal chat.", true);
+	//+3 int if less than 15, +2 int if less 20, +1 int if less than 30, +.5 int if less than 40.
+	if (player.inte < 15) dynStats("int", 1);
+	if (player.inte < 20) dynStats("int", 1);
+	if (player.inte < 30) dynStats("int", .5);
+	if (player.inte < 40) dynStats("int", .5);
 }
 
 public function workFarm():void {
@@ -395,11 +416,11 @@ public function workFarm():void {
 		//always +1 str till 50, then 50% chance.
 		if(player.str <= 50) dynStats("str", 1);
 		else dynStats("str", rand(2));
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	spriteSelect(62);
-	outputText("You ask Whitney if she could use help with anything and she points towards the pepper fields, \"<i><i>Ya mind gathering up some peppers for an hour or two?  I'm gonna need a few for supper tonight.  I'll even let you keep the best one!</i></i>\"\n\n", false);
+	outputText("You ask Whitney if she could use help with anything and she points towards the pepper fields, \"<i>Ya mind gathering up some peppers for an hour or two?  I'm gonna need a few for supper tonight.  I'll even let you keep the best one!</i>\"\n\n", false);
 	outputText("You nod and borrow a basket, and set off towards the fields.  The next two hours are a blur of sweat and hard work as you prowl between the rows of plants, picking as many ripe red peppers as you can find.  When you finish, you drop the basket by Whitney's door, but not before taking your pepper.\n", false);
 	//(75% chance normal pepper, 25% chance \"<i>rare</i>\" pepper)
 	var pepper:Number = rand(4);
@@ -419,8 +440,7 @@ public function workFarm():void {
 		if(temp == 4) itype = consumables.BULBYPP;
 	}
 	trace("FARM SHIT: " + itype.shortName);
-	gameState = 8;
-	inventory.takeItem(itype);
+	inventory.takeItem(itype, camp.returnToCampUseTwoHours);
 }
 
 public function meetMarble():void {
@@ -481,13 +501,13 @@ public function exploreFarm():void {
 	}
 	//Meet Marble First Time
 	if(player.findStatusAffect(StatusAffects.Marble) < 0 && player.findStatusAffect(StatusAffects.NoMoreMarble) < 0) {
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		marbleScene.encounterMarbleInitially();
 		return;
 	}
 	//Meet kelt 1st time
 	if(rand(2) == 0 && player.findStatusAffect(StatusAffects.Kelt) < 0 && player.findStatusAffect(StatusAffects.KeltOff) < 0) {
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		keltScene.keltEncounter();
 		return;		
 	}
@@ -523,14 +543,14 @@ public function exploreFarm():void {
 			outputText("Whitney falls behind, unable to cope with your speed as you tear around the farm.", false);
 		}
 		outputText("\n\nAfterwards, the both of you lie back against a tree, panting heavily and exchanging pleasantries.  Once you've both had a chance to rest, she bids you farewell and returns to her labors, leaving you to journey home to camp.", false);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	//Other stuff
 	if(explore == 1) {
 		outputText("After wandering around for a while, you find yourself atop a slight rise looking out over the farm and the distant lake. Despite the corruption you know is slowly consuming this land, being here now makes you feel so at peace you wish it could go on forever.", true);
 		dynStats("cor", -rand(3));
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	//Cows
@@ -549,7 +569,7 @@ public function exploreFarm():void {
 			dynStats("lus", 10);
 		}
 		//[if no horse dick, a deep cow or horse vag, and in heat]
-		else if(player.findStatusAffect(StatusAffects.Heat) >= 0) {
+		else if(player.inHeat) {
 			outputText("Maybe it wants a bull? You do, one with long, thick dick-meat to satisfy your starving fuck-hole...\n\n", false);
 			dynStats("lus", 15);
 		}
@@ -559,7 +579,7 @@ public function exploreFarm():void {
 			dynStats("lus", 3);
 		}
 		outputText("Shaking your head, you clear your thoughts and turn away from the pasture. Cows don't have your problems.", false);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		return;
 	}
 	if(explore == 3) {
@@ -569,7 +589,7 @@ public function exploreFarm():void {
 	//[NOTHING]
 	else {
 		outputText("You wander around, unable to find anything entertaining on this patch of rural bliss.", true);
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 }
 
@@ -663,7 +683,7 @@ public function getMilked():void {
 			if(player.totalBreasts() == 2) outputText("pair", false);
 			else if(player.totalBreasts() == 4) outputText("quartet", false);
 			else outputText("group", false);
-			outputText(" of internal floodgates are opening, and thin streams of milk erupt, spraying to the noisy suckling tubes.   The milk is sucked away before it can build up, leaving you to wonder just how much you're managing to produce.   The milking goes on for the better part of an hour, though you stop producing long before its over.  By the time the milker shuts off and the harness releases you, your breasts ache terribly.\n\n", false);
+			outputText(" of internal floodgates are opening, and thin streams of milk erupt, spraying to the noisy suckling tubes.   The milk is sucked away before it can build up, leaving you to wonder just how much you're managing to produce.   The milking goes on for the better part of an hour, though you stop producing long before it's over.  By the time the milker shuts off and the harness releases you, your breasts ache terribly.\n\n", false);
 		}
 		//Lightish2
 		else if(milksplosion == 1) {
@@ -687,7 +707,7 @@ public function getMilked():void {
 		}
 		//Medium 3
 		if(milksplosion == 2) {
-			outputText("Fat drops of milk pour out of your " + nippleDescript(0) + "s, pooling in the milking-cups as the machine begins to extract your creamy breast-milk.   The milk flow begins streaming out of you it bursts of fluid as the machinery switches to a pulsating suction.  You groan happily as your " + allBreastsDescript() + " empty, relieving you of pent of pressure.   The feeling is enjoyable in more than just that way, and you feel yourself getting ", false);
+			outputText("Fat drops of milk pour out of your " + nippleDescript(0) + "s, pooling in the milking-cups as the machine begins to extract your creamy breast-milk.   The milk flow begins streaming out of you it bursts of fluid as the machinery switches to a pulsating suction.  You groan happily as your " + allBreastsDescript() + " empty, relieving you of pent up pressure.   The feeling is enjoyable in more than just that way, and you feel yourself getting ", false);
 			if(player.totalCocks() == 0) {
 				if(player.hasVagina()) outputText("wet", false);
 				else outputText("horny", false);
@@ -759,14 +779,14 @@ public function getMilked():void {
 	//If already at cap
 	if(flags[kFLAGS.WHITNEY_GEMS_PAID_THIS_WEEK] >= cap) {
 		outputText(" and displays a warning that <b>you're producing more than Whitney can pay for</b>", false);
-		payout = 0;		
+		payout = 0;
 	}
 	if(payout > 0) {
 		//If over cap reduce payout to the difference
 		if(payout + flags[kFLAGS.WHITNEY_GEMS_PAID_THIS_WEEK] > cap) payout = cap - flags[kFLAGS.WHITNEY_GEMS_PAID_THIS_WEEK];
 		//Keep track of how much is paid
 		flags[kFLAGS.WHITNEY_GEMS_PAID_THIS_WEEK] += payout;
-		outputText(" and automatically dispenses " + num2Text(payout) + " gems.  Whitney really went all out with this setup!", false);
+		outputText(" and automatically dispenses " + num2Text(payout) + " gem" + (payout == 1 ? "" : "s") + ".  Whitney really went all out with this setup!", false);
 		//Display a warning that you've capped out.
 		if(flags[kFLAGS.WHITNEY_GEMS_PAID_THIS_WEEK] >= cap) outputText("  <b>The machinery warns you that Whitney can't afford any more this week!</b>", false);
 		player.gems += payout;
@@ -816,7 +836,7 @@ public function getMilked():void {
 	if(player.statusAffectv1(StatusAffects.LactationEndurance) < 1.5) player.addStatusValue(StatusAffects.LactationEndurance,1,.05);
 	player.addStatusValue(StatusAffects.LactationEndurance,1,.05);
 	player.createStatusAffect(StatusAffects.Milked,8,0,0,0);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 public function cockPumping():void {
@@ -845,7 +865,7 @@ public function cockPumping():void {
 	}
 	//First time using cock milker – factory install
 	if(player.findStatusAffect(StatusAffects.CockPumped) < 0) {
-		outputText("<b>There is a note tacked to the door from Whitney:</b>\n\n<i>I got your machine all rigged up, and even made a few modifications to bring it up to speed with the machinery I use on the bulls.  Enjoy your 'milkings', and don't overdo it – certain messes even a farm-girl like me WON'T clean up.</i>\n\n", false);
+		outputText("<b>There is a note tacked to the door from Whitney:</b>\n\n<i>I got your machine all rigged up, and even made a few modifications to bring it up to speed with the machinery I use on the bulls.  Enjoy your 'milkings', and don't overdo it – there are certain messes even a farm-girl like me WON'T clean up.</i>\n\n", false);
 		//Step into harness – first time only
 		outputText("A harness hangs limply in the stall, there to hold the occupant in place while they are drained of every ounce of 'milk'.  You exhale slowly and force yourself to step into it.  As you puzzle out the straps, it gets easier and easier to get the rest into place.  You snap the last one in place, and machinery whirs and pulls them tight, lifting you off the ground and suspending you, facedown.  A hatch in the far wall slides open, revealing a mass of tubes, wires, and machinery.  A ", false);
 		if(player.cockTotal() == 1) outputText("single hose wriggles out from the hole, squirming across the floor.  It stops and lifts up, slowly homing in your horny shaft.\n\n", false);
@@ -866,45 +886,45 @@ public function cockPumping():void {
 		//Small 1 
 		if(rand(2) == 0) {
 			if(player.cockTotal() == 1) outputText("The hose's 'tip' is many times longer than your member, and about thrice as thick.  The 'opening' is filled with something wet and pink.  It squirms and wriggles, looking very much alive.  Where did Whitney get this stuff?    It tentatively presses against your " + cockDescript(0) + ", sucking wetly as the material inside slurps you down.  The feeling is immediate and intense, like being surrounded by hundreds of eager tongues, all writhing together along your length.\n\n", false);
-			else outputText("The hoses' 'tips' are many times longer than your members, and about thrice as thick.  The openings are each filled with something wet and pink.  It squirms and wriggles, looking very much alive.  Where did Whitney get this stuff?   They tentatively press against your " + multiCockDescriptLight() + ", sucking wetly as the material inside slurps you down.  The feeling is immediate and intense, like being surrounded by hundreds of eager tongues, all writhing together along your lengths at once.\n\n", false);
+			else outputText("The hoses' 'tips' are many times longer than your members, and about thrice as thick.  The openings are each filled with something wet and pink.  They squirm and wriggle, looking very much alive.  Where did Whitney get this stuff?   They tentatively press against your " + multiCockDescriptLight() + ", sucking wetly as the material inside slurps you down.  The feeling is immediate and intense, like being surrounded by hundreds of eager tongues, all writhing together along your lengths at once.\n\n", false);
 		}
 		//Small 2
 		else {
-			if(player.cockTotal() == 1) outputText("The hose's opening, while much larger than your " + cockDescript(0) + ", is packed full of some slimy looking pink flesh.  It wriggles hungrily as it snakes up, noisily slobbering over your tip.  Your body, tired of the foreplay, thrusts forwards, rocking the harness back in forth.  The effort is wasted, as hose stops and slowly repositions itself under you, having to reset before it can begin 'milking'.  You sigh and hold perfectly still as it bumps back against you.    Your muscles twitch but you hold steady as it slowly slides forwards, effortlessly taking your " + cockDescript(0) + " inside.  The stimulation is intense and immediate.  The suction kicks in, making you swell larger than normal.  You feel like every inch is covered in tiny wet massaging fingers and tongues.\n\n", false);
-			else outputText("The hoses' openings, while much larger than your " + multiCockDescriptLight() + ", are packed full of some slimy looking pink flesh.  They wriggles hungrily as they snake up, noisily slobbering over your tip.  Your body, tired of the foreplay, thrusts forwards, rocking the harness back in forth.  The effort is wasted, as hoses stop and slowly reposition themselves under you, having to reset before they can begin 'milking'.  You sigh and hold perfectly still as they bump back against you.    Your muscles twitch but you hold steady as they slowly slide forward, effortlessly taking your " + multiCockDescript() + " inside.  The stimulation is intense and immediate.  The suction kicks in, making you swell larger than normal.  You feel like every inch is covered in tiny wet massaging fingers and tongues.\n\n", false);
+			if(player.cockTotal() == 1) outputText("The hose's opening, while much larger than your " + cockDescript(0) + ", is packed full of some slimy looking pink flesh.  It wriggles hungrily as it snakes up, noisily slobbering over your tip.  Your body, tired of the foreplay, thrusts forwards, rocking the harness back and forth.  The effort is wasted, as the hose stops and slowly repositions itself under you, having to reset before it can begin 'milking'.  You sigh and hold perfectly still as it bumps back against you.    Your muscles twitch but you hold steady as it slowly slides forwards, effortlessly taking your " + cockDescript(0) + " inside.  The stimulation is intense and immediate.  The suction kicks in, making you swell larger than normal.  You feel like every inch is covered in tiny wet massaging fingers and tongues.\n\n", false);
+			else outputText("The hoses' openings, while much larger than your " + multiCockDescriptLight() + ", are packed full of some slimy looking pink flesh.  They wriggles hungrily as they snake up, noisily slobbering over your tip.  Your body, tired of the foreplay, thrusts forwards, rocking the harness back and forth.  The effort is wasted, as the hoses stop and slowly reposition themselves under you, having to reset before they can begin 'milking'.  You sigh and hold perfectly still as they bump back against you.    Your muscles twitch but you hold steady as they slowly slide forward, effortlessly taking your " + multiCockDescript() + " inside.  The stimulation is intense and immediate.  The suction kicks in, making you swell larger than normal.  You feel like every inch is covered in tiny wet massaging fingers and tongues.\n\n", false);
 		}
 	}
 	else if(player.cockArea(0) < 70) {
 		//Medium 1
 		if(rand(2) == 0) {
 			if(player.cockTotal() == 1) {
-				outputText("The mechanical snake's receptacle yawns open, showing an interior filled with wriggling pink material and dripping mucusy wetness.  It wiggles, closing the distance to your " + cockDescript(0) + " in a flash.  Pausing just below your " + cockHead() + ", it slowly flows upward, engulfing you with slick pleasure.  It sucks hard, sliding up ", false);
+				outputText("The mechanical snake's receptacle yawns open, showing an interior filled with wriggling pink material and dripping mucusy wetness.  It wiggles, closing the distance to your " + cockDescript(0) + " in a flash.  Pausing just below your " + player.cockHead() + ", it slowly flows upward, engulfing you with slick pleasure.  It sucks hard, sliding up ", false);
 				if(player.hasKnot(0)) outputText("past your knot", false);
 				else outputText("to your base", false);
 				outputText(" and massaging you with hundreds of lubricated internal protrusions.\n\n", false);
 			}
 			else {
-				outputText("The mechanical snake's receptacles yawn open, showing an interior filled with wriggling pink material and dripping mucusy wetness.  They wiggle, closing the distance to your " + multiCockDescriptLight() + " in a flash.  Pausing just below your " + cockHead() + "s, they slowly flow upward, engulfing you with slick pleasure.  They suck hard, sliding up ", false);
+				outputText("The mechanical snake's receptacles yawn open, showing an interior filled with wriggling pink material and dripping mucusy wetness.  They wiggle, closing the distance to your " + multiCockDescriptLight() + " in a flash.  Pausing just below your " + player.cockHead() + "s, they slowly flow upward, engulfing you with slick pleasure.  They suck hard, sliding up ", false);
 				outputText("to your base", false);
 				outputText(" and massage you with hundreds of lubricated internal protrusions.\n\n", false);
 			}
 		}
 		//medium 2
 		else {
-			if(player.cockTotal() == 1) outputText("The dick-milker's opening looks well suited to take your " + cockDescript(0) + ", just about a perfect match for someone hung like you.  As it closes with your groin, you get a better look at the internals.  It looks…alive.  The inside is filled with slime-slick flesh, pinkish in color and jiggling hungrily.  What the hell did Whitney put inside this thing anyway?  The dripping opening rubs against you tentatively, wetting your " + cockDescript(0) + " with slipperiness.  You resist the urge to push forwards, knowing it would be futile with the restraints binding you so tightly.  It sucks your " + cockHead() + " inside, making you groan and swell as your maleness is slowly pulled inside the mechanized fuck-hole.   Squelching noises echo through the barn, mixed with pleasured moans.\n\n", false);
-			else outputText("The dick-milkers' openings look well suited to take your " + multiCockDescriptLight() + ", just about a perfect match for someone hung like you.  As they close with your groin, you get a better look at the internals.  They look…alive.  The inside is filled with slime-slick flesh, pinkish in color and jiggling hungrily.  What the hell did Whitney put inside these things anyway?  The dripping openings rub against you tentatively, wetting your " + multiCockDescriptLight() + " with slipperiness.  You resist the urge to push forwards, knowing it would be futile with the restraints binding you so tightly.  They suck your " + cockHead() + "s inside, making you groan and swell as your multitude of malenesses is slowly pulled inside the mechanized fuck-hole.   Squelching noises echo through the barn, mixed with pleasured moans.\n\n", false);
+			if(player.cockTotal() == 1) outputText("The dick-milker's opening looks well suited to take your " + cockDescript(0) + ", just about a perfect match for someone hung like you.  As it closes with your groin, you get a better look at the internals.  It looks... alive.  The inside is filled with slime-slick flesh, pinkish in color and jiggling hungrily.  What the hell did Whitney put inside this thing anyway?  The dripping opening rubs against you tentatively, wetting your " + cockDescript(0) + " with slipperiness.  You resist the urge to push forwards, knowing it would be futile with the restraints binding you so tightly.  It sucks your " + player.cockHead() + " inside, making you groan and swell as your maleness is slowly pulled inside the mechanized fuck-hole.   Squelching noises echo through the barn, mixed with pleasured moans.\n\n", false);
+			else outputText("The dick-milkers' openings look well suited to take your " + multiCockDescriptLight() + ", just about a perfect match for someone hung like you.  As they close with your groin, you get a better look at the internals.  They look... alive.  The inside is filled with slime-slick flesh, pinkish in color and jiggling hungrily.  What the hell did Whitney put inside these things anyway?  The dripping openings rub against you tentatively, wetting your " + multiCockDescriptLight() + " with slipperiness.  You resist the urge to push forwards, knowing it would be futile with the restraints binding you so tightly.  They suck your " + player.cockHead() + "s inside, making you groan and swell as your multitude of malenesses is slowly pulled inside the mechanized fuck-hole.   Squelching noises echo through the barn, mixed with pleasured moans.\n\n", false);
 		}
 	}
 	else {
 		//large 1
 		if(rand(2) == 0) {
-			if(player.cockTotal() == 1) outputText("The hose's hole spreads wide as it closes in on your crotch, revealing the organic pinkish interior.   Somehow you doubt it'll be able to take all of your mammoth member, but the artificial pussy seems intent on trying.   It pushes against your " + cockDescript(0) + "'s " + cockHead() + ", stretching wide and struggling to fit.  The feelings of slippery flesh writhing about you overwhelms your body, making you go limp in the harness.   The suction slowly pulls you inside, an inch at a time, while the soft 'flesh' of the device hugs your " + cockDescript(0) + " with its many wriggling 'tongues'.\n\n", false);
-			else outputText("The hoses' holes spread wide as they close in on your crotch, revealing their organic pinkish interiors.   Somehow you doubt they'll be able to take all of your mammoth members, but the artificial pussies seem intent on trying.   They push against your " + multiCockDescriptLight() + "' " + cockHead() + "s, stretching wide and struggling to fit.  The feelings of slippery flesh writhing about you overwhelms your body, making you go limp in the harness.   The suction slowly pulls you inside, an inch at a time, while the soft 'flesh' of the devices hugs your " + multiCockDescript() + " with its many wriggling 'tongues'.\n\n", false);
+			if(player.cockTotal() == 1) outputText("The hose's hole spreads wide as it closes in on your crotch, revealing the organic pinkish interior.   Somehow you doubt it'll be able to take all of your mammoth member, but the artificial pussy seems intent on trying.   It pushes against your " + cockDescript(0) + "'s " + player.cockHead() + ", stretching wide and struggling to fit.  The feelings of slippery flesh writhing about you overwhelms your body, making you go limp in the harness.   The suction slowly pulls you inside, an inch at a time, while the soft 'flesh' of the device hugs your " + cockDescript(0) + " with its many wriggling 'tongues'.\n\n", false);
+			else outputText("The hoses' holes spread wide as they close in on your crotch, revealing their organic pinkish interiors.   Somehow you doubt they'll be able to take all of your mammoth members, but the artificial pussies seem intent on trying.   They push against your " + multiCockDescriptLight() + "' " + player.cockHead() + "s, stretching wide and struggling to fit.  The feelings of slippery flesh writhing about you overwhelms your body, making you go limp in the harness.   The suction slowly pulls you inside, an inch at a time, while the soft 'flesh' of the devices hugs your " + multiCockDescript() + " with its many wriggling 'tongues'.\n\n", false);
 		}
 		//large 2
 		else {
-			if(player.cockTotal() == 1) outputText("The milker's opening dilates wide, struggling to spread enough to accommodate your sheer size.  It closes the gap, waving back and forth like a cobra.  It pauses, brushing its squirming interior against your " + cockHead() + " experimentally.  You squirm as its lubricants begin coating you, but do your best to hold still for the organic-looking pump mechanism.  It starts pushing against you, almost painfully, as your distended cock resists fitting into the tubular hole.  With a sigh of anguished pleasure you're crammed into the tube, squeezed tight by wiggling tendrils. The ever-increasing suction pulls the tube further and further down your length.  It bottoms out, pressing tightly against your crotch and squeezing the entirety of your " + cockDescript(0) + " with inhuman flesh.\n\n", false);
-			else outputText("The milkers' openings dilate wide, struggling to spread enough to accommodate your sheer size.  They close the gap, waving back and forth like a cobra.  Pausing, they brush their squirming interiors against your " + multiCockDescriptLight() + " experimentally.  You squirm as the lubricants begin coating you, but do your best to hold still for the organic-looking pump mechanisms.  They start pushing against you, almost painfully, as your distended cocks resist fitting into the tubular holes.  With a sigh of anguished pleasure you're crammed into the tube, squeezed tight by wiggling tendrils.  The ever-increasing suction pulls the tubes further and further down your lengths.  They bottom out, pressing tightly against your crotch and squeezing the entirety of your " + multiCockDescriptLight() + " with inhuman flesh.\n\n", false);
+			if(player.cockTotal() == 1) outputText("The milker's opening dilates wide, struggling to spread enough to accommodate your sheer size.  It closes the gap, waving back and forth like a cobra.  It pauses, brushing its squirming interior against your " + player.cockHead() + " experimentally.  You squirm as its lubricants begin coating you, but do your best to hold still for the organic-looking pump mechanism.  It starts pushing against you, almost painfully, as your distended cock resists fitting into the tubular hole.  With a sigh of anguished pleasure you're crammed into the tube, squeezed tight by wiggling tendrils. The ever-increasing suction pulls the tube further and further down your length.  It bottoms out, pressing tightly against your crotch and squeezing the entirety of your " + cockDescript(0) + " with inhuman flesh.\n\n", false);
+			else outputText("The milkers' openings dilate wide, struggling to spread enough to accommodate your sheer size.  They close the gap, waving back and forth like a cobra.  Pausing, they brush their squirming interiors against your " + multiCockDescriptLight() + " experimentally.  You squirm as the lubricants begin coating you, but do your best to hold still for the organic-looking pump mechanisms.  They start pushing against you, almost painfully, as your distended cocks resist fitting into the tubular holes.  With a sigh of anguished pleasure you're crammed into the tubes, squeezed tight by wiggling tendrils.  The ever-increasing suction pulls the tubes further and further down your lengths.  They bottom out, pressing tightly against your crotch and squeezing the entirety of your " + multiCockDescriptLight() + " with inhuman flesh.\n\n", false);
 		}
 	}
 	
@@ -932,7 +952,7 @@ public function cockPumping():void {
 		if(cumQ < 1000) {
 			outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out ", false);
 			if(cumQ > 500) outputText("thick ", false);
-			outputText("spurts of spunk.  Wriggling cillia convulse around you, licking your head as it flares wide, filling with blood and pouring out cum.  You moan and scream with delight, babbling happily as you watch your cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to and end; the harness lowers you to the ground and releases you, but the squishy walls of your demon machine lover don't cease their ministrations on your tender " + Appearance.cockNoun(CockTypesEnum.HUMAN), false);
+			outputText("spurts of spunk.  Wriggling cilia convulse around you, licking your head as it flares wide, filling with blood and pouring out cum.  You moan and scream with delight, babbling happily as you watch your cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to an end; the harness lowers you to the ground and releases you, but the squishy walls of your demon machine lover don't cease their ministrations on your tender " + Appearance.cockNoun(CockTypesEnum.HUMAN), false);
 			if(player.cockTotal() > 1) outputText("s", false);
 			outputText(".\n\n", false);
 						
@@ -970,7 +990,6 @@ public function cockPumping():void {
 			}
 			outputText(".  Every time you get a good grip and start to pull, a shiver of pleasure shoots down " + sMultiCockDesc() + " and robs you of your focus and muscle control.  Practically helpless against the tubes, you feel " + sMultiCockDesc() + " get harder and harder as the machine sucks out more pre-cum along with the milky aftershocks of your last massive orgasm.\n\n", false);
 		}
-		player.orgasm();
 		//TO BAD ENDAGE
 		doNext(milkerBadEnd1);
 		return;
@@ -979,14 +998,14 @@ public function cockPumping():void {
 	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00333]++;
 	//ORGAZMO
 	if(cumQ < 10) {
-		if(player.cockTotal() == 1) outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out tiny squirts of spunk.  Wriggling cillia convulse around you, licking your " + cockHead() + " as it flares wide, filling with blood and dripping out a little cum.  You moan and scream with delight, babbling happily as you watch your insignificant amount of cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to and end, and your cock starts to soften inside its squishy prison.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
-		else outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out tiny squirts of spunk.  Wriggling cillia convulse around you, licking your " + cockHead() + "s as they flare wide, filling with blood and dripping out a little cum.  You moan and scream with delight, babbling happily as you watch your insignificant amount of cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to and end, and your cocks start to soften inside their squishy prisons.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
+		if(player.cockTotal() == 1) outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out tiny squirts of spunk.  Wriggling cilia convulse around you, licking your " + player.cockHead() + " as it flares wide, filling with blood and dripping out a little cum.  You moan and scream with delight, babbling happily as you watch your insignificant amount of cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to an end, and your cock starts to soften inside its squishy prison.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
+		else outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out tiny squirts of spunk.  Wriggling cilia convulse around you, licking your " + player.cockHead() + "s as they flare wide, filling with blood and dripping out a little cum.  You moan and scream with delight, babbling happily as you watch your insignificant amount of cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to an end, and your cocks start to soften inside their squishy prisons.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
 		fatigue(5);
 	}
 	//Light Scene – output less than 100 mLs
 	else if(cumQ < 100) {
-		if(player.cockTotal() == 1) outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out thick spurts of spunk.  Wriggling cillia convulse around you, licking your " + cockHead() + " as it flares wide, filling with blood and pouring out cum.  You moan and scream with delight, babbling happily as you watch your cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to and end, and your cock starts to soften inside its squishy prison.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
-		else outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out thick spurts of spunk.  Wriggling cillia convulse around you, licking your " + cockHead() + "s as they flare wide, filling with blood and pouring out cum.  You moan and scream with delight, babbling happily as you watch your cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to and end, and your cocks start to soften inside their squishy prisons.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
+		if(player.cockTotal() == 1) outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out thick spurts of spunk.  Wriggling cilia convulse around you, licking your " + player.cockHead() + " as it flares wide, filling with blood and pouring out cum.  You moan and scream with delight, babbling happily as you watch your cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to an end, and your cock starts to soften inside its squishy prison.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
+		else outputText("The orgasm rolls over you, shutting down your thoughts as your body spasms in its straps, boiling out thick spurts of spunk.  Wriggling cilia convulse around you, licking your " + player.cockHead() + "s as they flare wide, filling with blood and pouring out cum.  You moan and scream with delight, babbling happily as you watch your cum wick up the clear tube and into the machinery in the wall.  All too soon the pleasure comes to an end, and your cocks start to soften inside their squishy prisons.  The harness slowly loosens, lowering you to the ground and releasing you.\n\n", false);
 		fatigue(10);
 	}
 	//Medium Scene – output less than 250 mLs
@@ -1011,7 +1030,7 @@ public function cockPumping():void {
 	//Heavy Scene – output less than 500 mLs
 	else if(cumQ < 1000) {
 		if(player.cockTotal() == 1) outputText("The force of your orgasm is intense, wracking your body with the effort of it as you push a thick blast of seed into the cum-receptacle you're feebly humping against.   Dribbles of seed leak out around the edges of the cock-milker, overflowing the receptacle slightly as you push wave after wave into the machine.  The wet internal nubs keep up their stimulation and combined with the hours of edging, your orgasm just drags on and on, filling the machinery to capacity.  In time, your body is drained of its remaining goo, and slowly lowered to the ground, still twitching weakly as the milker detaches and retracts back into the wall.\n\n", false);
-		else outputText("The force of your orgasm is intense, wracking your body with the effort of it as you push a thick blast of seed into the cum-receptacle you're feebly humping against.   Dribbles of seed leak out around the edges of the cock-milkers, overflowing the receptacles slightly as you push wave after wave into the machine.  The wet internal nubs keep up their stimulation and combined with the hours of edging, your orgasm just drags on and on, filling the machinery to capacity.  In time, your body is drained of its remaining goo, and slowly lowered to the ground, still twitching weakly as the milkers detache and retract back into the wall.\n\n", false);
+		else outputText("The force of your orgasm is intense, wracking your body with the effort of it as you push a thick blast of seed into the cum-receptacle you're feebly humping against.   Dribbles of seed leak out around the edges of the cock-milkers, overflowing the receptacles slightly as you push wave after wave into the machine.  The wet internal nubs keep up their stimulation and combined with the hours of edging, your orgasm just drags on and on, filling the machinery to capacity.  In time, your body is drained of its remaining goo, and slowly lowered to the ground, still twitching weakly as the milkers detach and retract back into the wall.\n\n", false);
 		fatigue(20);
 	}
 	//Massive Scene – else
@@ -1062,17 +1081,41 @@ public function cockPumping():void {
 		outputText("It also shows a warning: <b>Not enough gems for full payment.  GEMS NOW EXHAUSTED.</b>  ", false);
 	}	
 	if(payout > 0) {
+		if (player.cumQ() < 1000) player.modCumMultiplier(1);
+		if (payout == 1) outputText(Num2Text(payout) + " gem rolls ", false);
+		else outputText(Num2Text(payout) + " gems roll", false);
+	
+	outputText("out into a collection plate.  Whitney really put a lot of work into this! ", false);
+	
 		player.gems += payout;
 		flags[kFLAGS.WHITNEY_GEMS_PAID_THIS_WEEK] += payout;
 		statScreenRefresh();
-		if(player.cumQ() < 1000) player.cumMultiplier++;
-		if(payout == 1) outputText(Num2Text(payout) + " gem rolls out into a collection plate.  Whitney really put a lot of work into this!  You pocket the gem and g", false);
-		else outputText(Num2Text(payout) + " gems roll out into a collection plate.  Whitney really put a lot of work into this!  You pocket the gems and g", false);
 	}
-	else outputText("You g", false);
-	outputText("o on your way, whistling happily and feeling like taking a nap.", false);
-	dynStats("lus", -150);
-	doNext(13);
+	if (player.countCockSocks("gilded") > 0) {
+		
+		var gems:int = rand(2) + player.countCockSocks("gilded");
+		
+		if (player.cumQ() > 1000)
+			gems *= 1.5;
+		
+		if (payout > 0) {
+			outputText("\n\nAs you take your payment, <b>y", false);
+		}
+		else {
+			outputText("\n\n<b>Y", false);
+		}
+		
+		outputText("ou see a few sparkling gems in your trail of cum on the floor. You reach down and pick up all " + gems + " of them</b>, and then you are", false);
+		
+		player.gems += gems;
+		
+	}
+	else {
+		outputText("\n\nYou go", false);
+	}
+	outputText(" on your way, whistling happily and feeling like taking a nap.", false);
+	player.orgasm();
+	doNext(camp.returnToCampUseOneHour);
 }
 
 private function cowBadEnd1():void {
@@ -1086,9 +1129,9 @@ private function cowBadEnd2():void {
 	outputText("", true);
 	outputText("A day later, you slosh back into the barn with your breasts painfully full and ready to be emptied.  Your cum-filled belly joins your tits in dragging on the floor while you daydream about your time in the minotaur caves last night.  The first one claimed your " + assholeDescript() + ", brutalizing it over and over while the beast emptied his vast reservoirs of seed into your rectum.  Before the beast's equine-like cock could be stuffed halfway inside you, a slightly smaller minotaur was in front of your face, smearing your lips with a thick coating of his tasty pre.  Like a good cow, you opened wide for the bull and gratefully accepted his thick loads, feeling the narcotic-like spunk shut down your ability to think about anything but sex.\n\n", false);
 	outputText("You moo happily, shivering at the intensity of the fond memories and in anticipation of tonight's activities.  But first you need to get your swollen nipples emptied!  The straps to the harness hang there in front of you – how do you work them again?  Your happy moos turn to moos of confusion and stress, but thankfully Whitney pads into the barn before you have a chance to panic.  She looks down and sighs, filling you with confusion.  You weren't a bad cow, were you?\n\n", false);
-	outputText("The anthropomorphic country-girl gives you a gentle pat on the head as she works the straps, talking to herself as she does, \"<i><i>Don't worry girl, I'm not mad.  I reckon I should've given you a stronger warning is all.  But now the damage is done – what's left of your brains was mushed up by all that milking.  Don't worry none honey, there will always be a spot in my stall for you.  I'll just have to make sure you don't get out with the animals again, won't I?</i></i>\"\n\n", false);
-	outputText("You nod happily, determined to find someone or something that can stuff you as full as your bulls did.  Whitney gives a resigned sigh as she turns the machine turn on, watching your determined stare melt into a dopey painting of relief...", false);
-	eventParser(5035);
+	outputText("The anthropomorphic country-girl gives you a gentle pat on the head as she works the straps, talking to herself as she does, \"<i>Don't worry girl, I'm not mad.  I reckon I should've given you a stronger warning is all.  But now the damage is done – what's left of your brains was mushed up by all that milking.  Don't worry none honey, there will always be a spot in my stall for you.  I'll just have to make sure you don't get out with the animals again, won't I?</i>\"\n\n", false);
+	outputText("You nod happily, determined to find someone or something that can stuff you as full as your bulls did.  Whitney gives a resigned sigh as she turns the machine on, watching your determined stare melt into a dopey painting of relief...", false);
+	getGame().gameOver();
 }
 private function milkerBadEnd1():void {
 	var cumQ:Number = player.cumQ();
@@ -1205,7 +1248,7 @@ private function milkerBadEnd1():void {
 		outputText(" like yours, why worry about anything else for the moment?", false);
 		dynStats("lib", 20, "sen", 10, "lus", 80, "cor", 100);
 	}
-	eventParser(5035);
+	getGame().gameOver();
 }
 
 //Introduction: Finding the Toys @ The Farm
@@ -1231,7 +1274,7 @@ private function centaurToysHoooooo():void {
 	outputText("(<b>Key Items Gained: Fake Mare and Centaur Pole</b>)", false);
 	player.createKeyItem("Fake Mare",0,0,0,0);
 	player.createKeyItem("Centaur Pole",0,0,0,0);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 }
 }

@@ -9,11 +9,8 @@ package classes.Scenes.NPCs
 	import classes.Items.Armors.LustyMaidensArmor;
 	import classes.Items.Weapon;
 
-	public class AnemoneScene extends BaseContent
+	public class AnemoneScene extends BaseContent implements TimeAwareInterface
 	{
-		public function AnemoneScene()
-		{
-		}
 
 		//Encountered via Boat (unless a new Under-Lake area is
 		//unlocked)
@@ -56,9 +53,48 @@ package classes.Scenes.NPCs
 		//  KID_SITTER:int = 757; //0 = no sitter, 1 = possible, 2 = doing dat shit
 		//  HAD_KID_A_DREAM:int = 758;
 
+		public function AnemoneScene()
+		{
+			CoC.timeAwareClassAdd(this);
+		}
+		
+		//Implementation of TimeAwareInterface
+		public function timeChange():Boolean
+		{
+			var needNext:Boolean = false;
+			if (flags[kFLAGS.ANEMONE_KID] > 0) {
+				if (flags[kFLAGS.KID_ITEM_FIND_HOURS] < 20) flags[kFLAGS.KID_ITEM_FIND_HOURS]++;
+				if (flags[kFLAGS.KID_SITTER] == 0 && flags[kFLAGS.MARBLE_KIDS] >= 5 && model.time.hours > 10 && model.time.hours < 18 && rand(4) == 0) {
+					kidABabysitsCows();
+					needNext = true;
+				}
+				if (flags[kFLAGS.KID_SITTER] == 1 && model.time.hours > 10 && model.time.hours < 18 && rand(4) == 0) {
+					flags[kFLAGS.KID_SITTER] = 2;
+				}
+				else if (flags[kFLAGS.KID_SITTER] == 2) flags[kFLAGS.KID_SITTER] = 1;
+			}
+			if (player.findStatusAffect(StatusAffects.AnemoneArousal) >= 0) {
+				if (player.pregnancyIncubation > 1) {
+					player.removeStatusAffect(StatusAffects.AnemoneArousal);
+					outputText("\n<b>The nigh-constant arousal forced upon you by the anemone-like creature in your body finally fades.  You stick a finger inside yourself and marvel in wonder - it's gone!  You aren't sure if it slipped out or your body somehow consumed it, but it's nice to have a clearer head.</b>\n", false);
+				}
+				else if(!player.hasVagina()) {
+					player.removeStatusAffect(StatusAffects.AnemoneArousal);
+					outputText("\n<b>The nigh-constant arousal forced upon you by the anemone-like creature in your body finally fades.  You aren't sure if it was somehow consumed by the removal of your vagina or if it escaped during the process, but it's nice to have a clear head for a change.</b>\n", false);
+				}
+				needNext = true;
+			}
+			return needNext;
+		}
+	
+		public function timeChangeLarge():Boolean {
+			return false;
+		}
+		//End of Interface Implementation
+
 		private function anemonePreg():void
 		{
-			player.knockUp(10, 256, 101);
+			player.knockUp(PregnancyStore.PREGNANCY_ANEMONE, PregnancyStore.INCUBATION_ANEMONE, 101);
 		}
 
 		public function kidAXP(diff:Number = 0):Number
@@ -126,7 +162,8 @@ package classes.Scenes.NPCs
 				if (player.hasVagina()) vaginaRape = rapeAnemoneWithPussy;
 				var bikiniTits:Function =null;
 				if (player.hasVagina() && player.biggestTitSize() >= 4 && player.armor is LustyMaidensArmor) bikiniTits = (player.armor as LustyMaidensArmor).lustyMaidenPaizuri;
-				choices("Your Ass", victoryButtholeRape, "Your Cock", cockRape, "Your Vagina", vaginaRape, "Her Butt", anal, "Lay Egg", eggs, "", 0, "", 0, "", 0, "B.Titfuck", bikiniTits, "Leave", cleanupAfterCombat);
+				choices("Your Ass", victoryButtholeRape, "Your Cock", cockRape, "Your Vagina", vaginaRape, "Her Butt", anal, "Lay Egg", eggs,
+					"", null, "", null, "", null, "B.Titfuck", bikiniTits, "Leave", cleanupAfterCombat);
 			}
 			else cleanupAfterCombat();
 		}
@@ -152,7 +189,7 @@ package classes.Scenes.NPCs
 			else if (player.hasVagina()) {
 				outputText("  You lift one hand up to your " + vaginaDescript(0) + " and begin jilling yourself off.  This works to satisfy you for a while, but eventually you want more and grab a brace of tentacles floating in the water beside you, shoving them into your greedy pussy and smearing them around. This provokes a lusty moan from you and a giggle from your lover.", false);
 			}
-			outputText("  And as you work your " + assholeDescript() + " on the tool, something happens to push your peak closer at a startling pace...\n\n", false);
+			outputText("  As you work your " + assholeDescript() + " on the tool, something happens to push your peak closer at a startling pace...\n\n", false);
 
 			outputText("Your blue lover, restless now and uncontent to simply lie there anymore, begins to use her own hands and hips to pump in time with you, doubling the pace of the fuck.  The fervid intensity of her strokes doesn't leave any time for the venom to disperse before the next thrust arrives, making it feel as though your " + assholeDescript() + " is filled with one huge, hot cock that nevertheless slides in and out even as it remains motionless.  The sensation pushes you to orgasm quickly, your " + assholeDescript() + " clamping down on the anemone's penis", false);
 			if (player.cockTotal() > 0) {
@@ -209,7 +246,7 @@ package classes.Scenes.NPCs
 				outputText("The fuck begins in earnest as you demonstrate all the techniques you know or can imagine; the anemone seems to be more impressed as you go on, cooing and moaning to goad you further while wrapping her hands and hair around your hips for chemical encouragement.  Her small tits bounce a little", false);
 				//[(if PC boobs > A)
 				if (player.biggestTitSize() >= 1) outputText(" in time with your own", false);
-				outputText("; here and there one of the bounces will brush her gills away, giving you a tantalizing view of nipple.", false);
+				outputText("; here and there one of the bounces brush her gills away, giving you a tantalizing view of nipple.", false);
 				//[(if balls)
 				if (player.balls > 0) outputText("  As your thrusts get faster your " + sackDescript() + " starts to slap into the tickly and quite-venomous feelers fringing her pussy, getting hotter and hotter as the aphrodisiac builds in your " + ballsDescriptLight() + ".  Your body answers with swelling, causing your sack to feel bigger and tighter with every slap.", false);
 				//[(if noballs and clit > 6")
@@ -303,7 +340,7 @@ package classes.Scenes.NPCs
 			if (player.biggestTitSize() > 2) outputText("  You give special attention to the presentation of your " + breastDescript(0) + ", removing your top with tantalizing slowness, letting each breast slip out and hang between you like fruit ripe to be taken, then making sure to rub them seductively to arouse the both of you further.", false);
 			//(hipsize=girly or better)
 			if (player.hipRating > 6) outputText("  You make good use of your " + hipDescript() + ", too, giving a little shimmy to show off your pronounced curves.", false);
-			outputText("  The anemone's crotch, by the time you're finished, glistens with fluid from both her sexes; it's probably as wet as it was when she was underwater.  You lean into the anemone and give her a deep kiss, ", false);
+			outputText("  By the time you're finished, the anemone's crotch glistens with fluid from both her sexes; it's probably as wet as it was when she was underwater.  You lean into the anemone and give her a deep kiss, ", false);
 			//[(breast0>C)
 			if (player.biggestTitSize() > 2) outputText("making sure to let your " + player.allBreastsDescript() + " rub up against hers, ", false);
 			outputText("then pull apart from her and ", false);
@@ -494,7 +531,9 @@ package classes.Scenes.NPCs
 					if (player.balls > 0) outputText(" and your " + sackDescript() + " tightens up", false);
 					outputText(".  This doesn't escape your blue lover's notice, and she quickly stops pumping.  Left at the edge of orgasm, you panic and look over your shoulder at her.  Judging by her grinning demeanour, she seems to be up to something diabolical.  You stare at her confusedly until you feel a new heat at the base of your " + multiCockDescriptLight() + ". Glancing down, you see that her tentacle-hair has wrapped around " + sMultiCockDesc() + " and is squeezing tightly!  Pleased with the arrangement, the anemone begins pumping and rubbing your prostate again, spreading new warmth through your " + assholeDescript() + ".  Your delayed climax finally arrives, but the <i>de facto</i> cockring", false);
 					if (player.cockTotal() > 1) outputText("s", false);
-					outputText(" prevent any semen from escaping!  The sensations swell and fade as your orgasm passes fruitlessly, your blue partner fucking away as merrily as ever.\n\n", false);
+					outputText(" prevent");
+					if (player.cockTotal() == 1) outputText("s");
+					outputText(" any semen from escaping!  The sensations swell and fade as your orgasm passes fruitlessly, your blue partner fucking away as merrily as ever.\n\n", false);
 
 					outputText("For nearly an hour the anemone continues her performance, even going so far as to caress your swollen " + multiCockDescriptLight() + " with her unoccupied tentacles.  Several more orgasms arrive and desert you without bringing any relief from the pressure on your ", false);
 					//[(if balls)
@@ -511,7 +550,7 @@ package classes.Scenes.NPCs
 					else outputText("gouts", false);
 					outputText(" of jism ", false);
 					//[(height <4' and non-horse)
-					if (player.tallness < 48 && player.lowerBody != LOWER_BODY_TYPE_CENTAUR) outputText("fly over your head, and turning behind you, you see the anemone trying to catch them with open mouth and tongue out.", false);
+					if (player.tallness < 48 && player.lowerBody != LOWER_BODY_TYPE_CENTAUR) outputText("fly over your head, and turning behind you, you see the anemone trying to catch them with an open mouth and her tongue out.", false);
 					else if (player.tallness < 84 && player.lowerBody != LOWER_BODY_TYPE_CENTAUR) outputText("catch the air and rain down on both your faces, splashing quietly where they hit water.", false);
 					else {
 						outputText(" land right on your", false);
@@ -581,7 +620,7 @@ package classes.Scenes.NPCs
 			}
 			//(PC addicted but in withdrawal)
 			else {
-				outputText("Oh, hell NO are you going to give that bottle away when you haven't even gotten your own fix yet! You raise your " + player.weaponName + " and advance on the girl with a wild look in your eyes. She shivers a bit at your expression and drops the bottle with a splash, then recovers her composure and backs up a few steps. You grab the floating bottle, and the rest of your stuff, quickly.", false);
+				outputText("Oh hell no, you're not going to give that bottle away when you haven't even gotten your own fix yet! You raise your " + player.weaponName + " and advance on the girl with a wild look in your eyes. She shivers a bit at your expression and drops the bottle with a splash, then recovers her composure and backs up a few steps. You grab the floating bottle, and the rest of your stuff, quickly.", false);
 				//(gain lust, temp lose spd/str; if in withdrawal then proceed to fight, otherwise present choices 'Give' and 'Don't Give')
 				var anemone:Anemone = new Anemone();
 				startCombat(anemone);
@@ -590,7 +629,7 @@ package classes.Scenes.NPCs
 				anemone.applyVenom(1);
 				return;
 			}
-			simpleChoices("Give", giveMino, "Don't Give", dontGiveMino, "", 0, "", 0, "", 0);
+			simpleChoices("Give", giveMino, "Don't Give", dontGiveMino, "", null, "", null, "", null);
 		}
 
 //'Don't Give':
@@ -631,10 +670,10 @@ package classes.Scenes.NPCs
 				//Normal male: -requires dick of area < 36
 				if (player.cockTotal() > 0) cockRape = rapeAnemoneWithDick;
 				if (player.hasVagina()) vaginaRape = rapeAnemoneWithPussy;
-				simpleChoices("Your ass", victoryButtholeRape, "Your Cock", cockRape, "Your Vagina", vaginaRape, "", 0, "Leave", 13);
+				simpleChoices("Your ass", victoryButtholeRape, "Your Cock", cockRape, "Your Vagina", vaginaRape, "", null, "Leave", camp.returnToCampUseOneHour);
 				return;
 			}
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //anal
@@ -653,7 +692,7 @@ package classes.Scenes.NPCs
 				outputText(" as y");
 			}
 			else outputText("Y");
-			outputText("ou circle around behind her.  The anemone looks over her shoulder at you as you size her up.  But there... that's what you wanted to see.  Tilting the girl forward with a hand on her shoulder, you lower yourself to get a better look at her backside.");
+			outputText("ou circle around behind her.  The anemone looks over her shoulder at you as you size her up.  There... that's what you wanted to see.  Tilting the girl forward with a hand on her shoulder, you lower yourself to get a better look at her backside.");
 
 			outputText("\n\nThe rounded blue cheeks stick out as you slide your hand up her back and press gently to lean her over further.  You rub your other hand over them, giving a squeeze and, eventually, a smack.  She lets out a cute yelp at the blow and shakes her backside at you, as if to tempt you further.  It works; ");
 			if (player.hasCock() && player.cockThatFits(48) >= 0) {
@@ -694,7 +733,7 @@ package classes.Scenes.NPCs
 			var hotdog:Function =null;
 			if (!player.isTaur()) hotdog = hotdogTheAnemone;
 
-			simpleChoices("FUCK IT", anemoneQuoteUnquoteAnal, "Hotdog", hotdog, "", 0, "", 0, "Fuck Off", fuckingAssholelessAnemoneeeez);
+			simpleChoices("FUCK IT", anemoneQuoteUnquoteAnal, "Hotdog", hotdog, "", null, "", null, "Fuck Off", fuckingAssholelessAnemoneeeez);
 		}
 
 //[FUCK IT] (if cock fit 48, use cock; else use clit scenes)
@@ -749,7 +788,7 @@ package classes.Scenes.NPCs
 			outputText(" suddenly, stroking vigorously even as it smears a burning wave of arousal along your length.  \"<i>F-fuck,</i>\" you moan, pushed beyond your control by the coup.");
 			if (dick) {
 				outputText("  Your [cockFit 48] begins to ejaculate, filling the blue girl's mouth with your seed; she sucks it down greedily, swallowing every drop.");
-				if (player.cumQ() >= 1000) outputText("  So much cum do you push into her that her belly actually rounds from the volume, transforming into a sleek, flat midriff into a barely-contained ball of sloshing liquid");
+				if (player.cumQ() >= 1000) outputText("  You push so much cum into her that her belly actually rounds from the volume, transforming from a sleek, flat midriff into a barely-contained ball of sloshing liquid");
 				if (player.cumQ() >= 2000) outputText("; even when her stomach skin can stretch no further, your body won't stop filling her, and the bulge expands up her esophagus, pushing out her chest and throat until she's full to the brim and rather reminiscent of a big, blue pear");
 				if (player.cumQ() >= 1000) outputText(".");
 
@@ -792,7 +831,7 @@ package classes.Scenes.NPCs
 			outputText("Well... it's the spirit of the thing that counts, right?  That blue butt still does look pretty tempting.  You force the anemone forward again and squeeze them together; she giggles and tries once more to push her vagina toward you, but you push it down again and jam your ");
 			if (dick) outputText("[cockFit 48]");
 			else outputText("[clit]");
-			outputText(" between her small, round cheeks, seizing one in each hand and forcing them to sleeve as much of your length as possible.  The girl looks back at you, face a picture of confusion, but you do not even care.  Her cool ass feels otherworldly as you thrust through it, poking your tip out of the crack and then pulling back again; ");
+			outputText(" between her small, round cheeks, seizing one in each hand and forcing them to sleeve as much of your length as possible.  The girl looks back at you, her face a picture of confusion, but you do not even care.  Her cool ass feels otherworldly as you thrust through it, poking your tip out of the crack and then pulling back again; ");
 			if (dick) outputText("pre-cum");
 			else outputText("your juice");
 			outputText(" drools onto her at one end of your motion, filling your little canyon of fun with a river of hot lubrication that you smear liberally throughout.");
@@ -874,7 +913,7 @@ package classes.Scenes.NPCs
 			if (silly()) outputText("duck ");
 			outputText("face,</i>\" you reply.");
 
-			outputText("\n\nThe anemone looks quizzical, but wraps a hand around your egg-laying organ, pulling it closer.  You allow her to draw you in and press the black, wet tip to her mouth, and she raises her other hand to it and begins to stroke.  You shiver in pleasure as another gob of honey forms, and the anemone, watching your reaction, smiles slyly.  She slides two of her tentacles into each palm, adding the caressing, sticky sensation of her stingers to the handjob!  Your [legs] wobble as your blood vessels loosen and your ovipositor fills with warm, fluttering heat; you don't even notice when it begins oozing your nectar constantly, so fuzzy does it feel.  You do notice, however, when she lifts your prong to her lips and brashly sticks her tongue right down the hole!");
+			outputText("\n\nThe anemone looks quizzical, but wraps a hand around your egg-laying organ, pulling it closer.  You allow her to draw you in and press the black, wet tip to her mouth, and she raises her other hand to it and begins to stroke.  You shiver in pleasure as another gob of honey forms, and the anemone, watching your reaction, smiles slyly.  She slides two of her tentacles into each palm, adding the caressing, sticky sensation of her stingers to the handjob!  Your [legs] wobble as your blood vessels loosen and your ovipositor fills with warm, fluttering heat; it feels so fuzzy that you don\'t even notice when it begins oozing your nectar constantly.  You do notice, however, when she lifts your prong to her lips and brashly sticks her tongue right down the hole!");
 
 			outputText("\n\nA wordless groan drops from your mouth as the girl's small, cool muscle probes the inside of your ovipositor.  She strokes the base eagerly, forcing more of your honey to the end to be lapped up; every time a glob rises to the top, her tongue greedily scoops it up, tracking a tingling, ticklish trail along the nerves on the inside of your black bee-prick.  Fuck, there's no way you can hold back... the first of your eggs is pushed from you, forcing the anemone's lips apart as it enters her mouth.");
 
@@ -1023,7 +1062,7 @@ package classes.Scenes.NPCs
 			outputText("\n\nAnd... she's plunging the dipper into the barrel around her ankles.  You can hear it scraping the sides and bottom as she swishes it around to fill it up.  Politely and carefully handing it back to you, she resumes her seat and the water level rises slightly to cover her legs.  You stare at the dipper and then at her; she returns your gaze unflinchingly, splashing some liquid on her exposed gills with an idle hand.");
 			outputText("\n\nDoes she expect you to drink this?  And does she plan to live in your camp?  Won't it be absurdly toilsome to evict someone from your water barrel without speaking a word of their language or using physical force?  Your mind, unwilling to fathom answers to these questions - which is just as well since they're all variations on 'yes' - latches onto the trivial like a lifeline.  The water level was definitely lower than you left it before your nap.  Maybe she absorbed it through her skin as she grew to adulthood?  This might explain why her hips and thighs are better developed than her chest and 'hair'.");
 			outputText("\n\nChanging tack to work your hesitant brain around to the real issue, you address her again; assisted by clumsy pantomime, you ask her if she intends to stay in your barrel forever.  She smiles widely, her eyes lighting up, then makes a show of bowing her head graciously several times.  Oh... she thought it was an invitation.  The wind spills out of your sails and your shoulders slump in the face of her cheerful imperturbability.  Looks like words won't work; you'll have to reach her with your fists.  Do you eject the anemone from your camp?");
-			simpleChoices("Keep It", keepAnemoneKid, "Eject", getRidOfAnemone, "", 0, "", 0, "", 0);
+			simpleChoices("Keep It", keepAnemoneKid, "Eject", getRidOfAnemone, "", null, "", null, "", null);
 			//[yesno]
 		}
 
@@ -1036,7 +1075,7 @@ package classes.Scenes.NPCs
 			outputText("\n\nUpon reaching your destination, you dump the contents of the anemone's erstwhile apartment into the babbling brook, then point down-current toward the lake and set your jaw.  Glancing at your stony demeanor, the blue girl steps into the water, moistens her gills, and then begins the long trek to her ancestral home.");
 			//(set Kidswag to -1)
 			flags[kFLAGS.ANEMONE_KID] = -1;
-			doNext(1);
+			doNext(playerMenu);
 		}
 
 //[no, bonsai anemone is awesome and fuck the haters]
@@ -1055,18 +1094,31 @@ package classes.Scenes.NPCs
 			outputText("\n\n(<b>Kid A can be found in your \"Stash\"!</b>)");
 			//set Kidswag flag to 1
 			flags[kFLAGS.ANEMONE_KID] = 1;
-			doNext(1);
+			doNext(playerMenu);
 		}
 
 
 //KID A FOLLOWER STUFF
-//tion camp
+		public function anemoneBarrelDescription():void {
+			if (model.time.hours < 6) //(morning)
+				outputText("Kid A is sleeping in her barrel right now.");
+			else if (model.time.hours <= 10)
+				outputText("Kid A stands next to her barrel, refilling it from one of your waterskins.  A second full skin is slung over her shoulder.  She gives you a grin.\n\n");
+			else if (flags[kFLAGS.KID_SITTER] > 1)
+				outputText("Kid A is absent from her barrel right now, dragooned into babysitting again.\n\n");
+			else if (model.time.hours < 16) //(midday)
+				outputText("Kid A is deep in her barrel with the lid on top, hiding from the midday sun.\n\n");
+			else if (model.time.hours < 22) //(night hours)
+				outputText("Kid A is peeking out of her barrel.  Whenever you make eye contact she breaks into a smile; otherwise she just stares off into the distance, relaxing.\n\n");
+			else outputText("Kid A is here, seated demurely on the rim of her barrel and looking somewhat more purple under the red moon.  She glances slyly at you from time to time.\n\n");
+		}
+
 //[Barrel] button in [Stash] menu (appears whenever Kidswag flag >= 1)
 		public function approachAnemoneBarrel():void
 		{
 			var item:Function =null;
 			var weaponT:String = "Give Weapon";
-			var weaponB:* = giveAnemoneWeapon;
+			var weaponB:Function = giveAnemoneWeapon;
 			clearOutput();
 			spriteSelect(71);
 			outputText("You walk over to the barrel.  ");
@@ -1117,7 +1169,7 @@ package classes.Scenes.NPCs
 				}
 
 			}
-			addButton(9, "Back", eventParser, 2951);
+			addButton(9, "Back", inventory.stash);
 		}
 
 //[Item](only appears if hourssinceKiditem flag >= 16)
@@ -1175,72 +1227,39 @@ package classes.Scenes.NPCs
 			outputText(itype.longName + ".");
 			if (itype == weapons.L__AXE) outputText("  Holy... how did she drag this thing home!?");
 			outputText("\n\n");
-			menuLoc = 0;
-			inventory.takeItem(itype);
+			inventory.takeItem(itype, playerMenu);
 			//(set hourssinceKiditem = 0)
 			flags[kFLAGS.KID_ITEM_FIND_HOURS] = 0;
 		}
 
 //[Give Weapon]
-		private function giveAnemoneWeapon():void
-		{
+		private function giveAnemoneWeapon():void {
 			clearOutput();
 			spriteSelect(71);
 			outputText("What do you want to give her?");
-			var temp2:Function = null;
-			var temp1:Function = null;
-			var temp3:Function = null;
-			var temp4:Function = null;
-			var temp5:Function = null;
-			var bonus:Number = 0;
-			function giveableToAnemone(itemSlot:ItemSlotClass):Boolean{
-				return itemSlot.quantity>0 &&
-						(itemSlot.itype == consumables.W__BOOK ||
-								itemSlot.itype == consumables.B__BOOK ||
-								itemSlot.itype == consumables.W_STICK ||
-								itemSlot.itype is Weapon);
+			function giveableToAnemone(item:ItemType):Boolean {
+				return item == consumables.W__BOOK || item == consumables.B__BOOK || item == consumables.W_STICK || item is Weapon;
 			}
+			menu();
 			kGAMECLASS.hideUpDown();
-			if (giveableToAnemone(player.itemSlot1))
-				temp1 = createCallBackFunction(placeInAnemone,1);
-			if (giveableToAnemone(player.itemSlot2))
-				temp2 = createCallBackFunction(placeInAnemone,2);
-			if (giveableToAnemone(player.itemSlot3))
-				temp3 = createCallBackFunction(placeInAnemone,3);
-			if (player.itemSlot4.unlocked && giveableToAnemone(player.itemSlot4))
-				temp4 = createCallBackFunction(placeInAnemone,4);
-			if (player.itemSlot5.unlocked && giveableToAnemone(player.itemSlot5))
-				temp5 = createCallBackFunction(placeInAnemone,5);
-			if (temp1 != null || temp2 != null || temp3 != null || temp4 != null || temp5 != null) outputText("\n<b>You have no appropriate items to have your offspring hold.</b>", false);
-			choices((player.itemSlot1.itype.shortName + " x" + player.itemSlot1.quantity), temp1, (player.itemSlot2.itype.shortName + " x" + player.itemSlot2.quantity), temp2, (player.itemSlot3.itype.shortName + " x" + player.itemSlot3.quantity), temp3, (player.itemSlot4.itype.shortName + " x" + player.itemSlot4.quantity), temp4, (player.itemSlot5.itype.shortName + " x" + player.itemSlot5.quantity), temp5, "", 0, "", 0, "", 0, "", 0, "Back", 2951);
+			var foundItem:Boolean = false;
+			for (var x:int = 0; x < 5; x++) {
+				if (player.itemSlots[x].quantity > 0 && giveableToAnemone(player.itemSlots[x].itype)) {
+					addButton(x, player.itemSlots[x].itype.shortName + " x" + player.itemSlots[x].quantity, placeInAnemone, x);
+					foundItem = true;
+				}
+			}
+			if (!foundItem) outputText("\n<b>You have no appropriate items to have your offspring hold.</b>");
+			addButton(9, "Back", inventory.stash);
 		}
 
-		public function placeInAnemone(slot:Number = 1):void
-		{
+		private function placeInAnemone(slot:int):void {
 			clearOutput();
 			outputText("You leave the item by her barrel.");
 			spriteSelect(71);
 			//(set Kidweapon to item name, remove from inventory)
-			if (slot == 1) {
-				flags[kFLAGS.ANEMONE_WEAPON_ID] = player.itemSlot1.itype.id;
-				player.itemSlot1.removeOneItem();
-			}
-			else if (slot == 2) {
-				flags[kFLAGS.ANEMONE_WEAPON_ID] = player.itemSlot2.itype.id;
-				player.itemSlot2.removeOneItem();
-			}
-			else if (slot == 3) {
-				flags[kFLAGS.ANEMONE_WEAPON_ID] = player.itemSlot3.itype.id;
-				player.itemSlot3.removeOneItem();
-			}
-			else if (slot == 4) {
-				flags[kFLAGS.ANEMONE_WEAPON_ID] = player.itemSlot4.itype.id;
-				player.itemSlot4.removeOneItem();
-			}
-			else {
-				flags[kFLAGS.ANEMONE_WEAPON_ID] = player.itemSlot5.itype.id;
-				player.itemSlot5.removeOneItem();
-			}
+			flags[kFLAGS.ANEMONE_WEAPON_ID] = player.itemSlots[slot].itype.id;
+			player.itemSlots[slot].removeOneItem();
 			doNext(approachAnemoneBarrel);
 		}
 
@@ -1255,8 +1274,7 @@ package classes.Scenes.NPCs
 				outputText("Your anemone daughter will not be able to guard you at night without a weapon.  If you want her to guard, you'll need to give her a new weapon and tell her to watch at night again.  ");
 				flags[kFLAGS.ANEMONE_WATCH] = 0;
 			}
-			menuLoc = 0;
-			inventory.takeItem(itype);
+			inventory.takeItem(itype, playerMenu);
 			//(add weapon to inventory, then revert Kidweapon to empty)
 			flags[kFLAGS.ANEMONE_WEAPON_ID] = 0;
 		}
@@ -1291,13 +1309,13 @@ package classes.Scenes.NPCs
 			//(if lust > 99, output)
 			if (player.lust > 99) {
 				outputText("You're way too horny to focus on any sort of weapon instruction right now, and the anemone can see it in your expression as your gaze wanders over her body; she blushes a deep blue and shrinks into her barrel with a shy glance.");
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 				return;
 			}
 			outputText("The anemone obediently climbs out of her barrel, ");
 			//[(KidXP < 33)]
 			if (kidAXP() < 33) {
-				outputText("holding her " + ItemType.lookupItem(flags[kFLAGS.ANEMONE_WEAPON_ID]).longName + " protectively across her chest.");
+				outputText("holding " + ItemType.lookupItem(flags[kFLAGS.ANEMONE_WEAPON_ID]).longName + " protectively across her chest.");
 			}
 			else outputText("taking up an attentive stance with " + ItemType.lookupItem(flags[kFLAGS.ANEMONE_WEAPON_ID]).longName + " in her hands.");
 
@@ -1345,7 +1363,7 @@ package classes.Scenes.NPCs
 			else if (flags[kFLAGS.ANEMONE_WEAPON_ID] == weapons.RRAPIER.id ||
 					flags[kFLAGS.ANEMONE_WEAPON_ID] == weapons.JRAPIER.id) {
 				outputText("\n\nThe rapier is light enough for the girl, but it takes a multitude of reminders before she handles the slender blade with the care and style it deserves.  She seems to regard it as little more than a tool for thwacking you in the butt that, coincidentally, has a pointy end.");
-				//(no effect, senorita)
+				//(no effect, señorita)
 			}
 			//[Large Axe], [Large Hammer], [Large Claymore], or [Huge Warhammer]
 			else if (flags[kFLAGS.ANEMONE_WEAPON_ID] == weapons.L__AXE.id ||
@@ -1451,7 +1469,7 @@ package classes.Scenes.NPCs
 				outputText("\nYour bleary eyes open to a familiar-looking upside-down blue face.  It takes a minute before your brain can reconstruct the events preceding your lapse in consciousness; as soon as your expression gives a hint of understanding, Kid A sheepishly greets you.");
 				outputText("\n\n\"<i>Um... hi.</i>\"");
 				//(lose 8 hours, restore HP amount consonant with 8hrs rest)
-				doNext(16);
+				doNext(camp.returnToCampUseEightHours);
 				player.createStatusAffect(StatusAffects.PostAnemoneBeatdown, 0, 0, 0, 0);
 				return;
 			}
@@ -1468,14 +1486,14 @@ package classes.Scenes.NPCs
 
 					outputText("\n\nAppearing to reach a decision, she reaches out and pats you apologetically on the head, then stands up and heads back to her barrel.");
 					//no effect on lust, pass 1 hour
-					doNext(13);
+					doNext(camp.returnToCampUseOneHour);
 				}
 			}
 			//else if no HP or lust outcome triggered: pass 1 hour, gain 40 xp, increment fatigue by 10
 			else {
 				if (player.level < 10) player.XP += 30;
 				fatigue(10);
-				doNext(13);
+				doNext(camp.returnToCampUseOneHour);
 			}
 		}
 
@@ -1500,7 +1518,7 @@ package classes.Scenes.NPCs
 
 				outputText("\n\nBeginning to move her hips, she stirs herself with your " + Appearance.cockNoun(player.cocks[x].cockType) + " as she gyrates, loosening herself slightly; you take the opportunity to pull off the top of your " + player.armorName + " eagerly and she answers you by pushing her cock down onto your skin with a hand, smearing its tentacled crown around with her movement and spreading venomous heat to your torso even as she moans and the tip drools on your stomach.  After two minutes of this teasing, she grins again and raises up, pulling your cock partway out; you tense and shut your eyes in expectation of what's to come, but she just hovers there.  Curiously, you open your eyes again and look at her - which seems to be what she was waiting for.  At the first sign of your guard dropping, her eyes glint suspiciously and she begins riding you in earnest, plunging up and down your cock with her incredibly tight pussy; your sensation-swamped body carries you away and you begin pushing back against her as she descends, so that your groins meet each other in the air.  She gasps and smiles open-mouthed with her head back, removing the hand still on your stomach to fondle her breasts as she fucks you senseless.  At the nadir of every bounce, the feelers on her cock and vagina rub against your exposed skin, delivering a fresh load of anemone venom that pushes you closer to orgasm by leaps and bounds.");
 
-				outputText("\n\nThe girl herself doesn't seem to be faring much better; her left hand is furiously jerking her cock and her is right squeezing her small breasts as she rides, while her mouth hangs open and she makes tiny grunts of pleasure at each stroke.  Predictably, she twitches and sinks down one last time as her pecker spasms and she cries out.  She pushes her little blue shaft down onto your stomach again and rubs it back and forth as she ejaculates on your [chest]; her clenching pussy meanwhile wrings your dick vigorously, sending a shiver down your spine to spark the venom-induced climax that pours from you.  Your hands grasp her hips as your dick empties into the slender blue girl's womb, spitting semen with a furor enhanced by the continuing dose of aphrodisiac from the vaginal feelers stroking its base as she twitches.");
+				outputText("\n\nThe girl herself doesn't seem to be faring much better; her left hand is furiously jerking her cock and her right is squeezing her small breasts as she rides, while her mouth hangs open and she makes tiny grunts of pleasure at each stroke.  Predictably, she twitches and sinks down one last time as her pecker spasms and she cries out.  She pushes her little blue shaft down onto your stomach again and rubs it back and forth as she ejaculates on your [chest]; her clenching pussy meanwhile wrings your dick vigorously, sending a shiver down your spine to spark the venom-induced climax that pours from you.  Your hands grasp her hips as your dick empties into the slender blue girl's womb, spitting semen with a furor enhanced by the continuing dose of aphrodisiac from the vaginal feelers stroking its base as she twitches.");
 				//[(big skeet)]
 				if (player.cumQ() >= 1000) outputText("  As you pour into her, the sensation of being stuffed with semen sets off a second orgasm in the quivering girl, and her own prick drools weakly onto your stomach");
 				if (player.cumQ() >= 2000) outputText("; even a second orgasm from your daughter isn't enough to match one of yours in length.  Your magnificently productive " + Appearance.cockNoun(player.cocks[x].cockType) + " fills her until her belly is inflated so far that she can't contain more, and it begins to breach the seal her pussy makes around you, even as tight as it is, to squirt out in lazy globs as you deposit the last of your spunk");
@@ -1516,7 +1534,7 @@ package classes.Scenes.NPCs
 				player.orgasm();
 				dynStats("lus", 30);
 				if (flags[kFLAGS.ANEMONE_KID] < 3) flags[kFLAGS.ANEMONE_KID] = 3;
-				doNext(14);
+				doNext(camp.returnToCampUseTwoHours);
 				return true;
 			}
 			//sex revisited, for when KidXP >= 40 and confidence is mounting
@@ -1599,7 +1617,7 @@ package classes.Scenes.NPCs
 				//lose 100 lust, pass 2 hr, if Kidswag = 1, set Kidswag = 2
 				player.orgasm();
 				if (flags[kFLAGS.ANEMONE_KID] == 1) flags[kFLAGS.ANEMONE_KID] = 2;
-				doNext(14);
+				doNext(camp.returnToCampUseTwoHours);
 				return true;
 			}
 			//femsex
@@ -1628,7 +1646,7 @@ package classes.Scenes.NPCs
 				player.slimeFeed();
 				player.orgasm();
 				if (flags[kFLAGS.ANEMONE_KID] == 1) flags[kFLAGS.ANEMONE_KID] = 2;
-				doNext(16);
+				doNext(camp.returnToCampUseEightHours);
 				return true;
 			}
 			return false;
@@ -1657,7 +1675,7 @@ package classes.Scenes.NPCs
 			outputText("\n\nThe two girls continue to greet each other in this fashion as their attention shifts away from you, and you wonder exactly what kind of pernicious meme you've inflicted on the anemone community.");
 			//set Kidswag to -1, pass 1 hour
 			flags[kFLAGS.ANEMONE_KID] = -1;
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 //dreams: possible once KidXP >= 40; function as visible notice of sex-readiness
@@ -1700,7 +1718,7 @@ package classes.Scenes.NPCs
 				outputText("  Sighing, you turn over and attempt to return to sleep despite the pervading smell of semen.");
 			}
 			dynStats("lus", 50 + player.sens / 2, "resisted", false);
-			doNext(1);
+			doNext(playerMenu);
 		}
 
 //Kid-and-kid interaction scenes:
@@ -1767,7 +1785,7 @@ package classes.Scenes.NPCs
 			}
 			//(else)
 			else outputText("\n\nThe anemone doesn't hesitate, but bursts into the middle of the shark-girls like a bomb, shrieking and making huge splashes, scattering them in multiple directions.  She quickly scoops up both skins' worth of water and then runs, giggling giddily with the shark-girls dogging her heels until she's halfway back to camp.");
-			doNext(13);
+			doNext(camp.returnToCampUseOneHour);
 		}
 
 

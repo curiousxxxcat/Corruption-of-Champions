@@ -38,16 +38,18 @@ private function followMinotaurIntoBackroom():void {
 		if(player.findPerk(PerkLib.MinotaurCumAddict) >= 0) outputText("You lick your lips when you realize you're meeting the source of the 'special' éclairs.", false);
 		else outputText("You blush when you realize what he must be using for cream filling.", false);
 		//[Give Them] [Leave]
-		if(player.hasItem(consumables.BEEHONY) && player.hasItem(consumables.L_DRAFT)) simpleChoices("Give Them",handOverIngredientsItBeBakingTimeYo,"",0,"",0,"",0,"Leave",nopeAintGotNoneODemSpeculIngredimathings);
-		else simpleChoices("",0,"",0,"",0,"",0,"Leave",13);	
+		if (player.hasItem(consumables.BEEHONY) && player.hasItem(consumables.L_DRAFT))
+			simpleChoices("Give Them", handOverIngredientsItBeBakingTimeYo, "", null, "", null, "", null, "Leave", nopeAintGotNoneODemSpeculIngredimathings);
+		else simpleChoices("", null, "", null, "", null, "", null, "Leave", camp.returnToCampUseOneHour);
 		flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00241] = 1;
 	}
 	//(Explained) 
 	else {
 		outputText("You follow the burly chef through the door, winding through the familiar ovens.  By the time you reach his work area, you're both covered in a fine sheen of sweat and you find yourself responding to the minotaur musk unconsciously.  The strange chef turns to ask, \"<i>You have special ingredients now, yes?</i>\"", false);
 		//[Yes] [Lie – No/Not Yet]
-		if(player.hasItem(consumables.BEEHONY) && player.hasItem(consumables.L_DRAFT)) simpleChoices("Yes",2934,"Lie - No",2933,"",0,"",0,"",0);
-		else simpleChoices("No",nopeAintGotNoneODemSpeculIngredimathings,"",0,"",0,"",0,"",0);
+		if (player.hasItem(consumables.BEEHONY) && player.hasItem(consumables.L_DRAFT))
+			simpleChoices("Yes", handOverIngredientsItBeBakingTimeYo, "Lie - No", nopeAintGotNoneODemSpeculIngredimathings, "", null, "", null, "", null);
+		else simpleChoices("No", nopeAintGotNoneODemSpeculIngredimathings, "", null, "", null, "", null, "", null);
 	}
 }
 
@@ -79,7 +81,7 @@ public function handOverIngredientsItBeBakingTimeYo():void {
 	outputText("\n\n", false);
 	if(player.findPerk(PerkLib.MinotaurCumAddict) >= 0) doNext(waitForSlutCake);
 	//[Wait] [Sneak Out]
-	else simpleChoices("Wait",waitForSlutCake,"Sneak Out",sneakAwayFromMaddie,"",0,"",0,"",0);
+	else simpleChoices("Wait", waitForSlutCake, "Sneak Out", sneakAwayFromMaddie, "", null, "", null, "", null);
 }
 	
 //[Sneak Out]
@@ -88,7 +90,7 @@ private function sneakAwayFromMaddie():void {
 	outputText("You get out before he can find you again.  Whatever he's making is nothing you ever want to taste.", false);
 	//(No more mino chef)
 	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00242] = -2;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[Wait/Next]
 private function waitForSlutCake():void {
@@ -113,7 +115,7 @@ private function waitForSlutCake():void {
 	
 	outputText("Running seems like a very good idea.  Who knows what she has planned for you?", false);
 	//[RUN] [TRY TO TALK]
-	simpleChoices("Run Away",runAwayFromMaddiiiieee,"TryToTalk",talkToMaddie,"",0,"",0,"",0);
+	simpleChoices("Run Away", runAwayFromMaddiiiieee, "TryToTalk", talkToMaddie, "", null, "", null, "", null);
 }
 //[RUN DAFUQ AWAY]
 private function runAwayFromMaddiiiieee():void {
@@ -121,7 +123,7 @@ private function runAwayFromMaddiiiieee():void {
 	outputText("", true);
 	outputText("You turn tail to run, evacuating the room before that culinary catastrophe can have her way with you.  A high-pitched whine chases you away as the cupcake-girl cries, \"<i>Nooooo... come back!  I'm making so much filling for you!</i>\"  Her words lend you even greater speed, and you vacate the city in record time.\n\n", false);
 	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00242] = -1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 //[Followup to run away]
 public function runAwayMaddieFollowup():void {
@@ -163,7 +165,7 @@ private function talkToMaddie():void {
 		outputText("A half-melted tongue ", false);
 		if(!player.hasSheath()) outputText("encircles the base", false);
 		else outputText("pokes and prods into your sheath", false);
-		outputText(", leaving a syrupy residue trailing over your " + cockDescript(x) + ".  You groan, sagging into the sugary suspension.  The strength is completely gone from your limbs, stolen by the pastry's prick-devouring maw.  Her shining eyes look up to gloat once she realizes how completely you've submitted to her ministrations, and her cake-soft hands press your head into the gargantuan swell of her spongy breasts.  A smile crosses your face as you're comforted by the motherly mounds and the familiar, sweet smell that Maddie exudes.\n\n", false);
+		outputText(", leaving a syrupy residue trailing over your " + cockDescript(x) + ".  You groan, sagging into the sugary suspension.  The strength is completely gone from your limbs, stolen by the pastry's prick-devouring maw.  Her shining eyes look up to gloat once she realizes how completely you've submitted to her ministrations, and in no time, her cake-soft hands catch and squeeze your " + cockDescript(x) + " into the gargantuan swell of her spongy breasts.  A smile crosses your face as you get pleasured by the motherly mounds and the familiar, sweet smell that Maddie exudes.\n\n", false);
 		
 		outputText("Suction starts, hollowing the cupcake-girl's plush cheeks into a concave, cock-slurping form.  The constant squeezing of your " + cockDescript(x) + " combines with the sucking to make you swell larger inside Maddie's gullet while she kisses your groin.  The confection's oral charms show no signs of stopping as she noisily slurps away at her treat, and her pillowy breasts are so spongy-soft and calming that you're happy to let her sample your 'icing' if it means you can feel like this.  Your " + hipDescript() + " push back into the baby blue lips, pumping and thrusting as your instinct to fuck and breed takes over, working your " + cockDescript(x) + " in and out of the pastry's puckered mouth.\n\n", false);
 		
@@ -197,11 +199,11 @@ private function talkToMaddie():void {
 	else {
 		outputText("\"<i>Dad said my name is Madeleine, but that's no fun.  Just call me Maddie!</i>\" exclaims the airheaded pastry.  You briefly wonder if the yeast is to blame for her state, but you stifle the involuntarily giggle that rises with the stray thought.  Now is hardly the time for such frivolous rambling!  You shout with equal parts terror and rage, demanding she remove her sugary bondage from you immediately.  She looks at you with her alien eyes full of confusion, as if she doesn't comprehend a word you're saying.\n\n", false);
 		
-		outputText("A nipple is forced between your still-protesting lips, plugging your noise-hole before you can complain further.  Maddie gleefully cheers, \"<i>There we go… now we just need to get some magic icing in you so you'll feel nice and yummy and like, relaxed!</i>\"  Oh no – you don't know what she means by magic icing, but whatever it is, it can't be good.  First, you try to spit the spongy areola out.  It pushes back with incessant pressure, flooding your mouth with cake-like sweetness immediately.  You try to bite down.  Maybe pain will make her draw back?  It doesn't work, and if anything, it just starts the flow of icing.\n\n", false);
+		outputText("A nipple is forced between your still-protesting lips, plugging your noise-hole before you can complain further.  Maddie gleefully cheers, \"<i>There we go... now we just need to get some magic icing in you so you'll feel nice and yummy and like, relaxed!</i>\"  Oh no – you don't know what she means by magic icing, but whatever it is, it can't be good.  First, you try to spit the spongy areola out.  It pushes back with incessant pressure, flooding your mouth with cake-like sweetness immediately.  You try to bite down.  Maybe pain will make her draw back?  It doesn't work, and if anything, it just starts the flow of icing.\n\n", false);
 		
 		outputText("It's delicious – creamy, gooey, and sugary-sweet while at the same time as fluid as mother's milk. You swallow the first mouthful reflexively before you remember you were trying to avoid this exact fate.  The thick icing coats your esophagus with the cupcake's warm secretion. It radiates gentle, oven-like heat throughout you, clouding your mind and dulling your vision with its hazy warmth.  You relax against your saccharine bonds nervelessly and begin to drink of your own volition.\n\n", false);
 		
-		outputText("\"<i>Shhh, shhh… that's a good " + player.mf("boy","girl") + ".  Isn't my icing the absolute best?</i>\" she verbally gushes, just like the nipple between your teeth.  \"<i>Drink up", false);
+		outputText("\"<i>Shhh, shhh... that's a good " + player.mf("boy","girl") + ".  Isn't my icing the absolute best?</i>\" she verbally gushes, just like the nipple between your teeth.  \"<i>Drink up", false);
 		if(player.thickness < 60) outputText(", you're looking awful thin", false);
 		else if(player.tone >= 70) outputText(", you look like you're carved from stone.  A little softness would do you good", false);
 		else outputText(", you look like you'd better eat to keep up your gorgeous figure", false);
@@ -228,7 +230,7 @@ private function talkToMaddie():void {
 		outputText(player.modTone(0,10), false);  
 	}
 	flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00242] = 3;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[Next visit to the bakery...]

@@ -440,7 +440,7 @@
 					if(player.balls > 0) 
 						outputText("balls plenty of room to breathe", false);
 					else if(player.hasCock()) 
-						outputText(multiCockDescript() + " plenty of room to swing", false);
+						outputText(player.multiCockDescript() + " plenty of room to swing", false);
 					else if(player.hasVagina()) 
 						outputText(vaginaDescript() + " a nice, wide berth", false);
 					else outputText("vacant groin plenty of room", false);
@@ -613,7 +613,7 @@
 		outputText("  Below your waist your flesh is fused together into a very long snake-like tail.", false);
 	//Horse body is placed higher for readability purposes
 	else if(player.lowerBody == LOWER_BODY_TYPE_DEMONIC_HIGH_HEELS) 
-		outputText("  Your perfect lissom legs end in mostly human feet, apart from the horn protruding straight down from the heel that forces you to walk with a sexy, swaying gait.", false);
+		outputText("  Your perfect lissome legs end in mostly human feet, apart from the horn protruding straight down from the heel that forces you to walk with a sexy, swaying gait.", false);
 	else if(player.lowerBody == LOWER_BODY_TYPE_DEMONIC_CLAWS) 
 		outputText("  Your lithe legs are capped with flexible clawed feet.  Sharp black nails grow where once you had toe-nails, giving you fantastic grip.", false);
 	else if(player.lowerBody == LOWER_BODY_TYPE_BEE) 
@@ -650,9 +650,9 @@
 		outputText("\n<b>Your gravid-looking belly is absolutely stuffed full of goo. There's no way you can get pregnant like this, but at the same time, you look like some fat-bellied breeder.</b>\n");
 	}
 	//Pregnancy Shiiiiiitz
-	if((player.buttPregnancyType == 23 && player.buttPregnancyIncubation > 0) || (player.buttPregnancyType == 19 && player.buttPregnancyIncubation > 0) || (player.pregnancyType > 0 && player.pregnancyIncubation > 0)) 
+	if((player.buttPregnancyType == PregnancyStore.PREGNANCY_FROG_GIRL) || (player.buttPregnancyType == PregnancyStore.PREGNANCY_SATYR) || player.isPregnant()) 
 	{
-		if(player.pregnancyType == 5) 
+		if (player.pregnancyType == PregnancyStore.PREGNANCY_OVIELIXIR_EGGS) 
 		{
 			outputText("<b>", false);
 			//Compute size
@@ -681,7 +681,7 @@
 			temp = 0;
 		}
 		//Satur preggos - only shows if bigger than regular pregnancy or not pregnancy
-		else if((player.buttPregnancyType == 19 && player.buttPregnancyIncubation > 0) && (player.pregnancyIncubation == 0 || player.buttPregnancyIncubation > player.pregnancyIncubation)) 
+		else if (player.buttPregnancyType == PregnancyStore.PREGNANCY_SATYR && player.buttPregnancyIncubation > player.pregnancyIncubation) 
 		{
 			if(player.buttPregnancyIncubation < 125 && player.buttPregnancyIncubation >= 75) 
 			{
@@ -696,16 +696,16 @@
 				outputText("<b>Your stomach is painfully distended by your pregnancy, making it difficult to walk normally.</b>", false);
 			}
 			else 
-			{
-				if(player.pregnancyType == 12 || player.pregnancyType == 4 || player.pregnancyType == 11 || player.pregnancyType == 17 || player.pregnancyType == 21) 
+			{ //Surely Benoit and Cotton deserve their place in this list
+				if (player.pregnancyType == PregnancyStore.PREGNANCY_IZMA || player.pregnancyType == PregnancyStore.PREGNANCY_MOUSE || player.pregnancyType == PregnancyStore.PREGNANCY_AMILY || player.pregnancyType == PregnancyStore.PREGNANCY_EMBER || player.pregnancyType == PregnancyStore.PREGNANCY_BENOIT || player.pregnancyType == PregnancyStore.PREGNANCY_COTTON || player.pregnancyType == PregnancyStore.PREGNANCY_URTA) 
 					outputText("\n<b>Your belly protrudes unnaturally far forward, bulging with the spawn of one of this land's natives.</b>", false);
-				else if(player.pregnancyType != 8) 
+				else if(player.pregnancyType != PregnancyStore.PREGNANCY_MARBLE) 
 					outputText("\n<b>Your belly protrudes unnaturally far forward, bulging with the unclean spawn of some monster or beast.</b>", false);
 				else outputText("\n<b>Your belly protrudes unnaturally far forward, bulging outwards with Marble's precious child.</b>", false);
 			}
 		}
 		//URTA PREG
-		else if(player.pregnancyType == 21) 
+		else if (player.pregnancyType == PregnancyStore.PREGNANCY_URTA) 
 		{
 			if(player.pregnancyIncubation <= 432 && player.pregnancyIncubation > 360)
 			{
@@ -736,11 +736,19 @@
 				outputText("\n<b>Your belly protrudes unnaturally far forward, bulging with the spawn of one of this land's natives.</b>", false);
 			}
 		}
-		else if(player.buttPregnancyType == 23) 
+		else if (player.buttPregnancyType == PregnancyStore.PREGNANCY_FROG_GIRL) 
 		{
-			if(player.buttPregnancyType >= 8) 
+			if(player.buttPregnancyIncubation >= 8) 
 				outputText("<b>Your stomach is so full of frog eggs that you look about to birth at any moment, your belly wobbling and shaking with every step you take, packed with frog ovum.</b>");
 			else outputText("<b>You're stuffed so full with eggs that your belly looks obscenely distended, huge and weighted with the gargantuan eggs crowding your gut. They make your gait a waddle and your gravid tummy wobble obscenely.</b>");
+		}
+		else if (player.pregnancyType == PregnancyStore.PREGNANCY_FAERIE) { //Belly size remains constant throughout the pregnancy
+			outputText("<b>Your belly remains swollen like a watermelon. ");
+			if (player.pregnancyIncubation <= 100)
+				outputText("It's full of liquid, though unlike a normal pregnancy the passenger you’re carrying is tiny.</b>");
+			else if (player.pregnancyIncubation <= 140)
+				outputText("It feels like it’s full of thick syrup or jelly.</b>");
+			else outputText("It still feels like there’s a solid ball inside your womb.</b>");    
 		}
 		else 
 		{
@@ -768,11 +776,11 @@
 			{
 				outputText("<b>Your stomach is painfully distended by your pregnancy, making it difficult to walk normally.</b>", false);
 			}
-			if(player.pregnancyIncubation <= 48) 
-			{
-				if(player.pregnancyType == 12 || player.pregnancyType == 4 || player.pregnancyType == 11 || player.pregnancyType == 17 || player.pregnancyType == 21) 
+			if (player.pregnancyIncubation <= 48) 
+			{ //Surely Benoit and Cotton deserve their place in this list
+				if(player.pregnancyType == PregnancyStore.PREGNANCY_IZMA || player.pregnancyType == PregnancyStore.PREGNANCY_MOUSE || player.pregnancyType == PregnancyStore.PREGNANCY_AMILY || player.pregnancyType == PregnancyStore.PREGNANCY_EMBER || player.pregnancyType == PregnancyStore.PREGNANCY_BENOIT || player.pregnancyType == PregnancyStore.PREGNANCY_COTTON || player.pregnancyType == PregnancyStore.PREGNANCY_URTA) 
 					outputText("\n<b>Your belly protrudes unnaturally far forward, bulging with the spawn of one of this land's natives.</b>", false);
-				else if(player.pregnancyType != 8) 
+				else if (player.pregnancyType != PregnancyStore.PREGNANCY_MARBLE) 
 					outputText("\n<b>Your belly protrudes unnaturally far forward, bulging with the unclean spawn of some monster or beast.</b>", false);
 				else outputText("\n<b>Your belly protrudes unnaturally far forward, bulging outwards with Marble's precious child.</b>", false);
 			}
@@ -840,7 +848,7 @@
 	{
 		if(player.lowerBody==LOWER_BODY_TYPE_CENTAUR) 
 			outputText("\nEver since becoming a centaur, your equipment has shifted to lie between your rear legs, like a horse.", false);
-		outputText("\nYour " + cockDescript(temp) + " is " + int(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
+		outputText("\nYour " + player.cockDescript(temp) + " is " + int(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
 		if(Math.round(10*player.cocks[temp].cockThickness)/10 < 2) 
 		{
 			if(Math.round(10*player.cocks[temp].cockThickness)/10 == 1) 
@@ -857,11 +865,11 @@
 		if(((player.cocks[temp].cockType == CockTypesEnum.DOG) || (player.cocks[temp].cockType == CockTypesEnum.FOX)) || (player.cocks[temp].cockType == CockTypesEnum.FOX)) 
 		{
 			if(player.cocks[temp].knotMultiplier >= 1.8) 
-				outputText("  The obscenely swollen lump of flesh near the base of your " + cockDescript(temp) + " looks almost too big for your cock.", false);
+				outputText("  The obscenely swollen lump of flesh near the base of your " + player.cockDescript(temp) + " looks almost too big for your cock.", false);
 			else if(player.cocks[temp].knotMultiplier >= 1.4) 
-				outputText("  A large bulge of flesh nestles just above the bottom of your " + cockDescript(temp) + ", to ensure it stays where it belongs during mating.", false);
+				outputText("  A large bulge of flesh nestles just above the bottom of your " + player.cockDescript(temp) + ", to ensure it stays where it belongs during mating.", false);
 			else if(player.cocks[temp].knotMultiplier > 1) 
-				outputText("  A small knot of thicker flesh is near the base of your " + cockDescript(temp) + ", ready to expand to help you lodge it inside a female.", false);
+				outputText("  A small knot of thicker flesh is near the base of your " + player.cockDescript(temp) + ", ready to expand to help you lodge it inside a female.", false);
 			//List thickness
 			outputText("  The knot is " + Math.round(player.cocks[temp].cockThickness * player.cocks[temp].knotMultiplier * 10)/10 + " inches wide when at full size.", false);
 		}
@@ -900,9 +908,12 @@
 		{
 			outputText("  With its tapered tip, there are few holes you wouldn't be able to get into.  It has a strange, knot-like bulb at its base, but doesn't usually flare during arousal as a dog's knot would.");
 		}
+		if (player.cocks[temp].cockType == CockTypesEnum.BEE) {
+			outputText("  It's a long, smooth black shaft that's rigid to the touch.  Its base is ringed with a layer of four inch long soft bee hair.  The tip has a much finer layer of short yellow hairs.  The tip is very sensitive, and it hurts constantly if you don’t have bee honey on it.");
+		}
 		//Worm flavor
 		if(player.findStatusAffect(StatusAffects.Infested) >= 0)
-			outputText("  Every now and again a slimy worm coated in spunk slips partway out of your " + cockDescript(0) + ", tasting the air like a snake's tongue.", false);		
+			outputText("  Every now and again a slimy worm coated in spunk slips partway out of your " + player.cockDescript(0) + ", tasting the air like a snake's tongue.", false);		
 		if(player.cocks[temp].sock) 
 			sockDescript(temp);
 		//DONE WITH COCKS, moving on!
@@ -914,8 +925,8 @@
 		temp = 0;
 		rando = rand(4);
 		if(player.lowerBody == LOWER_BODY_TYPE_CENTAUR) 
-			outputText("\nWhere a horse's penis would usually be located, you have instead grown " + multiCockDescript() + "!\n", false);
-		else outputText("\nWhere a penis would normally be located, you have instead grown " + multiCockDescript() + "!\n", false);
+			outputText("\nWhere a horse's penis would usually be located, you have instead grown " + player.multiCockDescript() + "!\n", false);
+		else outputText("\nWhere a penis would normally be located, you have instead grown " + player.multiCockDescript() + "!\n", false);
 		while(temp < player.cocks.length) 
 		
 		{
@@ -923,9 +934,9 @@
 			//middle cock description
 			if(rando == 0) 
 			{
-				if(temp == 0)outputText("-Your first ", false);
-				else outputText("-Your next ", false);
-				outputText(cockDescript(temp), false);
+				if(temp == 0)outputText("--Your first ", false);
+				else outputText("--Your next ", false);
+				outputText(player.cockDescript(temp), false);
 				outputText(" is ", false);
 				outputText(int(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
 				if(Math.floor(player.cocks[temp].cockThickness) >= 2) 
@@ -939,8 +950,8 @@
 			}
 			if(rando == 1) 
 			{
-				outputText("-One of your ", false);
-				outputText(cockDescript(temp) + "s is " + Math.round(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
+				outputText("--One of your ", false);
+				outputText(player.cockDescript(temp) + "s is " + Math.round(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
 				if(Math.floor(player.cocks[temp].cockThickness) >= 2) 
 					outputText(num2Text(Math.round(player.cocks[temp].cockThickness * 10)/10) + " inches thick.", false);
 				else 
@@ -953,9 +964,9 @@
 			if(rando == 2) 
 			{
 				if(temp > 0) 
-					outputText("-Another of your ", false);
-				else outputText("-One of your ", false);
-				outputText(cockDescript(temp) + "s is " + Math.round(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
+					outputText("--Another of your ", false);
+				else outputText("--One of your ", false);
+				outputText(player.cockDescript(temp) + "s is " + Math.round(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
 				if(Math.floor(player.cocks[temp].cockThickness) >= 2) 
 					outputText(num2Text(Math.round(player.cocks[temp].cockThickness * 10)/10) + " inches thick.", false);
 				else 
@@ -968,9 +979,9 @@
 			if(rando == 3) 
 			{
 				if(temp > 0) 
-					outputText("-Your next ", false);
-				else outputText("-Your first ", false);
-				outputText(cockDescript(temp) + " is " + Math.round(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
+					outputText("--Your next ", false);
+				else outputText("--Your first ", false);
+				outputText(player.cockDescript(temp) + " is " + Math.round(10*player.cocks[temp].cockLength)/10 + " inches long and ", false);
 				if(Math.floor(player.cocks[temp].cockThickness) >= 2) 
 					outputText(num2Text(Math.round(player.cocks[temp].cockThickness * 10)/10) + " inches in diameter.", false);
 				else 
@@ -983,7 +994,7 @@
 			//horse cock flavor
 			if(player.cocks[temp].cockType == CockTypesEnum.HORSE) 
 			{
-				outputText("  It's mottled black and brown in a very animalistic pattern.  The 'head' of your " + cockDescript(temp) + " flares proudly, just like a horse's.", false);
+				outputText("  It's mottled black and brown in a very animalistic pattern.  The 'head' of your " + player.cockDescript(temp) + " flares proudly, just like a horse's.", false);
 			}
 			//dog cock flavor
 			if((player.cocks[temp].cockType == CockTypesEnum.DOG) || (player.cocks[temp].cockType == CockTypesEnum.FOX)) 
@@ -995,11 +1006,11 @@
 					outputText("fox's cock.");
 
 				if(player.cocks[temp].knotMultiplier >= 1.8) 
-					outputText("  The obscenely swollen lump of flesh near the base of your " + cockDescript(temp) + " looks almost comically mismatched for your " + cockDescript(temp) + ".", false);
+					outputText("  The obscenely swollen lump of flesh near the base of your " + player.cockDescript(temp) + " looks almost comically mismatched for your " + player.cockDescript(temp) + ".", false);
 				else if(player.cocks[temp].knotMultiplier >= 1.4) 
-					outputText("  A large bulge of flesh nestles just above the bottom of your " + cockDescript(temp) + ", to ensure it stays where it belongs during mating.", false);
+					outputText("  A large bulge of flesh nestles just above the bottom of your " + player.cockDescript(temp) + ", to ensure it stays where it belongs during mating.", false);
 				else if(player.cocks[temp].knotMultiplier > 1) 
-					outputText("  A small knot of thicker flesh is near the base of your " + cockDescript(temp) + ", ready to expand to help you lodge your " + cockDescript(temp) + " inside a female.", false);
+					outputText("  A small knot of thicker flesh is near the base of your " + player.cockDescript(temp) + ", ready to expand to help you lodge your " + player.cockDescript(temp) + " inside a female.", false);
 				//List knot thickness
 				outputText("  The knot is " + Math.floor(player.cocks[temp].cockThickness * player.cocks[temp].knotMultiplier * 10)/10 + " inches thick when at full size.", false);
 			}
@@ -1050,7 +1061,7 @@
 		}
 		//Worm flavor
 		if(player.findStatusAffect(StatusAffects.Infested) >= 0)
-			outputText("Every now and again slimy worms coated in spunk slip partway out of your " + multiCockDescriptLight() + ", tasting the air like tongues of snakes.\n", false);
+			outputText("Every now and again slimy worms coated in spunk slip partway out of your " + player.multiCockDescriptLight() + ", tasting the air like tongues of snakes.\n", false);
 		//DONE WITH COCKS, moving on!
 	}
 	//Of Balls and Sacks!
@@ -1077,13 +1088,13 @@
 		else 
 		{
 			if(player.skinType == SKIN_TYPE_PLAIN) 
-				outputText("A " + sackDescript() + " with " + ballsDescript() + " swings heavily beneath your " + multiCockDescriptLight() + ".", false);
+				outputText("A " + sackDescript() + " with " + ballsDescript() + " swings heavily beneath your " + player.multiCockDescriptLight() + ".", false);
 			if(player.skinType == SKIN_TYPE_FUR) 
-				outputText("A fuzzy " + sackDescript() + " filled with " + ballsDescript() + " swings low under your " + multiCockDescriptLight() + ".", false);
+				outputText("A fuzzy " + sackDescript() + " filled with " + ballsDescript() + " swings low under your " + player.multiCockDescriptLight() + ".", false);
 			if(player.skinType == SKIN_TYPE_SCALES) 
 				outputText("A scaley " + sackDescript() + " hugs your " + ballsDescript() + " tightly against your body.", false);
 			if(player.skinType == SKIN_TYPE_GOO) 
-				outputText("An oozing, semi-solid sack with " + ballsDescript() + " swings heavily beneath your " + multiCockDescriptLight() + ".", false);
+				outputText("An oozing, semi-solid sack with " + ballsDescript() + " swings heavily beneath your " + player.multiCockDescriptLight() + ".", false);
 		}
 		outputText("  You estimate each of them to be about " + num2Text(Math.round(player.ballSize)) + " ", false);
 		if(Math.round(player.ballSize) == 1) 
@@ -1213,7 +1224,7 @@
 	{
 		if(player.cocks[0].pierced > 0) 
 		{
-			outputText("\nLooking positively perverse, a " + player.cocks[0].pShortDesc + " adorns your " + cockDescript(0) + ".", false);
+			outputText("\nLooking positively perverse, a " + player.cocks[0].pShortDesc + " adorns your " + player.cockDescript(0) + ".", false);
 		}
 	}
 	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00286] == 1) 

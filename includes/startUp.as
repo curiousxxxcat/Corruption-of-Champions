@@ -1,4 +1,5 @@
 ﻿import coc.view.CoCButton;
+import coc.view.MainView;
 import flash.text.TextField;
 import flash.text.TextFormat;
 
@@ -7,7 +8,8 @@ import flash.text.TextFormat;
 //MainMenu - kicks player out to the main menu
 public function mainMenu(e:MouseEvent = undefined):void 
 {
-
+	stage.focus = (mainView as MainView).mainText;
+	
 	if(CONFIG::debug)
 	{
 		CoC_Settings.debugBuild = true;
@@ -17,6 +19,10 @@ public function mainMenu(e:MouseEvent = undefined):void
 		CoC_Settings.debugBuild = false;
 	}
 
+	if (mainView.aCb.parent != null)
+	{
+		mainView.removeChild(mainView.aCb);
+	}
 
 	mainView.eventTestInput.x = -10207.5;
 	mainView.eventTestInput.y = -1055.1;
@@ -41,9 +47,9 @@ public function mainMenu(e:MouseEvent = undefined):void
 
 	startupScreenBody();
 
-	var resume:Number = 0;
-	if(player.str > 0)  //we're in a game, allow resume.
-		resume = 1;
+	var resume:Function = null;
+	if (player.str > 0)  //we're in a game, allow resume.
+		resume = playerMenu;
 
 
 	// I really wanted to only have the "imageCreditsScreen" button if images were found, but it turns out
@@ -51,14 +57,14 @@ public function mainMenu(e:MouseEvent = undefined):void
 	// since the images haven't loaded yet.
 	// Therefore, the imageCreditScreen will just have to say "No image pack" if you don't have any images
 
-	choices("",  0,
+	choices("", null,
 			"Image Credits", imageCreditsScreen,
 			"Credits", creditsScreen,
-			"", 0,
+			"", null,
 			"Instructions", howToPlay,
 			"Debug Info", debugPane,
-			"", 0,
-			"", 0,
+			"", null,
+			"", null,
 			"Settings", settingsScreen,
 			"Resume", resume);
 
@@ -80,10 +86,11 @@ public function startupScreenBody():void
 <br>(Formerly Unnamed Text Game)  
 <u>Created by: Fenoxo</u>
 
-Edited By: SoS, Zeikfried, Prisoner416, Ashi, and Others
+Edited By:<br>
+&nbsp; &nbsp; &nbsp; Ashi, SoS, Prisoner416, Zeikfried, et al
 
-Open-source contributions by:  
-Amygdala, Yoffy, Fake-Name, Cmacleod42, Gedan, aimozg
+Open-source contributions by:<br>
+&nbsp; &nbsp; &nbsp; aimozg, Amygdala, Cmacleod42, Enterprise2001, Fake-Name, Gedan, Yoffy, et al
 
 Source Code: <u><a href='https://github.com/herp-a-derp/Corruption-of-Champions'>https://github.com/herp-a-derp/Corruption-of-Champions</a></u>
 
@@ -316,8 +323,8 @@ public function creditsScreen():void {
 	outputText("<li> Adjatha (Scylla the Cum Addicted Nun, Vala, Goo-girls, Bimbo Sophie Eggs, Ceraph Urta Roleplay, Gnoll with Balls Scene, Kiha futa scene, Goblin Web Fuck Scene, and 69 Bunny Scene)</li>");
 	outputText("<li> ComfyCushion (Muff Wrangler)</li>");
 	outputText("<li> B (Brooke)</li>");
-	outputText("<li> Quiet Browser (Half of Niamh, Ember, Amily The Mouse-girl Breeder, Katherine, Urta's in-bar Dialogue Trees, some of Izma, Loppe)</li>");
-	outputText("<li> Indirect (Alternate Non-Scylla Katherine Recruitment)</li>");
+	outputText("<li> Quiet Browser (Half of Niamh, Ember, Amily The Mouse-girl Breeder, Katherine, Part of Katherine Employment Expansion, Urta's in-bar Dialogue Trees, some of Izma, Loppe)</li>");
+	outputText("<li> Indirect (Alternate Non-Scylla Katherine Recruitment, Part of Katherine Employment Expansion, Phouka, Coding of Bee Girl Expansion)</li>");
 	outputText("<li> Schpadoinkle (Victoria Sex)</li>");
 	outputText("<li> Donto (Ro'gar the Orc, Polar Pete)</li>");
 	outputText("<li> Angel (Additional Amily Scenes)</li>");
@@ -340,7 +347,7 @@ public function creditsScreen():void {
 	outputText("<li> Noogai, Reaper, and Numbers (Nipple-Fucking Victory vs Imp Rape)</li>");
 	outputText("<li> Verse and IAMurow (Bee-Girl MultiCock Rapes)</li>");
 	outputText("<li> Sombrero (Additional Imp Lust Loss Scene (Dick insertion ahoy!)</li>");
-	outputText("<li> The Dark Master (Marble, Fetish Cultist, Fetish Zealot, Hellhound, Lumi, Some Cat Transformations, LaBova, Ceraph's Cat-Slaves, a Cum Witch Scene, Mouse Dreams, Forced Nursing:Imps&Goblins)</li>");
+	outputText("<li> The Dark Master (Marble, Fetish Cultist, Fetish Zealot, Hellhound, Lumi, Some Cat Transformations, LaBova, Ceraph's Cat-Slaves, a Cum Witch Scene, Mouse Dreams, Forced Nursing:Imps&Goblins, Bee Girl Expansion)</li>");
 	outputText("<li> Mr. Fleshcage (Cat Transformation/Masturbation)</li>");
 	outputText("<li> Spy (Cat Masturbation, Forced Nursing: Minotaur, Bee, & Cultist)</li>");
 	outputText("<li> PostNuclearMan (Some Cat TF)</li>");
@@ -357,6 +364,7 @@ public function creditsScreen():void {
 	outputText("<li> Radar (Dominating Sand Witches, Some Phylla)</li>");
 	outputText("<li> Jokester (Sharkgirls, Izma, & Additional Amily Scenes)</li>");
 	outputText("<li> Lukadoc (Additional Izma, Ceraph Followers Corrupting Gangbang, Satyrs, Ember)</li>");
+	outputText("<li> IxFa (Dildo Scene, Virgin Scene for Deluxe Dildo, Naga Tail Masturbation)</li>");
 	outputText("<li> Bob (Additional Izma)</li>");
 	outputText("<li> lh84 (Various Typos and Code-Suggestions)</li>");
 	outputText("<li> Dextersinister (Gnoll girl in the plains)</li>");
@@ -413,6 +421,7 @@ public function creditsScreen():void {
 	outputText("<li> Quiet Browser (Bee Oviposition of Urta)</li>");
 	outputText("<li> Bagpuss (Laying Eggs In Pure Amily)</li>");
 	outputText("<li> Eliria (Bee Laying Eggs in Bunny-Girls)</li>");
+	outputText("<li> Gardeford (Helia x Bimbo Sophie Threesomes)</li>");
 	outputText("</ul>");
 	outputText("\nIf I'm missing anyone, please contact me ASAP!  I have done a terrible job keeping the credits up to date!");
 	doNext(mainMenu);

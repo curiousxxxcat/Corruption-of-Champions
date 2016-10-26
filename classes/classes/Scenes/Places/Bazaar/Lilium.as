@@ -1,5 +1,6 @@
 ﻿package classes.Scenes.Places.Bazaar{
 	import classes.GlobalFlags.kFLAGS;
+	import classes.PregnancyStore;
 
 	public class Lilium extends BazaarAbstractContent{
 
@@ -53,7 +54,7 @@ private function approachLilium():void {
 	}
 	if(player.gems < 200) outputText("<b>You remember that you haven't got the 200 gems for her services right now.  Maybe next time.</b>", false);
 	else pay = payForLilium;
-	simpleChoices("Pay",pay,"",0,"",0,"",0,"Leave",leaveLilium);
+	simpleChoices("Pay", pay, "", null, "", null, "", null, "Leave", leaveLilium);
 }
 
 
@@ -69,7 +70,7 @@ private function payForLilium():void {
 		outputText("\"<i>Look, I'm sorry, but I can't really do anything for you right now.  If your, uh, situation changes, come see me again.</i>\"  Lilium then walks off, leaving you alone and naked.\n\n", false);
 
 		outputText("Bummer.", false);
-		doNext(2855);
+		doNext(bazaar.enterTheBazaar);
 		return;
 	}
 	//First time - Pay: 
@@ -96,7 +97,7 @@ private function payForLilium():void {
 	if(player.hasCock() && player.tongueType >= TONUGE_DEMONIC) buttFuck = buttFuckTongueJeorb;
 	if(player.hasCock()) nippleFuck = liliumNippleFuck;
 	if(player.hasVagina()) rideHer = liliumDickRidah;
-	simpleChoices("Buttfuck",buttFuck,"Ride Her",rideHer,"Nipple-Fuck",nippleFuck,"",0,"",0);
+	simpleChoices("Buttfuck", buttFuck, "Ride Her", rideHer, "Nipple-Fuck", nippleFuck, "", null, "", null);
 }
 
 //- Leave:
@@ -105,7 +106,7 @@ private function leaveLilium():void {
 	spriteSelect(93);
 	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00267] == 0) outputText("\"<i>I'm deathly allergic to fun, unfortunately,</i>\" you reply before moving on to examine more of the bazaar.", false);
 	else outputText("\"<i>Just passing through, and I thought I'd see how you were doing,</i>\" you reply, and leave Lilium alone at her post.", false);
-	doNext(2855);
+	doNext(bazaar.enterTheBazaar);
 }
 
 //#########BUTTFUCK + TONGUEJOB SCENE######### REQUIRES PENIS AND LONG DEMONIC TONGUE
@@ -138,16 +139,16 @@ private function buttFuckTongueJeorb():void {
 
 	outputText("Panting, Lilium grabs your hands and moves them around her waist, holding them against her stomach.  ", false);
 	//(If naga body)
-	if(player.isNaga()) outputText("As you both stand there, reeling in the wake of your ecstasy, she leans back against against you causing you to flop onto your " + buttDescript() + " with the demon girl on top of you; you haven't the strength to remain standing.", false);
+	if(player.isNaga()) outputText("As you both stand there, reeling in the wake of your ecstasy, she leans back against you causing you to flop onto your " + buttDescript() + " with the demon girl on top of you; you haven't the strength to remain standing.", false);
 	//(else) 
-	else outputText("As you both stand there, reeling in the wake of your ecstasy, she leans back against against you causing you to flop onto your " + buttDescript() + " with the demon girl on top of you; your wobbling legs have temporarily lost the strength to keep you both upright.", false);
+	else outputText("As you both stand there, reeling in the wake of your ecstasy, she leans back against you causing you to flop onto your " + buttDescript() + " with the demon girl on top of you; your wobbling legs have temporarily lost the strength to keep you both upright.", false);
 	outputText("  Lilium lets out a laugh and soon you find yourself laughing with her.\n\n", false);
 	
 	outputText("After you both recover, you get up to don your " + player.armorName + ", thanking Lilium and beginning the trip back to camp.  Maybe you'll take a bath too...", false);
 	
 	player.orgasm();
 	dynStats("cor", 1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //#########DICK RIDE SCENE######### REQUIRES VAGINA
@@ -202,8 +203,8 @@ private function liliumDickRidah():void {
 	player.orgasm();
 	dynStats("cor", 1);
 	//(imp preg check)
-	player.knockUp(1,418);
-	doNext(13);
+	player.knockUp(PregnancyStore.PREGNANCY_IMP, PregnancyStore.INCUBATION_IMP - 14, 61); //Lilium causes faster pregnancies
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //#########NIPPLE FUCK SCENE######### REQUIRES PENIS
@@ -261,7 +262,7 @@ private function liliumNippleFuck():void {
 
 	outputText("You get dressed again and begin to leave; as you look back over shoulder, Lilium - still seated and leaning against the wall - blows you a kiss.", false);
 	player.orgasm();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 }
 }

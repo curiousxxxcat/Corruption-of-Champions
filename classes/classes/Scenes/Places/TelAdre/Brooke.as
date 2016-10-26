@@ -89,7 +89,7 @@ public function meetBrookeFirstTime():void {
 	brookeAffection(5);
 	flags[kFLAGS.BROOKE_MET_TODAY] = 1;
 	flags[kFLAGS.BROOKE_MET] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 public function repeatChooseShower():void {
@@ -111,7 +111,7 @@ public function repeatChooseShower():void {
 			outputText("You head your way back to the showers, feeling the sweet ache of your muscles as you easily find your way there.  The showers are completely empty when you arrive.  You know exactly when Brooke will and won't be in the shower, and you've specifically chosen to avoid her this time.  As fond as you are of her and as fun as the sex is, you've been leaving the shower dirtier than when you've gone in!  It'd be nice to actually get clean this time.");
 			outputText("\n\nYour shower proceeds uneventfully.  While the cleanliness is nice, occasionally a rogue wish wants her to show up and 'ruin' your shower time.  Brooke is nowhere to be found, though, and just a short while later, you're clean as a whistle and out the door.");
 		}
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 		fatigue(-5);
 	}
 	//Between 16:00 and 18:00
@@ -157,7 +157,7 @@ public function brookeThirdEncounter():void {
 	outputText("\n\nThe rest of your shower is cold and uneasy.  Have you done something wrong?");
 	brookeAffection(5);
 	flags[kFLAGS.BROOKE_GRUMPS_ABOUT_TA] = 1;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 // Between 16:00 and 18:00, Affection <= 19
@@ -167,7 +167,7 @@ public function lowAffectionBrookeMeeting():void {
 
 	outputText("\n\nThe shower goes by smoothly, the both of you talking idly about whatever happens to come to mind.  Learning from your previous encounter, you try to keep the topics away from Tel'Adre while still asking her about herself, and answer her own questions about yourself whenever she asks.  All in all, things go by rather well, and once again she leaves the showers before you, giving you a wave before she leaves.");
 	outputText("\n\nYour shower proceeds uneventfully, and just a short while later, you're clean as a whistle and out the door.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	brookeAffection(5);
 }
 
@@ -184,7 +184,7 @@ public function mediumLowBrookeAffectionOneTime():void {
 	outputText("\n\nThe shower proceeds as it normally would, although you can't really get what she was about to ask you out of your head.  As usual, she leaves before you, leaving you curious and somewhat unfulfilled.");
 	outputText("\n\nMaybe it was something personal, and you're just not her type?");
 		// (Brooke's affection now caps at 20 until the PC is no longer a centaur.  This scene will re-proc until this condition is met, and then will proceed normally)
-		doNext(13);
+		doNext(camp.returnToCampUseOneHour);
 	}
 	//[if (isTaur = false)
 	else {
@@ -204,7 +204,7 @@ public function dontHelpBrookeShower():void {
 	outputText("\n\nYour shower proceeds uneventfully, and just a short while later, you're clean as a whistle and out the door.");
 	//(Brooke's affection resets to zero)
 	flags[kFLAGS.BROOKE_AFFECTION] = 0;
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 // [=Help=]
@@ -250,7 +250,7 @@ public function helpBrookeOut():void {
 	dynStats("lus", 15 + player.lib/20, "resisted", false);
 	flags[kFLAGS.BROOKE_SHOWERED_WITH] = 1;
 	brookeAffection(4);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 // Between 16:00 and 18:00, Affection >= 20, <= 39
@@ -319,7 +319,7 @@ public function talkWithBrookeAboutWorkingOut():void {
 	dynStats("lus", 10, "resisted", false);
 	if(player.inte < 50) dynStats("int", .5);
 	brookeAffection(4);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Gym Members=]
@@ -331,7 +331,7 @@ public function talkToBrookeAboutGymFolks():void {
 	outputText("\n\nThat centaur lady who owns the place is an all right sort, I guess.  Never really paid much attention to her.  I pay for my lifetime membership and she leaves me be.  Got a nice rack on her, but truth be told, I'm not the biggest fan of centaurs.  I know how racist that sounds and everything, and I even hate myself for admitting it, but...  I don't know; I think it has to do with my pa being a horse-morph.  It just looks unsettling to me.");
 
 	//[if {met Cotton}]
-	if(flags[kFLAGS.UNKNOWN_FLAG_NUMBER_00177] > 0) outputText("\n\nSpeaking of: Cotton, that horse-morph gal?  Cute as a button, sexy as a... well, as a big-titted ten-outta-ten.  Not really into that flowery yoga stuff, though, that's just not my style, and she's not into lifting the heavy stuff, so we don't really cross paths much.  I'd jump her bones if I didn't know that her horsecock of hers would split me in half.");
+	if(flags[kFLAGS.COTTON_MET_FUCKED] > 0) outputText("\n\nSpeaking of: Cotton, that horse-morph gal?  Cute as a button, sexy as a... well, as a big-titted ten-outta-ten.  Not really into that flowery yoga stuff, though, that's just not my style, and she's not into lifting the heavy stuff, so we don't really cross paths much.  I'd jump her bones if I didn't know that her horsecock of hers would split me in half.");
 
 	//[if {met Heckel}]
 	if(flags[kFLAGS.MET_HECKEL] > 0) outputText("\n\nHeckel's way too competitive and dominant.  I just wanna lift some weights, and she takes that as a personal challenge or something, and tries to outlift me.  Well, us Shepherds aren't too taken with being submissive, so I gotta outlift her right back.  Occasionally, we make it into competitions: whoever wins is the dom for the day, and whoever loses is the sub.  In the end, really, we both win – she's a damn good fuck either way – but it's more the principle of the thing.  We go more-or-less even, although she'd probably tell you otherwise.");
@@ -366,7 +366,7 @@ public function talkToBrookeAboutGymFolks():void {
 	// (Lust increases by 15)
 	dynStats("lus", 15, "resisted", false);
 	brookeAffection(4);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Her Rockin Bod=]
@@ -396,7 +396,7 @@ public function brookesRockinBod():void {
 	//(Lust increases by 15)
 	dynStats("lus", 15, "resisted", false);
 	brookeAffection(15);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Grope=]
@@ -480,7 +480,7 @@ public function penetrateBrooke():void {
 	player.orgasm();
 	dynStats("sen", -2);
  	brookeAffection(10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Anal=]
@@ -512,13 +512,13 @@ public function brookeAnal():void {
 	if(flags[kFLAGS.TIMES_IN_BROOKES_BUTT] == 0) outputText("  You wonder – is this the first time she's ever had anal before?");
 	else outputText("  She's tight as a vice, but you know she can take you.  She's just getting herself ready.");
 
-	outputText("\n\nThe " + cockHead(x) + " of your " + cockDescript(x) + " rubs against her rosebud in anticipation");
+	outputText("\n\nThe " + player.cockHead(x) + " of your " + cockDescript(x) + " rubs against her rosebud in anticipation");
 	if(player.cockTotal() > 1) outputText(" while your other member entertains itself between her thighs, bumping and sliding pleasurably across her vulva");
 	outputText(".  She instinctively clenches her ass, and you give her a moment to relax before you stroke her there again.  She loosens, and, almost teasingly now, you prod gently at her hole, implying but not acting just yet.  She takes deep breaths, working to steady herself.  <i>\"Okay,\"</i> she says, looking over her shoulder to you with a smile.");
 
 	outputText(images.showImage("brooke-gym-male-analbrooke"));
 
-	outputText("\n\nYou plan to take it easy on her.  You realign yourself, pointing your " + cockHead(x) + " right at her hole, and slowly begin to push yourself in.  On reflex, she inhales sharply, pressing her upper body into the wall some more.  You reassure her and push in a little deeper, sliding a quarter of your " + cockDescript(x) + " into her anus.  She gasps, but doesn't object.  Another push, sliding in to halfway.  A grunt, and she shuffles her feet slightly, getting more stability.  Another push, nearly to the base.  She gives out a whorish moan, and you wonder if she's at her comfort limit.  You push forward anyway, to your [sheath], and gasp in pleasure and sigh with relief when she doesn't object.");
+	outputText("\n\nYou plan to take it easy on her.  You realign yourself, pointing your " + player.cockHead(x) + " right at her hole, and slowly begin to push yourself in.  On reflex, she inhales sharply, pressing her upper body into the wall some more.  You reassure her and push in a little deeper, sliding a quarter of your " + cockDescript(x) + " into her anus.  She gasps, but doesn't object.  Another push, sliding in to halfway.  A grunt, and she shuffles her feet slightly, getting more stability.  Another push, nearly to the base.  She gives out a whorish moan, and you wonder if she's at her comfort limit.  You push forward anyway, to your [sheath], and gasp in pleasure and sigh with relief when she doesn't object.");
 
 	outputText("\n\nYou stay still for a moment, basking in the heat of her ass as she completely takes your " + cockDescript(x) + ".  The ring of her sphincter pulls and tightens around you, dragging the skin of your cock with each movement, and her inner muscles clench and massage every fiber of your hard meat.  You shuffle a bit, when Brooke interrupts you.  <i>\"Just a sec,\"</i> she says, rocking her hips some more, this way and that, trying to get a good feel for your dick in her ass.  You let her take her time – it's her ass you're fucking.  She eventually shuffles into a comfortable standing position, and with a nod, gives you the go ahead.");
 
@@ -558,7 +558,7 @@ public function brookeAnal():void {
 	fatigue(15);
 	flags[kFLAGS.TIMES_IN_BROOKES_BUTT]++;
 	brookeAffection(10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Tribadism=]
@@ -613,7 +613,7 @@ public function tribadism():void {
 	dynStats("sen", -2);
 	fatigue(15);
 	brookeAffection(10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Down on her=]
@@ -671,7 +671,7 @@ public function goDownOnBrooke():void {
 	// Lust increased by 30.
 	dynStats("lus", 30);
 	brookeAffection(10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Get laid=]
@@ -733,7 +733,7 @@ public function getLaidByBrooke():void {
 			if(player.balls > 0) outputText("burying her muzzle underneath your [sack] to push your [balls] out of her way, ");
 			outputText("and gets her tongue to work on your [vagina].  You gasp, unintentionally squatting just a bit to get more of her.  Ever the multi-tasker, she keeps her left hand busy, stroking your " + cockDescript(x) + ", making sure no part of you is ever left alone for long.\n\nShe pushes her nose up, rubbing the bridge of her long dog-nose against your [clit], knowing how much that'd get to you.  From her position, she can't reach very deep into your tunnel with her tongue, but she certainly does what she can: she licks and digs at your vulva, tasting every drop of juice you drip, and allows you to fuck against the fine fur on her face as she services you.  With the work she does in your [vagina] and with the way her expert hand continues to masturbate your " + cockDescript(x) + ", your body is horribly confused in which way to thrust against, but the sensations lighting up your mind nonetheless make it worthwhile.\n\nEventually, Brooke pulls back, releasing your cock from her hand and stepping out from between your legs.  She rolls her head on her neck a bit – staying in such a way for so long must have been a strain – and gets right back to work, sucking your " + cockDescript(x) + " back into her mouth, deeper and faster this time.  ");
 		}
-		outputText("Brooke moans out loud, pressing herself farther in, loving the feel of your dick in her mouth as much as you do.  Your " + cockDescript(x) + " pulses and bounces with each of your heartbeats, and she can feel the jump in her mouth and across her tongue.  She does everything she can to enhance your pleasure, from pressing your " + cockDescript(x) + " against the roof of her mouth, to using the base of her tongue on your " + cockHead(x) + " while she toys with your shaft with the tip, to leaning in and taking all of you in her mouth at once and staying there for a moment.  You let her know that her efforts are paying off with a wordless grunt and jerking your hips: you're close, and she can tell.");
+		outputText("Brooke moans out loud, pressing herself farther in, loving the feel of your dick in her mouth as much as you do.  Your " + cockDescript(x) + " pulses and bounces with each of your heartbeats, and she can feel the jump in her mouth and across her tongue.  She does everything she can to enhance your pleasure, from pressing your " + cockDescript(x) + " against the roof of her mouth, to using the base of her tongue on your " + player.cockHead(x) + " while she toys with your shaft with the tip, to leaning in and taking all of you in her mouth at once and staying there for a moment.  You let her know that her efforts are paying off with a wordless grunt and jerking your hips: you're close, and she can tell.");
 
 		outputText("\n\nShe picks up her pace, bobbing up and down on you faster and harder.  You're not fucking her face so much as she's fucking you with her mouth");
 		//[if (cocks >= 3)]
@@ -787,7 +787,7 @@ public function getLaidByBrooke():void {
 	brookeAffection(10);
 	player.orgasm();
 	dynStats("sen", -2);
- 	doNext(13);
+ 	doNext(camp.returnToCampUseOneHour);
 }
 //[=Double-dicked=]
 //Requires at least two penises
@@ -882,7 +882,7 @@ public function doubleDicked():void {
 	outputText("\n\nThe rest of your drying continues without much incident, and before long, you have your [armor] back on you and you're out of the gym, heading back towards camp.");
 	//Lust reduced to 0
 	player.orgasm();
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	brookeAffection(10);
 }
 
@@ -937,7 +937,7 @@ public function brookeSpecialMediumSceneContinued():void {
 		if(y >= 0 && player.cockTotal() >= 3) outputText(" while [eachCock] finds themselves either driving themselves higher, through the wet fur on her stomach and across each of her tensed abs, or joining the first in between her legs, pressing and pulling with her needy humping");
 		outputText(", and you can feel the heat, the need, pour from Brooke's pussy as she continues to grind on you.  You can hear her pant as she continues to kiss your neck, whimpering at your denial to penetrate her and moaning with each brush across her vulva.");
 
-		outputText("\n\nShe needs it as badly as you do, and you're not about to deny it.  With your grip on her thighs, you bend your [legs] just slightly, lining your " + cockHead(x) + " up with her target.  She stops breathing, tensing slightly, waiting for your thrust, and you oblige.  Straightening your legs and pushing forward, you enter her, pushing in only slightly so you can adjust.");
+		outputText("\n\nShe needs it as badly as you do, and you're not about to deny it.  With your grip on her thighs, you bend your [legs] just slightly, lining your " + player.cockHead(x) + " up with her target.  She stops breathing, tensing slightly, waiting for your thrust, and you oblige.  Straightening your legs and pushing forward, you enter her, pushing in only slightly so you can adjust.");
 
 		outputText("\n\nYou can't really tell how wet she is from the shower, but the heat and the contractions, along with her quiet mewling, tell you all you need to know.  She's tight, remarkably so, but your enthusiasm outweighs any friction burn you might get later, and you slowly continue to push.  She pulls you tighter by her forearms, her face buried in your chest as you ease your way in.  You thrust just a bit first, then pause, then thrust, going deeper and deeper.  She gasps with each pause and moans with each motion.  Too soon, you bottom out, your ");
 		if(player.balls > 0) outputText("[sack] resting gently against her crotch");
@@ -1140,7 +1140,7 @@ public function brookeSpecialMediumSceneContinued():void {
 		fatigue(10);
 	}
 	brookeAffection(10);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 // Affection = 70, after first-time sex, talk to Heckel between 13:00 and 15:00, must not be a first-time encounter with Heckel, requires a gender
@@ -1207,7 +1207,7 @@ public function nopeOutofBroke():void {
 	outputText("\n\n\"<i>Save yourself while you still can; I'll catch up in a bit.\"</i>  You ask if she's sure, and in response, she lovingly kisses the inside of your thigh.  <i>\"Sure I'm sure, sweet thing.  You have things to do, I bet.  Just get going.\"</i>");
 	outputText("\n\nYou leave, chased out by lewd, lusty slurps.");
 	brookeAffection(1);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 public function submitHeckelXBrookeThreesome():void {
@@ -1286,7 +1286,7 @@ public function brookeAndHeckelStuffPartThree():void {
 	outputText("\n\nYou take her advice and leave the gym before Heckel wakes up and decides to run on her dominance rush some more.");
 	//Lust reduced to 0, sensitivity increased by 1
 	brookeAffection(5);
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 }
 
 //[=Leg Press=]
@@ -1354,7 +1354,18 @@ public function brookeVHeckelBrookeWins2():void {
 
 		outputText("\n\nHeckel does her part, trailing her hands down to Brooke's sides and gripping onto her hamstrings, pulling the dog into her with every thrust forward.  But it's no mistake that Brooke is the top between the two of them: she stnds tall over the weak-legged hyena, covering as much of Heckel's body as she can with her own, pumping her hips powerfully into the herm's own.  Every one of Brooke's humps are met with one of your own, and all too quickly the two of you are battering the poor hyena around with your genitals; the locker room echoing a cacophony of wet thrusts, hard fleshy slaps, and perverse moans and sexual grunts.");
 
-		outputText("\n\nYou, for one, don't take the chance to fuck Heckel properly for granted.  Every time you met Heckel, you either went down on her, or had to take her dick up your ass – now, with the rare opportunity to return the favor, you savor every thrust into her tight velvet tunnel.  She's tight, far tighter than you had expected, but she's definitely no virgin either.  You draw your hands down to her hips, gripping and pulling delightedly at her tight muscles as you work her cunt, whetting your " + cockDescript(x) + " with the fruit you've been forbidden all this time.");
+		outputText("\n\nYou, for one, don't take the chance to fuck Heckel properly for granted.");
+		if (flags[kFLAGS.TIMES_FUCKED_HECKEL_BLOWJOB] > 0 || flags[kFLAGS.TIMES_FUCKED_HECKEL_ANAL] > 0)
+		{
+			var bj:Boolean = flags[kFLAGS.TIMES_FUCKED_HECKEL_BLOWJOB] > 0;
+			var anal:Boolean = flags[kFLAGS.TIMES_FUCKED_HECKEL_ANAL] > 0;
+			
+			if (bj && anal)	outputText("  Every time you met Heckel, you either went down on her, or had to take her dick up your ass – now, with the rare opportunity to return the favor, y"); 
+			else if (bj && !anal) outputText("  Every time you met Heckel, you went down on her - now, with the rare opportunity to return the favour, y");
+			else outputText("  Every time you met Heckel, you had to take her dick up your ass - now, with the rare opportunity to return the favour, y");
+		}
+		else outputText("Y");
+		outputText("ou savor every thrust into her tight velvet tunnel.  She's tight, far tighter than you had expected, but she's definitely no virgin either.  You draw your hands down to her hips, gripping and pulling delightedly at her tight muscles as you work her cunt, whetting your " + cockDescript(x) + " with the fruit you've been forbidden all this time.");
 		//[if (cocks >= 2)
 		if(player.cockTotal() >= 2) outputText("  Your extra dick flops lamely up the crack of her ass, hotdogging between her cheeks with every thrust.  You consider the possibility of maybe double-dicking the cocky hyena, but you opt against it, not willing to break the good flow you've got between the three of you.");
 		outputText("\n\nFor her part, Heckel gasps more often when you thrust into her than when Brooke thrusts onto her own cock, although you take that more to mean she's not used to getting fucked than you're outdoing Brooke.");
@@ -1431,7 +1442,7 @@ public function brookeVHeckelBrookeWins3():void {
 	outputText(".  Bow-legged, you make your way to your gear and slip it back on.  You turn back to Brooke and Heckel, to see that Brooke's laid herself flat on Heckel, kissing and sucking gently on the hyena's tits, already working herself back up for a second round.");
 
 	outputText("\n\nYou take her advice and leave the gym before Brooke changes her mind decides to make you stay to play on her dominance rush some more.");
-	doNext(13);
+	doNext(camp.returnToCampUseOneHour);
 	brookeAffection(5);
 }
 }
