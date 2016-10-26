@@ -25,6 +25,9 @@ package classes.Scenes.Dungeons.D3
 		public var livingStatue:LivingStatueScenes = new LivingStatueScenes();
 		public var succubusGardener:SuccubusGardenerScenes = new SuccubusGardenerScenes();
 		public var hermCentaur:HermCentaurScenes = new HermCentaurScenes();
+		public var driderIncubus:DriderIncubusScenes = new DriderIncubusScenes();
+		public var minotaurKing:MinotaurKingScenes = new MinotaurKingScenes();
+		public var lethice:LethiceScenes = new LethiceScenes();
 		
 		public function D3() 
 		{
@@ -161,7 +164,14 @@ package classes.Scenes.Dungeons.D3
 			tRoom.RoomName = "northcourtyard";
 			tRoom.EastExit = "northeastcourtyard";
 			tRoom.WestExit = "northwestcourtyard";
+			tRoom.NorthExit = "throneroom";
 			tRoom.RoomFunction = northcourtyardRoomFunc;
+			rooms[tRoom.RoomName] = tRoom;
+			
+			tRoom = new room();
+			tRoom.RoomName = "throneroom";
+			tRoom.SouthExit = "northcourtyard";
+			tRoom.RoomFunction = throneRoom;
 			rooms[tRoom.RoomName] = tRoom;
 			
 			// North East Courtyard
@@ -677,6 +687,27 @@ package classes.Scenes.Dungeons.D3
 			outputText("Intricate stonework supports this precarious platform as it juts from the side of Lethice's fortress, hanging over a sheer cliff that must go down for hundreds of feet. The harpies appear to have moved away from the area immediately below, whether by choice or by demonic action, though you can still spot a few of their nests in other places on the mountainside. A complicated looking machine sits on the side of the platform, attached to a cage that dangles over the edge, supported by a lowly metal cable. It must be some kind of mechanical lift - a way to come and go as one would please.");
 			
 			incubusMechanic.meetAtElevator();
+			
+			return false;
+		}
+		
+		private function throneRoom():Boolean
+		{
+			if (flags[kFLAGS.DRIDERINCUBUS_DEFEATED] == 0)
+			{
+				driderIncubus.encounterDriderIncbutt();
+				return true;
+			}
+			else if (flags[kFLAGS.MINOTAURKING_DEFEATED] == 0)
+			{
+				minotaurKing.encounterMinotaurKing();
+				return true;
+			}
+			else if (flags[kFLAGS.LETHICE_DEFEATED] == 0)
+			{
+				lethice.encounterLethice();
+				return true;
+			}
 			
 			return false;
 		}

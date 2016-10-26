@@ -378,6 +378,7 @@ private function genderlessShouldraMasturbation():void {
 	shouldraSleeping((10 + rand(26)), true);
 	flags[kFLAGS.GENDERLESS_MASTURBATION_WITH_GHOST_COUNT]++;
 	inventory.takeItem(consumables.ECTOPLS, camp.returnToCampUseOneHour);
+	flags[kFLAGS.SHOULDRA_GENDERLESS_FUCK_COUNT]++;
 }
 
 //Anal Masturbation - Variant on Genderless Masturbation
@@ -460,6 +461,7 @@ private function nongenderlessAnalShouldraMasturbation():void {
 	outputText("\n\n", false);
 	flags[kFLAGS.GENDERLESS_MASTURBATION_WITH_GHOST_COUNT]++;
 	inventory.takeItem(consumables.ECTOPLS, camp.returnToCampUseOneHour);
+	flags[kFLAGS.SHOULDRA_GENDERLESS_FUCK_COUNT]++;
 }
 
 //Male Masturbation
@@ -605,6 +607,7 @@ private function shouldraTongueLicksPCs():void {
 	shouldraSleeping((10 + rand(26)), true);
 	flags[kFLAGS.SHOULDRA_TONGUE_LICKS_TIMES]++;
 	doNext(camp.returnToCampUseOneHour);
+	flags[kFLAGS.SHOULDRA_TONGUE_LICKS_TIMES]++;
 }
 
 
